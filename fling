@@ -86,7 +86,7 @@ TextBox.BorderSizePixel = 0
 TextBox.Position = UDim2.new(0.0704845786, 0, 0.270642221, 0)
 TextBox.Size = UDim2.new(0, 388, 0, 62)
 TextBox.Font = Enum.Font.SourceSans
-TextBox.PlaceholderText = "Who do i destroy(can be shortened)"
+TextBox.PlaceholderText = "quem e que vai voar?(pode abreviar)"
 TextBox.Text = ""
 TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 TextBox.TextScaled = true
@@ -119,7 +119,7 @@ TextButton.MouseButton1Click:Connect(function()
 			game:FindService("RunService").Heartbeat:wait()
 		until not Target.Character:FindFirstChild("Head")
 	else
-		notif("Invalid player")
+		notif("pessoa invalida")
 	end
 end)
 
