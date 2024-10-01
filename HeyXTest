@@ -39,6 +39,20 @@ local Toggle = Tabs.Main:AddToggle("Fly",
     end 
 })
 
+local Toggle = Tabs.Main:AddToggle("Noclip", 
+{
+    Title = "Noclip", 
+    Description = "Atrvessar parede Em breve...",
+    Default = false, -- esse "," e preciso coloque em qualquer situação 
+    Callback = function(state)
+	if state then
+	    Fluent:Notify({ Title = "Noclip ligado", Content = "teste" })
+	else
+	    Fluent:Notify({ Title = "desligando", Content = "desligando" })
+        end
+    end 
+})
+
 --sliders
 
 local Slider = Tabs.Main:AddSlider("pulo", 
