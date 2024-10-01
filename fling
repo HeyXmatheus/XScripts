@@ -41,7 +41,7 @@ end
 --// sds
 
 local h = Instance.new("ScreenGui")
-local Main = Instance.new("ImageLabel")
+local Main = Instance.new("")
 local Top = Instance.new("Frame")
 local Title = Instance.new("TextLabel")
 local TextBox = Instance.new("TextBox")
