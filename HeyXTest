@@ -33,14 +33,6 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/
 end })
 
 -- alterador 
-local Toggle = Tabs.Main:AddToggle("Noclip", 
-{
-    Title = "Noclip", 
-    Description = "Em breve...",
-    Default = false, -- esse "," e preciso coloque em qualquer situação 
-    Callback = function(state)
-	if state then
-	    Fluent:Notify({ Title = "Noclip ligado", Content = "teste" })
 
 --sliders
 
