@@ -41,11 +41,6 @@ local Toggle = Tabs.Main:AddToggle("Noclip",
     Callback = function(state)
 	if state then
 	    Fluent:Notify({ Title = "Noclip ligado", Content = "teste" })
-	else
-	    Fluent:Notify({ Title = "desligando", Content = "desligando" })
-        end
-    end 
-})
 
 --sliders
 
