@@ -24,25 +24,15 @@ Tabs.Main:AddButton({ Title = "pulo infinito", Callback = function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
 end })
 
--- alterador 
-local Toggle = Tabs.Main:AddToggle("Fly", 
-{
-    Title = "Fly", 
-    Description = "Voar Em breve...",
-    Default = false, -- esse "," e preciso coloque em qualquer situação 
-    Callback = function(state)
-	if state then
-	    Fluent:Notify({ Title = "Fly ligado", Content = "teste" })
-	else
-	    Fluent:Notify({ Title = "desligando", Content = "desligando" })
-        end
-    end 
-})
+Tabs.Main:AddButton({ Title = "Fly", Callback = function() 
+loadstring(game:HttpGet("https://https://github.com/HeyXmatheus/XScripts/blob/main/fly/"))()
+end })
 
+-- alterador 
 local Toggle = Tabs.Main:AddToggle("Noclip", 
 {
     Title = "Noclip", 
-    Description = "Atrvessar parede Em breve...",
+    Description = "Em breve...",
     Default = false, -- esse "," e preciso coloque em qualquer situação 
     Callback = function(state)
 	if state then
