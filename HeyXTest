@@ -12,8 +12,7 @@ local Window = Fluent:CreateWindow({
 })
 
 local Tabs = {
-    main = Window:AddTab({ Title = "inicio" }),
-    Window:AddTab({ Title = "inicio" }),
+    Main = Window:AddTab({ Title = "inicio" }),
     Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 }
 -- parágrafos 
@@ -33,16 +32,47 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/
 end })
 
 -- alterador 
-local Toggle = Tabs.Main:AddToggle("autofarm", 
+local player = game.Players.LocalPlayer
+local noclip = false
+
+-- Função para alternar o estado do noclip
+local function toggleNoclip(state)
+    noclip = state
+    if noclip then
+        -- Desativar colisões
+        for _, part in pairs(player.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = false
+            end
+        end
+        print("Noclip ativado")
+    else
+        -- Ativar colisões
+        for _, part in pairs(player.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
+            end
+        end
+        print("Noclip desativado")
+    end
+end
+
+local Toggle = Tabs.Main:AddToggle("noclip", 
 {
-    Title = "autofarm", 
-    Description = "ele vai diamante",
-    Default = false, -- esse "," e preciso coloque em qualquer situação 
+    Title = "noclip", 
+    Description = "Ativa ou desativa o noclip",
+    Default = false, -- esse "," é preciso, coloque em qualquer situação 
     Callback = function(state)
-	if state then
+        toggleNoclip(state)
+        if state then
+            print("Noclip ativado")
+        else
+            print("Noclip desativado")
         end
     end 
 })
+
+
 
 --sliders
 
