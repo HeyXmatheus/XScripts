@@ -2,7 +2,22 @@
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
 -- aviso ao executar
-Fluent:Notify({ Title = "executado!", Content = "executando com sucesso" })
+local function showNotification()
+    local notification = Fluent:Notify({
+        Title = "executado!",
+        Content = "executando com sucesso"
+    })
+
+    -- Define o tempo em segundos antes de remover a notificação
+    local delayTime = 5
+
+    -- Aguarda o tempo especificado e remove a notificação
+    wait(delayTime)
+    notification:Destroy()
+end
+
+-- Chama a função para exibir a notificação
+showNotification()
 
 
 local Window = Fluent:CreateWindow({
