@@ -1,0 +1,101 @@
+-- carregar biblioteca 
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
+-- aviso ao executar
+Fluent:Notify({ Title = "executado!", Content = "executando com sucesso" })
+
+local Window = Fluent:CreateWindow({
+    Title = "XScript universal" .. Fluent.Version,
+    TabWidth = 160, 
+    Size = UDim2.fromOffset(580, 460), 
+    Theme = "Amethyst"
+})
+
+local Tabs = {
+    Main = Window:AddTab({ Title = "inicio" }),
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+}
+-- parágrafos 
+Tabs.Main:AddParagraph({ Title = "XScript", Content = "versao beta" })
+
+-- botões 
+Tabs.Main:AddButton({ Title = "pulo infinito", Callback = function() 
+loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
+end })
+
+Tabs.Main:AddButton({ Title = "Fly gui", Callback = function() 
+loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fly'))()
+end })
+
+Tabs.Main:AddButton({ Title = "Fling gui", Callback = function() 
+loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fling'))()
+end })
+
+-- alterador 
+local player = game.Players.LocalPlayer
+local noclip = false
+
+-- Função para alternar o estado do noclip
+local function toggleNoclip(state)
+    noclip = state
+    if noclip then
+        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+        print("Noclip ativado")
+    else
+        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+        print("Noclip desativado")
+    end
+end
+
+local Toggle = Tabs.Main:AddToggle("noclip", 
+{
+    Title = "noclip", 
+    Description = "Ativa ou desativa o noclip",
+    Default = false, -- esse "," é preciso, coloque em qualquer situação 
+    Callback = function(state)
+        toggleNoclip(state)
+        if state then
+            print("Noclip ativado")
+        else
+            print("Noclip desativado")
+        end
+    end 
+})
+
+
+--sliders
+
+local Slider = Tabs.Main:AddSlider("pulo", 
+{
+    Title = "ajusta pulo",
+    Description = "irar mudar pulo jogador",
+    Default = 2,
+    Min = 0,
+    Max = 5,
+    Rounding = 1,
+    Callback = function(Value)
+        print("pulo mudou pra:", Value)
+    end
+})
+
+
+
+
+
+local Slider = Tabs.Main:AddSlider("velocidade", 
+{
+    Title = "Velocidade",
+    Description = "Ajusta a velocidade do jogador",
+    Default = 2,
+    Min = 0,
+    Max = 5,
+    Rounding = 1,
+    Callback = function(Value)
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        
+        -- Define a velocidade de caminhada
+        humanoid.WalkSpeed = Value * 10  -- Multiplica o valor para aumentar o impacto
+    end
+})
