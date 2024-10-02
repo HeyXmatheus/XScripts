@@ -32,6 +32,10 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/
 end })
 
 -- alterador 
+-- carregar biblioteca 
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
+-- aviso ao executar
 local player = game.Players.LocalPlayer
 local noclip = false
 
@@ -57,6 +61,23 @@ local function toggleNoclip(state)
     end
 end
 
+-- Função para monitorar continuamente o estado do noclip
+local function monitorNoclip()
+    while true do
+        if noclip then
+            for _, part in pairs(player.Character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = false
+                end
+            end
+        end
+        wait(0.1) -- Ajuste o intervalo conforme necessário
+    end
+end
+
+-- Iniciar a monitorização do noclip em uma nova thread
+spawn(monitorNoclip)
+
 local Toggle = Tabs.Main:AddToggle("noclip", 
 {
     Title = "noclip", 
@@ -71,6 +92,7 @@ local Toggle = Tabs.Main:AddToggle("noclip",
         end
     end 
 })
+ 
 
 
 
