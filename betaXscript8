@@ -131,6 +131,7 @@ end })
 
 -- Variável para controlar o estado do God Mode
 local godMode = false
+local godModeConnection
 
 -- Função para ativar/desativar God Mode
 local function toggleGodMode()
@@ -140,7 +141,7 @@ local function toggleGodMode()
     local humanoid = character:FindFirstChildOfClass("Humanoid")
 
     if godMode then
-        humanoid.HealthChanged:Connect(function(health)
+        godModeConnection = humanoid.HealthChanged:Connect(function(health)
             if health < humanoid.MaxHealth then
                 -- Teleportar para o céu
                 character:SetPrimaryPartCFrame(CFrame.new(0, 1000, 0))
@@ -153,7 +154,9 @@ local function toggleGodMode()
         end)
         print("God Mode ativado")
     else
-        humanoid.HealthChanged:Disconnect()
+        if godModeConnection then
+            godModeConnection:Disconnect()
+        end
         print("God Mode desativado")
     end
 end
