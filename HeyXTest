@@ -4,7 +4,6 @@ local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/
 -- aviso ao executar
 Fluent:Notify({ Title = "executado!", Content = "executando com sucesso" })
 
--- carregar interface
 local Window = Fluent:CreateWindow({
     Title = "XScript universal" .. Fluent.Version,
     TabWidth = 160, 
@@ -33,22 +32,6 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/
 end })
 
 -- alterador 
-local player = game.Players.LocalPlayer
-local noclip = false
-
--- Função para alternar o estado do noclip
-local function toggleNoclip(state)
-    noclip = state
-    if noclip then
-        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
-        print("Noclip ativado")
-    else
-        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
-        print("Noclip desativado")
-    end
-end
-
--- Adicionando o toggle e configurando o callback
 local Toggle = Tab:AddToggle("MyToggle", 
 {
     Title = "Toggle", 
@@ -62,25 +45,6 @@ local Toggle = Tab:AddToggle("MyToggle",
             print("Toggle Off")
         end
     end 
-})
-
--- Adicionando o slider e configurando o callback
-local Slider = Tab:AddSlider("Slider", 
-{
-    Title = "Slider",
-    Description = "This is a slider",
-    Default = 2,
-    Min = 0,
-    Max = 5,
-    Rounding = 1,
-    Callback = function(Value)
-        print("Slider was changed:", Value)
-        if Value > 2.5 then
-            toggleNoclip(true)
-        else
-            toggleNoclip(false)
-        end
-    end
 })
 
 --sliders
