@@ -1,7 +1,7 @@
--- carregar biblioteca 
+-- Carregar biblioteca
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
--- aviso ao executar
+-- Aviso ao executar
 Fluent:Notify({ Title = "executado!", Content = "executando com sucesso" })
 
 local Window = Fluent:CreateWindow({
@@ -15,27 +15,24 @@ local Tabs = {
     Main = Window:AddTab({ Title = "inicio" }),
     Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 }
--- parágrafos 
+
+-- Parágrafos 
 Tabs.Main:AddParagraph({ Title = "XScript", Content = "versao beta" })
 
--- botões 
+-- Botões 
 Tabs.Main:AddButton({ Title = "pulo infinito", Callback = function() 
-loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
 end })
 
 Tabs.Main:AddButton({ Title = "Fly gui", Callback = function() 
-loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fly'))()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fly'))()
 end })
 
 Tabs.Main:AddButton({ Title = "Fling gui", Callback = function() 
-loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fling'))()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fling'))()
 end })
 
--- alterador 
--- carregar biblioteca 
-local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
-
--- aviso ao executar
+-- Alterador 
 local player = game.Players.LocalPlayer
 local noclip = false
 
@@ -82,7 +79,7 @@ local Toggle = Tabs.Main:AddToggle("noclip",
 {
     Title = "noclip", 
     Description = "Ativa ou desativa o noclip",
-    Default = false, -- esse "," é preciso, coloque em qualquer situação 
+    Default = false, 
     Callback = function(state)
         toggleNoclip(state)
         if state then
@@ -92,16 +89,12 @@ local Toggle = Tabs.Main:AddToggle("noclip",
         end
     end 
 })
- 
 
-
-
---sliders
-
+-- Sliders
 local Slider = Tabs.Main:AddSlider("pulo", 
 {
     Title = "ajusta pulo",
-    Description = "irar mudar pulo jogador",
+    Description = "irá mudar pulo jogador",
     Default = 2,
     Min = 0,
     Max = 5,
@@ -110,10 +103,6 @@ local Slider = Tabs.Main:AddSlider("pulo",
         print("pulo mudou pra:", Value)
     end
 })
-
-
-
-
 
 local Slider = Tabs.Main:AddSlider("velocidade", 
 {
@@ -132,3 +121,20 @@ local Slider = Tabs.Main:AddSlider("velocidade",
         humanoid.WalkSpeed = Value * 10  -- Multiplica o valor para aumentar o impacto
     end
 })
+
+-- Função para minimizar e reabrir a interface
+local frame = Window:GetFrame()
+local minimizeButton = frame:WaitForChild("MinimizeButton")
+local reopenButton = Window:AddButton({
+    Title = "Reabrir",
+    Callback = function()
+        frame.Visible = true
+        reopenButton.Visible = false
+    end
+})
+reopenButton.Visible = false
+
+minimizeButton.MouseButton1Click:Connect(function()
+    frame.Visible = false
+    reopenButton.Visible = true
+end)
