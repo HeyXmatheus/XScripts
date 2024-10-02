@@ -32,17 +32,13 @@ loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/
 end })
 
 -- alterador 
-local Toggle = Tab:AddToggle("MyToggle", 
+local Toggle = Tabs.Main:AddToggle("autofarm", 
 {
-    Title = "Toggle", 
-    Description = "Toggle description",
-    Default = false, -- esse "," é necessário, coloque em qualquer situação 
+    Title = "autofarm", 
+    Description = "ele vai diamante",
+    Default = false, -- esse "," e preciso coloque em qualquer situação 
     Callback = function(state)
-        toggleNoclip(state)
-        if state then
-            print("Toggle On")
-        else
-            print("Toggle Off")
+	if state then
         end
     end 
 })
