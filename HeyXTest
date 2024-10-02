@@ -64,44 +64,93 @@ Tabs.Main:AddButton({ Title = "Remover Lag e Texturas", Callback = function()
     print("Lag e texturas removidos")
 end })
 
-Tabs.Main:AddButton({ Title = "Kill All (Sword)", Callback = function() 
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local sword = character:FindFirstChildOfClass("Tool")
+-- Variável para controlar o estado do ataque automático
+local autoKill = false
 
-    if sword and sword.Name:lower():find("sword") then
-        for _, target in pairs(game.Players:GetPlayers()) do
-            if target ~= player then
-                local targetCharacter = target.Character
-                if targetCharacter and targetCharacter:FindFirstChild("Humanoid") then
-                    -- Função para seguir o alvo e atacar
-                    local function followAndAttack()
-                        while targetCharacter.Humanoid.Health > 0 do
-                            -- Teleportar para trás do jogador alvo e olhar para ele
-                            local targetPosition = targetCharacter.PrimaryPart.Position
-                            local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
-                            character:SetPrimaryPartCFrame(CFrame.new(behindPosition, targetPosition))
+-- Função para seguir e atacar jogadores
+local function followAndAttack()
+    while autoKill do
+        local player = game.Players.LocalPlayer
+        local character = player.Character
+        local sword = character:FindFirstChildOfClass("Tool")
 
-                            -- Auto click para atacar sem delay
+        if sword and sword.Name:lower():find("sword") then
+            for _, target in pairs(game.Players:GetPlayers()) do
+                if target ~= player then
+                    local targetCharacter = target.Character
+                    if targetCharacter and targetCharacter:FindFirstChild("Humanoid") then
+                        -- Teleportar para trás do jogador alvo e olhar para ele
+                        local targetPosition = targetCharacter.PrimaryPart.Position
+                        local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
+                        character:SetPrimaryPartCFrame(CFrame.new(behindPosition, targetPosition))
+
+                        -- Auto click para atacar sem delay
+                        while autoKill and targetCharacter.Humanoid.Health > 0 do
                             sword:Activate()
                             wait() -- Sem delay
                         end
+
+                        -- Matar o jogador alvo
+                        targetCharacter.Humanoid.Health = 0
+                        wait(0.5) -- Esperar um pouco antes de ir para o próximo jogador
                     end
-
-                    -- Iniciar a função de seguir e atacar
-                    followAndAttack()
-
-                    -- Matar o jogador alvo
-                    targetCharacter.Humanoid.Health = 0
-                    wait(0.5) -- Esperar um pouco antes de ir para o próximo jogador
                 end
             end
+        else
+            print("Você precisa estar com uma espada equipada")
         end
-        print("Todos os jogadores foram mortos")
-    else
-        print("Você precisa estar com uma espada equipada")
+        wait(1) -- Pequeno delay antes de repetir o ciclo
     end
-end })
+end
+
+-- Alternador para ativar/desativar o ataque automático
+local Toggle = Tabs.Main:AddToggle("autoKill", 
+{
+    Title = "Auto Kill (Sword)", 
+    Description = "Ativa ou desativa o ataque automático",
+    Default = false, 
+    Callback = function(state)
+        autoKill = state
+        if autoKill then
+            print("Auto Kill ativado")
+            followAndAttack()
+        else
+            print("Auto Kill desativado")
+        end
+    end 
+})
+
+-- Variável para controlar o estado do God Mode
+local godMode = false
+
+-- Função para ativar/desativar o God Mode
+local function toggleGodMode(state)
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    local humanoid = character:FindFirstChild("Humanoid")
+
+    if state then
+        humanoid.MaxHealth = math.huge
+        humanoid.Health = math.huge
+        print("God Mode ativado")
+    else
+        humanoid.MaxHealth = 100
+        humanoid.Health = 100
+        print("God Mode desativado")
+    end
+end
+
+-- Alternador para ativar/desativar o God Mode
+local Toggle = Tabs.Main:AddToggle("godMode", 
+{
+    Title = "God Mode", 
+    Description = "Ativa ou desativa o God Mode",
+    Default = false, 
+    Callback = function(state)
+        godMode = state
+        toggleGodMode(godMode)
+    end 
+})
 
 -- Função para alternar o estado do noclip
 local player = game.Players.LocalPlayer
