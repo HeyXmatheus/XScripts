@@ -74,7 +74,18 @@ local function followAndAttack()
         local character = player.Character
         local sword = character:FindFirstChildOfClass("Tool")
 
-        if sword and sword.Name:lower():find("sword") then
+        -- Equipar espada automaticamente
+        if not sword or not sword.Name:lower():find("sword") then
+            for _, tool in pairs(player.Backpack:GetChildren()) do
+                if tool:IsA("Tool") and tool.Name:lower():find("sword") then
+                    character.Humanoid:EquipTool(tool)
+                    sword = tool
+                    break
+                end
+            end
+        end
+
+        if sword then
             for _, target in pairs(game.Players:GetPlayers()) do
                 if target ~= player then
                     local targetCharacter = target.Character
@@ -98,139 +109,61 @@ local function followAndAttack()
 
                         -- Matar o jogador alvo
                         targetCharacter.Humanoid.Health = 0
-                        wait(0.1) -- Esperar um pouco antes de ir para o próximo jogador
+                        wait()
                     end
                 end
             end
-        else
-            print("Você precisa estar com uma espada equipada")
         end
-        wait(0.1) -- Pequeno delay antes de repetir o ciclo
     end
 end
 
--- Alternador para ativar/desativar o ataque automático
-local Toggle = Tabs.Main:AddToggle("autoKill", 
-{
-    Title = "Auto Kill (Sword)", 
-    Description = "Ativa ou desativa o ataque automático",
-    Default = false, 
-    Callback = function(state)
-        autoKill = state
-        if autoKill then
-            print("Auto Kill ativado")
-            followAndAttack()
-        else
-            print("Auto Kill desativado")
+-- Botão para Kill All Manual
+Tabs.Main:AddButton({ Title = "Kill All Manual", Callback = function()
+    for _, target in pairs(game.Players:GetPlayers()) do
+        if target ~= game.Players.LocalPlayer then
+            local targetCharacter = target.Character
+            if targetCharacter and targetCharacter:FindFirstChild("Humanoid") then
+                targetCharacter.Humanoid.Health = 0
+            end
         end
-    end 
-})
+    end
+end })
 
 -- Variável para controlar o estado do God Mode
 local godMode = false
 
--- Função para ativar/desativar o God Mode
-local function toggleGodMode(state)
+-- Função para ativar/desativar God Mode
+local function toggleGodMode()
+    godMode = not godMode
     local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoid = character:FindFirstChild("Humanoid")
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
 
-    if state then
-        humanoid.MaxHealth = math.huge
-        humanoid.Health = math.huge
-        humanoid:GetPropertyChangedSignal("Health"):Connect(function()
-            if humanoid.Health < math.huge then
-                humanoid.Health = math.huge
+    if godMode then
+        humanoid.HealthChanged:Connect(function(health)
+            if health < humanoid.MaxHealth then
+                -- Teleportar para o céu
+                character:SetPrimaryPartCFrame(CFrame.new(0, 1000, 0))
+                repeat
+                    wait(1)
+                until humanoid.Health == humanoid.MaxHealth
+                -- Voltar para a posição original
+                character:SetPrimaryPartCFrame(CFrame.new(0, 5, 0))
             end
         end)
         print("God Mode ativado")
     else
-        humanoid.MaxHealth = 100
-        humanoid.Health = 100
+        humanoid.HealthChanged:Disconnect()
         print("God Mode desativado")
     end
 end
 
--- Alternador para ativar/desativar o God Mode
-local Toggle = Tabs.Main:AddToggle("godMode", 
-{
-    Title = "God Mode", 
-    Description = "Ativa ou desativa o God Mode",
-    Default = false, 
-    Callback = function(state)
-        godMode = state
-        toggleGodMode(godMode)
-    end 
-})
+Tabs.Main:AddButton({ Title = "Ativar/Desativar God Mode", Callback = toggleGodMode })
 
--- Função para alternar o estado do noclip
-local player = game.Players.LocalPlayer
-local noclip = false
-
-local function toggleNoclip(state)
-    noclip = state
-    if noclip then
-        -- Desativar colisões
-        for _, part in pairs(player.Character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = false
-            end
-        end
-        print("Noclip ativado")
-    else
-        -- Ativar colisões
-        for _, part in pairs(player.Character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = true
-            end
-        end
-        print("Noclip desativado")
+-- Botão para ativar/desativar Auto Kill All
+Tabs.Main:AddButton({ Title = "Auto Kill All", Callback = function()
+    autoKill = not autoKill
+    if autoKill then
+        followAndAttack()
     end
-end
-
-local Toggle = Tabs.Main:AddToggle("noclip", 
-{
-    Title = "noclip", 
-    Description = "Ativa ou desativa o noclip",
-    Default = false, 
-    Callback = function(state)
-        toggleNoclip(state)
-        if state then
-            print("Noclip ativado")
-        else
-            print("Noclip desativado")
-        end
-    end 
-})
-
--- Sliders
-local Slider = Tabs.Main:AddSlider("pulo", 
-{
-    Title = "ajusta pulo",
-    Description = "irá mudar pulo jogador",
-    Default = 2,
-    Min = 0,
-    Max = 5,
-    Rounding = 1,
-    Callback = function(Value)
-        print("pulo mudou para:", Value)
-    end
-})
-
-local Slider = Tabs.Main:AddSlider("velocidade", 
-{
-    Title = "Velocidade",
-    Description = "Ajusta a velocidade do jogador",
-    Default = 2,
-    Min = 0,
-    Max = 5,
-    Rounding = 1,
-    Callback = function(Value)
-        local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        local humanoid = character:WaitForChild("Humanoid")
-        
-        -- Define a velocidade de caminhada
-        humanoid.WalkSpeed = Value * 10  -- Multiplica o valor para aumentar o impacto
-    end
-})
+end })
