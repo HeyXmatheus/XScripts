@@ -3,9 +3,6 @@ local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/
 
 -- aviso ao executar
 Fluent:Notify({ Title = "executado!", Content = "executando com sucesso" })
-    local delayTime = 5
-    notification:Destroy()
-end
 
 -- carregar interface
 local Window = Fluent:CreateWindow({
@@ -50,6 +47,22 @@ local function toggleNoclip(state)
         print("Noclip desativado")
     end
 end
+
+-- Adicionando o toggle e configurando o callback
+local Toggle = Tab:AddToggle("MyToggle", 
+{
+    Title = "Toggle", 
+    Description = "Toggle description",
+    Default = false, -- esse "," é necessário, coloque em qualquer situação 
+    Callback = function(state)
+        toggleNoclip(state)
+        if state then
+            print("Toggle On")
+        else
+            print("Toggle Off")
+        end
+    end 
+})
 
 -- Adicionando o slider e configurando o callback
 local Slider = Tab:AddSlider("Slider", 
