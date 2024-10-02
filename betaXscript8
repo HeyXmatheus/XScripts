@@ -90,8 +90,8 @@ local function followAndAttack()
                 if target ~= player then
                     local targetCharacter = target.Character
                     if targetCharacter and targetCharacter:FindFirstChild("Humanoid") then
-                        -- Função para seguir o alvo e atacar
-                        local function followTarget()
+                        -- Função para teleportar para o alvo e atacar
+                        local function teleportAndAttack()
                             while autoKill and targetCharacter.Humanoid.Health > 0 do
                                 -- Teleportar para trás do jogador alvo e olhar para ele
                                 local targetPosition = targetCharacter.PrimaryPart.Position
@@ -100,73 +100,26 @@ local function followAndAttack()
 
                                 -- Auto click para atacar sem delay
                                 sword:Activate()
-                                wait() -- Sem delay
+                                wait(0.1) -- Pequeno delay para evitar problemas de sincronização
                             end
                         end
-
-                        -- Iniciar a função de seguir e atacar
-                        followTarget()
-
-                        -- Matar o jogador alvo
-                        targetCharacter.Humanoid.Health = 0
-                        wait()
+                        teleportAndAttack()
                     end
                 end
             end
         end
+        wait(0.1) -- Pequeno delay para evitar sobrecarga do loop
     end
 end
 
--- Botão para Kill All Manual
-Tabs.Main:AddButton({ Title = "Kill All Manual", Callback = function()
-    for _, target in pairs(game.Players:GetPlayers()) do
-        if target ~= game.Players.LocalPlayer then
-            local targetCharacter = target.Character
-            if targetCharacter and targetCharacter:FindFirstChild("Humanoid") then
-                targetCharacter.Humanoid.Health = 0
-            end
+-- Toggle para ativar/desativar o ataque automático
+Tabs.Main:AddToggle({
+    Title = "Auto Kill",
+    Default = false,
+    Callback = function(state)
+        autoKill = state
+        if autoKill then
+            followAndAttack()
         end
     end
-end })
-
--- Variável para controlar o estado do God Mode
-local godMode = false
-local godModeConnection
-
--- Função para ativar/desativar God Mode
-local function toggleGodMode()
-    godMode = not godMode
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoid = character:FindFirstChildOfClass("Humanoid")
-
-    if godMode then
-        godModeConnection = humanoid.HealthChanged:Connect(function(health)
-            if health < humanoid.MaxHealth then
-                -- Teleportar para o céu
-                character:SetPrimaryPartCFrame(CFrame.new(0, 1000, 0))
-                repeat
-                    wait(1)
-                until humanoid.Health == humanoid.MaxHealth
-                -- Voltar para a posição original
-                character:SetPrimaryPartCFrame(CFrame.new(0, 5, 0))
-            end
-        end)
-        print("God Mode ativado")
-    else
-        if godModeConnection then
-            godModeConnection:Disconnect()
-        end
-        print("God Mode desativado")
-    end
-end
-
-Tabs.Main:AddButton({ Title = "Ativar/Desativar God Mode", Callback = toggleGodMode })
-
--- Botão para ativar/desativar Auto Kill All
-Tabs.Main:AddButton({ Title = "Auto Kill All", Callback = function()
-    autoKill = not autoKill
-    if autoKill then
-        followAndAttack()
-    end
-end })
+})
