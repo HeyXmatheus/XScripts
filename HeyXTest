@@ -32,11 +32,81 @@ Tabs.Main:AddButton({ Title = "Fling gui", Callback = function()
     loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fling'))()
 end })
 
--- Alterador 
+Tabs.Main:AddButton({ Title = "Remover Lag e Texturas", Callback = function() 
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    -- Desativar texturas
+    for _, part in pairs(workspace:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.Material = Enum.Material.SmoothPlastic
+            if part:FindFirstChildOfClass("Decal") then
+                part:FindFirstChildOfClass("Decal"):Destroy()
+            end
+            if part:FindFirstChildOfClass("Texture") then
+                part:FindFirstChildOfClass("Texture"):Destroy()
+            end
+        end
+    end
+
+    -- Desativar efeitos de partículas
+    for _, effect in pairs(workspace:GetDescendants()) do
+        if effect:IsA("ParticleEmitter") or effect:IsA("Trail") then
+            effect.Enabled = false
+        end
+    end
+
+    -- Desativar iluminação desnecessária
+    game.Lighting.GlobalShadows = false
+    game.Lighting.FogEnd = 9e9
+    game.Lighting.Brightness = 0
+
+    print("Lag e texturas removidos")
+end })
+
+Tabs.Main:AddButton({ Title = "Kill All (Sword)", Callback = function() 
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    local sword = character:FindFirstChildOfClass("Tool")
+
+    if sword and sword.Name:lower():find("sword") then
+        for _, target in pairs(game.Players:GetPlayers()) do
+            if target ~= player then
+                local targetCharacter = target.Character
+                if targetCharacter and targetCharacter:FindFirstChild("Humanoid") then
+                    -- Função para seguir o alvo e atacar
+                    local function followAndAttack()
+                        while targetCharacter.Humanoid.Health > 0 do
+                            -- Teleportar para trás do jogador alvo e olhar para ele
+                            local targetPosition = targetCharacter.PrimaryPart.Position
+                            local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
+                            character:SetPrimaryPartCFrame(CFrame.new(behindPosition, targetPosition))
+
+                            -- Auto click para atacar sem delay
+                            sword:Activate()
+                            wait() -- Sem delay
+                        end
+                    end
+
+                    -- Iniciar a função de seguir e atacar
+                    followAndAttack()
+
+                    -- Matar o jogador alvo
+                    targetCharacter.Humanoid.Health = 0
+                    wait(0.5) -- Esperar um pouco antes de ir para o próximo jogador
+                end
+            end
+        end
+        print("Todos os jogadores foram mortos")
+    else
+        print("Você precisa estar com uma espada equipada")
+    end
+end })
+
+-- Função para alternar o estado do noclip
 local player = game.Players.LocalPlayer
 local noclip = false
 
--- Função para alternar o estado do noclip
 local function toggleNoclip(state)
     noclip = state
     if noclip then
@@ -57,23 +127,6 @@ local function toggleNoclip(state)
         print("Noclip desativado")
     end
 end
-
--- Função para monitorar continuamente o estado do noclip
-local function monitorNoclip()
-    while true do
-        if noclip then
-            for _, part in pairs(player.Character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.CanCollide = false
-                end
-            end
-        end
-        wait(0.1) -- Ajuste o intervalo conforme necessário
-    end
-end
-
--- Iniciar a monitorização do noclip em uma nova thread
-spawn(monitorNoclip)
 
 local Toggle = Tabs.Main:AddToggle("noclip", 
 {
@@ -100,7 +153,7 @@ local Slider = Tabs.Main:AddSlider("pulo",
     Max = 5,
     Rounding = 1,
     Callback = function(Value)
-        print("pulo mudou pra:", Value)
+        print("pulo mudou para:", Value)
     end
 })
 
@@ -121,20 +174,3 @@ local Slider = Tabs.Main:AddSlider("velocidade",
         humanoid.WalkSpeed = Value * 10  -- Multiplica o valor para aumentar o impacto
     end
 })
-
--- Função para minimizar e reabrir a interface
-local frame = Window:GetFrame()
-local minimizeButton = frame:WaitForChild("MinimizeButton")
-local reopenButton = Window:AddButton({
-    Title = "Reabrir",
-    Callback = function()
-        frame.Visible = true
-        reopenButton.Visible = false
-    end
-})
-reopenButton.Visible = false
-
-minimizeButton.MouseButton1Click:Connect(function()
-    frame.Visible = false
-    reopenButton.Visible = true
-end)
