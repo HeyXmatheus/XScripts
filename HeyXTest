@@ -12,8 +12,8 @@ local Window = Fluent:CreateWindow({
 })
 
 local Tabs = {
-    Main = Window:AddTab({ Title = "inicio" }),
-    Main = Window:AddTab({ Title = "Brookhaven" }),
+    main = Window:AddTab({ Title = "inicio" }),
+    Window:AddTab({ Title = "Brookhaven" }),
     Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 }
 -- parágrafos 
