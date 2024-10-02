@@ -79,27 +79,33 @@ local function followAndAttack()
                 if target ~= player then
                     local targetCharacter = target.Character
                     if targetCharacter and targetCharacter:FindFirstChild("Humanoid") then
-                        -- Teleportar para trás do jogador alvo e olhar para ele
-                        local targetPosition = targetCharacter.PrimaryPart.Position
-                        local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
-                        character:SetPrimaryPartCFrame(CFrame.new(behindPosition, targetPosition))
+                        -- Função para seguir o alvo e atacar
+                        local function followTarget()
+                            while autoKill and targetCharacter.Humanoid.Health > 0 do
+                                -- Teleportar para trás do jogador alvo e olhar para ele
+                                local targetPosition = targetCharacter.PrimaryPart.Position
+                                local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
+                                character:SetPrimaryPartCFrame(CFrame.new(behindPosition, targetPosition))
 
-                        -- Auto click para atacar sem delay
-                        while autoKill and targetCharacter.Humanoid.Health > 0 do
-                            sword:Activate()
-                            wait() -- Sem delay
+                                -- Auto click para atacar sem delay
+                                sword:Activate()
+                                wait() -- Sem delay
+                            end
                         end
+
+                        -- Iniciar a função de seguir e atacar
+                        followTarget()
 
                         -- Matar o jogador alvo
                         targetCharacter.Humanoid.Health = 0
-                        wait(0.5) -- Esperar um pouco antes de ir para o próximo jogador
+                        wait(0.1) -- Esperar um pouco antes de ir para o próximo jogador
                     end
                 end
             end
         else
             print("Você precisa estar com uma espada equipada")
         end
-        wait(1) -- Pequeno delay antes de repetir o ciclo
+        wait(0.1) -- Pequeno delay antes de repetir o ciclo
     end
 end
 
@@ -132,6 +138,11 @@ local function toggleGodMode(state)
     if state then
         humanoid.MaxHealth = math.huge
         humanoid.Health = math.huge
+        humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+            if humanoid.Health < math.huge then
+                humanoid.Health = math.huge
+            end
+        end)
         print("God Mode ativado")
     else
         humanoid.MaxHealth = 100
