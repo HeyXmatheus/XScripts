@@ -30,7 +30,7 @@ Tabs.Main:AddButton({ Title = "Fly gui", Callback = function()
     loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fly'))()
 end })
 
-Tabs.Main:AddButton({ Title = "Fling gui", Callback = function() 
+Tabs.Main:AddButton({ Title = "jogar alguém no void gui", Callback = function() 
     loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fling'))()
 end })
 
@@ -125,8 +125,8 @@ end
 -- Alternador para ativar/desativar o ataque automático
 local Toggle = Tabs.Main:AddToggle("autoKill", 
 {
-    Title = "Auto Kill (Sword)", 
-    Description = "Ativa ou desativa o ataque automático",
+    Title = "Auto Kill all (Sword)", 
+    Description = "mate todos do Servidor (necessita de espada)",
     Default = false, 
     Callback = function(state)
         autoKill = state
@@ -219,7 +219,7 @@ end
 local Toggle = Tabs.Main:AddToggle("godMode", 
 {
     Title = "God Mode", 
-    Description = "Ativa ou desativa o God Mode",
+    Description = "Ativa ou desativa o God Mode (talvez não funcione está em beta!)",
     Default = false, 
     Callback = function(state)
         godMode = state
@@ -255,7 +255,7 @@ end
 local Toggle = Tabs.Main:AddToggle("noclip", 
 {
     Title = "noclip", 
-    Description = "Ativa ou desativa o noclip",
+    Description = "atravesse as paredes",
     Default = false, 
     Callback = function(state)
         toggleNoclip(state)
