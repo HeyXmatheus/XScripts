@@ -89,7 +89,7 @@ local godModeActive = false
 Tabs.Main:AddToggle("GodModeToggle", 
 {
     Title = "Ativar/Desativar God Mode", 
-    Description = "Ativa ou desativa o God Mode (não funciona ainda)",
+    Description = "Ativa ou desativa o God Mode",
     Default = false, 
     Callback = function(state)
         godModeActive = state
@@ -108,7 +108,7 @@ Tabs.Main:AddToggle("GodModeToggle",
                 end
             end)
             print("God Mode ativado")
-            else
+        else
             for _, part in pairs(character:GetDescendants()) do
                 if part:IsA("BasePart") then
                     part.CanCollide = true
@@ -186,11 +186,16 @@ Tabs.Main:AddToggle("AutoKillToggle",
                                 -- Função para seguir o alvo e atacar
                                 local function followTarget()
                                     while autoKillActive and targetCharacter.Humanoid.Health > 0 do
-                                        -- Teleportar para trás do jogador alvo e olhar para ele
+                                        -- Teleportar para uma posição fixa atrás do jogador alvo e olhar para ele
                                         local targetPosition = targetCharacter.PrimaryPart.Position
                                         local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
                                         character:SetPrimaryPartCFrame(CFrame.new(behindPosition, targetPosition))
-                                        wait(0.09)
+                                        
+                                        -- Auto click para atacar mais rápido
+                                        if sword:FindFirstChild("Handle") then
+                                            fireclickdetector(sword.Handle.ClickDetector)
+                                        end
+                                        wait(0.05) -- Aumentar a velocidade de ataque
                                     end
                                 end
                                 followTarget()
@@ -198,7 +203,7 @@ Tabs.Main:AddToggle("AutoKillToggle",
                         end
                     end
                 end
-                wait(0)
+                wait(0.1) -- Reduzir o tempo de espera para ataques mais rápidos
             end
         end
 
