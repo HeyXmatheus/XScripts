@@ -65,23 +65,52 @@ Tabs.Main:AddButton({ Title = "Remover Lag e Texturas", Callback = function()
 end })
 
 -- God Mode 100% funcional
-Tabs.Main:AddButton({ Title = "God Mode", Callback = function() 
+local godModeActive = false
+Tabs.Main:AddButton({ Title = "Ativar/Desativar God Mode", Callback = function() 
+    godModeActive = not godModeActive
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoid = character:FindFirstChildOfClass("Humanoid")
 
-    if humanoid then
-        humanoid.Name = "1"
-        local newHumanoid = humanoid:Clone()
-        newHumanoid.Parent = character
-        newHumanoid.Name = "Humanoid"
-        wait(0.1)
-        humanoid:Destroy()
-        workspace.CurrentCamera.CameraSubject = character
-        newHumanoid.DisplayDistanceType = "None"
+    if godModeActive and humanoid then
+        humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+            if humanoid.Health < humanoid.MaxHealth then
+                humanoid.Health = humanoid.MaxHealth
+            end
+        end)
+        print("God Mode ativado")
+    elseif not godModeActive and humanoid then
+        humanoid.Health = humanoid.MaxHealth
+        print("God Mode desativado")
     end
+end })
 
-    print("God Mode ativado")
+-- Noclip funcional
+local noclipActive = false
+Tabs.Main:AddButton({ Title = "Ativar/Desativar Noclip", Callback = function() 
+    noclipActive = not noclipActive
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    if noclipActive then
+        game:GetService("RunService").Stepped:Connect(function()
+            if noclipActive then
+                for _, part in pairs(character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = false
+                    end
+                end
+            end
+        end)
+        print("Noclip ativado")
+    else
+        for _, part in pairs(character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
+            end
+        end
+        print("Noclip desativado")
+    end
 end })
 
 -- Variável para controlar o estado do ataque automático
