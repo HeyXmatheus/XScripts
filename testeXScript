@@ -34,6 +34,7 @@ end })
 
 Tabs.Main:AddButton({ Title = "Remover Lag e Texturas", Callback = function() 
     loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/NoLag'))()
+end })
 
 -- God Mode 100% funcional
 local godModeActive = false
