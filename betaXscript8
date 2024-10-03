@@ -190,7 +190,7 @@ Tabs.Main:AddToggle("AutoKillToggle",
                                         local targetPosition = targetCharacter.PrimaryPart.Position
                                         local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
                                         character:SetPrimaryPartCFrame(CFrame.new(behindPosition, targetPosition))
-                                        wait(0.1)
+                                        wait(0.09)
                                     end
                                 end
                                 followTarget()
