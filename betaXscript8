@@ -66,55 +66,79 @@ end })
 
 -- God Mode 100% funcional
 local godModeActive = false
-Tabs.Main:AddButton({ Title = "Ativar/Desativar God Mode", Callback = function() 
-    godModeActive = not godModeActive
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoid = character:FindFirstChildOfClass("Humanoid")
+Tabs.Main:AddToggle("GodModeToggle", 
+{
+    Title = "Ativar/Desativar God Mode", 
+    Description = "Ativa ou desativa o God Mode",
+    Default = false, 
+    Callback = function(state)
+        godModeActive = state
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
 
-    if godModeActive and humanoid then
-        humanoid:GetPropertyChangedSignal("Health"):Connect(function()
-            if humanoid.Health < humanoid.MaxHealth then
-                humanoid.Health = humanoid.MaxHealth
-            end
-        end)
-        print("God Mode ativado")
-    elseif not godModeActive and humanoid then
-        humanoid.Health = humanoid.MaxHealth
-        print("God Mode desativado")
-    end
-end })
+        if godModeActive and humanoid then
+            humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+                if humanoid.Health < humanoid.MaxHealth then
+                    humanoid.Health = humanoid.MaxHealth
+                end
+            end)
+            print("God Mode ativado")
+        elseif not godModeActive and humanoid then
+            humanoid.Health = humanoid.MaxHealth
+            print("God Mode desativado")
+        end
+    end 
+})
 
 -- Noclip funcional
 local noclipActive = false
-Tabs.Main:AddButton({ Title = "Ativar/Desativar Noclip", Callback = function() 
-    noclipActive = not noclipActive
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
+Tabs.Main:AddToggle("NoclipToggle", 
+{
+    Title = "Ativar/Desativar Noclip", 
+    Description = "Ativa ou desativa o Noclip",
+    Default = false, 
+    Callback = function(state)
+        noclipActive = state
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
 
-    if noclipActive then
-        game:GetService("RunService").Stepped:Connect(function()
-            if noclipActive then
-                for _, part in pairs(character:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        part.CanCollide = false
+        if noclipActive then
+            game:GetService("RunService").Stepped:Connect(function()
+                if noclipActive then
+                    for _, part in pairs(character:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            part.CanCollide = false
+                        end
                     end
                 end
+            end)
+            print("Noclip ativado")
+        else
+            for _, part in pairs(character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = true
+                end
             end
-        end)
-        print("Noclip ativado")
-    else
-        for _, part in pairs(character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = true
-            end
+            print("Noclip desativado")
         end
-        print("Noclip desativado")
-    end
-end })
+    end 
+})
 
 -- Variável para controlar o estado do ataque automático
 local autoKill = false
+Tabs.Main:AddToggle("AutoKillToggle", 
+{
+    Title = "Ativar/Desativar Auto Kill", 
+    Description = "Ativa ou desativa o Auto Kill",
+    Default = false, 
+    Callback = function(state)
+        autoKill = state
+        if autoKill then
+            followAndAttack()
+        end
+    end 
+})
 
 -- Função para seguir e atacar jogadores
 local function followAndAttack()
@@ -156,11 +180,3 @@ local function followAndAttack()
         wait(0.01) -- Delay reduzido para 0.01 segundos
     end
 end
-
--- Botão para ativar/desativar o ataque automático
-Tabs.Main:AddButton({ Title = "Ativar/Desativar Auto Kill", Callback = function() 
-    autoKill = not autoKill
-    if autoKill then
-        followAndAttack()
-    end
-end })
