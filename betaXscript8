@@ -4,8 +4,6 @@ local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/
 -- Aviso ao executar
 Fluent:Notify({ Title = "executado!", Content = "executando com sucesso" })
 
-Fluent:Notify({ Title = "Servidor XScripts oficial no discord!", Content = "https://discord.gg/qsYR297DR2" })
-
 local Window = Fluent:CreateWindow({
     Title = "XScript universal" .. Fluent.Version,
     TabWidth = 160, 
@@ -115,12 +113,80 @@ local function followAndAttack()
                     end
                 end
             end
+        else
+            print("Você precisa estar com uma espada equipada")
+        end
+        wait(0.01) -- Pequeno delay antes de repetir o ciclo
+    end
+end
+
+-- Alternador para ativar/desativar o ataque automático
+local Toggle = Tabs.Main:AddToggle("autoKill", 
+{
+    Title = "Auto Kill (Sword)", 
+    Description = "Ativa ou desativa o ataque automático",
+    Default = false, 
+    Callback = function(state)
+        autoKill = state
+        if autoKill then
+            print("Auto Kill ativado")
+            followAndAttack()
+        else
+            print("Auto Kill desativado")
+        end
+    end 
+})
+
+-- Botão para executar o Kill All manualmente
+Tabs.Main:AddButton({ Title = "Kill All (Sword)", Callback = function() 
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    local sword = character:FindFirstChildOfClass("Tool")
+
+    -- Equipar a espada automaticamente se não estiver equipada
+    if not sword or not sword.Name:lower():find("sword") then
+        for _, tool in pairs(player.Backpack:GetChildren()) do
+            if tool:IsA("Tool") and tool.Name:lower():find("sword") then
+                character.Humanoid:EquipTool(tool)
+                sword = tool
+                break
+            end
+        end
+    end
+
+    if sword and sword.Name:lower():find("sword") then
+        for _, target in pairs(game.Players:GetPlayers()) do
+            if target ~= player then
+                local targetCharacter = target.Character
+                if targetCharacter and targetCharacter:FindFirstChild("Humanoid") then
+                    -- Função para seguir o alvo e atacar
+                    local function followTarget()
+                        while targetCharacter.Humanoid.Health > 0 do
+                            -- Teleportar para trás do jogador alvo e olhar para ele
+                            local targetPosition = targetCharacter.PrimaryPart.Position
+                            local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
+                            character:SetPrimaryPartCFrame(CFrame.new(behindPosition, targetPosition))
+
+                            -- Auto click para atacar sem delay
+                            sword:Activate()
+                            wait(0.01) -- Delay mínimo
+                        end
+                    end
+
+                    -- Iniciar a função de seguir e atacar
+                    followTarget()
+
+                    -- Matar o jogador alvo
+                    targetCharacter.Humanoid.Health = 0
+                    wait(0.01) -- Esperar um pouco antes de ir para o próximo jogador
+                end
+            end
         end
         print("Todos os jogadores foram mortos")
     else
         print("Você precisa estar com uma espada equipada")
     end
-end
+end })
 
 -- Variável para controlar o estado do God Mode
 local godMode = false
@@ -230,21 +296,3 @@ local Slider = Tabs.Main:AddSlider("velocidade",
         humanoid.WalkSpeed = Value * 10  -- Multiplica o valor para aumentar o impacto
     end
 })
-
--- Script Anti-Fling
-local function preventFling()
-    local Players = game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-
-    Character.HumanoidRootPart:GetPropertyChangedSignal("CFrame"):Connect(function()
-        if Character.HumanoidRootPart.Velocity.Magnitude > 50 then
-            Character.HumanoidRootPart.Anchored = true
-            wait(0.1)
-            Character.HumanoidRootPart.Anchored = false
-        end
-    end)
-end
-
--- Chamar a função anti-fling
-preventFling()
