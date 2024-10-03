@@ -198,7 +198,7 @@ Tabs.Main:AddToggle("AutoKillToggle",
                         end
                     end
                 end
-                wait(1)
+                wait(0.09)
             end
         end
 
