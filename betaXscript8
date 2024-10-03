@@ -89,7 +89,7 @@ local godModeActive = false
 Tabs.Main:AddToggle("GodModeToggle", 
 {
     Title = "Ativar/Desativar God Mode", 
-    Description = "Ativa ou desativa o God Mode",
+    Description = "Ativa ou desativa o God Mode (não funciona ainda)",
     Default = false, 
     Callback = function(state)
         godModeActive = state
