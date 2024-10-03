@@ -75,17 +75,25 @@ Tabs.Main:AddToggle("GodModeToggle",
         godModeActive = state
         local player = game.Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
-        local humanoid = character:FindFirstChildOfClass("Humanoid")
 
-        if godModeActive and humanoid then
-            humanoid:GetPropertyChangedSignal("Health"):Connect(function()
-                if humanoid.Health < humanoid.MaxHealth then
-                    humanoid.Health = humanoid.MaxHealth
+        if godModeActive then
+            for _, part in pairs(character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = false
+                end
+            end
+            character.Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+                if character.Humanoid.Health < character.Humanoid.MaxHealth then
+                    character.Humanoid.Health = character.Humanoid.MaxHealth
                 end
             end)
             print("God Mode ativado")
-        elseif not godModeActive and humanoid then
-            humanoid.Health = humanoid.MaxHealth
+        else
+            for _, part in pairs(character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = true
+                end
+            end
             print("God Mode desativado")
         end
     end 
@@ -170,6 +178,7 @@ local function followAndAttack()
                                 local targetPosition = targetCharacter.PrimaryPart.Position
                                 local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
                                 character:SetPrimaryPartCFrame(CFrame.new(behindPosition, targetPosition))
+                                wait(0.09) -- Delay ajustado para 0.09 segundos
                             end
                         end
                         followTarget()
@@ -177,6 +186,81 @@ local function followAndAttack()
                 end
             end
         end
-        wait(0.01) -- Delay reduzido para 0.01 segundos
+    end
+end
+
+-- ESP com nome
+local espActive = false
+Tabs.Main:AddToggle("ESPToggle", 
+{
+    Title = "Ativar/Desativar ESP com Nome", 
+    Description = "Ativa ou desativa o ESP com nome",
+    Default = false, 
+    Callback = function(state)
+        espActive = state
+        if espActive then
+            for _, player in pairs(game.Players:GetPlayers()) do
+                if player ~= game.Players.LocalPlayer then
+                    createESP(player.Character)
+                end
+            end
+            game.Players.PlayerAdded:Connect(function(player)
+                if player ~= game.Players.LocalPlayer then
+                    player.CharacterAdded:Connect(function(character)
+                        createESP(character)
+                    end)
+                end
+            end)
+            print("ESP ativado")
+        else
+            for _, player in pairs(game.Players:GetPlayers()) do
+                if player ~= game.Players.LocalPlayer then
+                    removeESP(player.Character)
+                end
+            end
+            print("ESP desativado")
+        end
+    end 
+})
+
+-- Função para criar ESP
+local function createESP(character)
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        local espBox = Instance.new("BoxHandleAdornment")
+        espBox.Size = character.HumanoidRootPart.Size
+        espBox.Adornee = character.HumanoidRootPart
+        espBox.Color3 = Color3.new(1, 0, 0)
+        espBox.AlwaysOnTop = true
+        espBox.ZIndex = 10
+        espBox.Transparency = 0.5
+        espBox.Parent = character.HumanoidRootPart
+
+        local nameTag = Instance.new("BillboardGui")
+        nameTag.Adornee = character.HumanoidRootPart
+        nameTag.Size = UDim2.new(0, 100, 0, 50)
+        nameTag.StudsOffset = Vector3.new(0, 2, 0)
+        nameTag.AlwaysOnTop = true
+
+        local nameLabel = Instance.new("TextLabel")
+        nameLabel.Parent = nameTag
+        nameLabel.Size = UDim2.new(1, 0, 1, 0)
+        nameLabel.BackgroundTransparency = 1
+        nameLabel.Text = character.Name
+        nameLabel.TextColor3 = Color3.new(1, 0, 0)
+        nameLabel.TextScaled = true
+        nameLabel.Font = Enum.Font.SourceSansBold
+        nameLabel.TextStrokeTransparency = 0.5
+        nameTag.Parent = character.HumanoidRootPart
+    end
+end
+
+-- Função para remover ESP
+local function removeESP(character)
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        for _, child in pairs(character.HumanoidRootPart:GetChildren()) do
+            if child:IsA("BoxHandleAdornment") or child:IsA("BillboardGui") then
+                child:Destroy()
+            end
+        end
     end
 end
