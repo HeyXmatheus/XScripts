@@ -19,7 +19,7 @@ local Tabs = {
 }
 
 -- Parágrafos 
-Tabs.Main:AddParagraph({ Title = "XScript", Content = "versao beta" })
+Tabs.Main:AddParagraph({ Title = "XScript versão beta", Content = " https://discord.gg/qsYR297DR2" })
 
 -- Botões 
 Tabs.Main:AddButton({ Title = "pulo infinito", Callback = function() 
