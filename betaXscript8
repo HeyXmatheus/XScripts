@@ -4,6 +4,8 @@ local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/
 -- Aviso ao executar
 Fluent:Notify({ Title = "executado!", Content = "executando com sucesso" })
 
+Fluent:Notify({ Title = "Servidor XScripts oficial no discord!", Content = "https://discord.gg/qsYR297DR2" })
+
 local Window = Fluent:CreateWindow({
     Title = "XScript universal" .. Fluent.Version,
     TabWidth = 160, 
