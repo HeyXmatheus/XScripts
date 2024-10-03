@@ -151,18 +151,18 @@ Tabs.Main:AddToggle("NoclipToggle",
     end 
 })
 
--- Auto Kill All funcional
-local autoKillActive = false
-Tabs.Main:AddToggle("AutoKillToggle", 
+-- Auto Kill All com espada
+local autoKillSwordActive = false
+Tabs.Main:AddToggle("AutoKillSwordToggle", 
 {
-    Title = "Ativar/Desativar Auto Kill All", 
-    Description = "Ativa ou desativa o Auto Kill All",
+    Title = "Ativar/Desativar Auto Kill All (Espada)", 
+    Description = "Ativa ou desativa o Auto Kill All com espada",
     Default = false, 
     Callback = function(state)
-        autoKillActive = state
+        autoKillSwordActive = state
 
         local function followAndAttack()
-            while autoKillActive do
+            while autoKillSwordActive do
                 local player = game.Players.LocalPlayer
                 local character = player.Character
                 local sword = character:FindFirstChildOfClass("Tool")
@@ -185,7 +185,7 @@ Tabs.Main:AddToggle("AutoKillToggle",
                             if targetCharacter and targetCharacter:FindFirstChild("Humanoid") then
                                 -- Função para seguir o alvo e atacar
                                 local function followTarget()
-                                    while autoKillActive and targetCharacter.Humanoid.Health > 0 do
+                                    while autoKillSwordActive and targetCharacter.Humanoid.Health > 0 do
                                         -- Teleportar para uma posição fixa atrás do jogador alvo e olhar para ele
                                         local targetPosition = targetCharacter.PrimaryPart.Position
                                         local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
@@ -207,11 +207,83 @@ Tabs.Main:AddToggle("AutoKillToggle",
             end
         end
 
-        if autoKillActive then
+        if autoKillSwordActive then
             followAndAttack()
-            print("Auto Kill All ativado")
+            print("Auto Kill All (Espada) ativado")
         else
-            print("Auto Kill All desativado")
+            print("Auto Kill All (Espada) desativado")
         end
     end 
 })
+
+-- Auto Kill All com arma e aimbot
+local autoKillGunActive = false
+Tabs.Main:AddToggle("AutoKillGunToggle", 
+{
+    Title = "Ativar/Desativar Auto Kill All (Arma)", 
+    Description = "Ativa ou desativa o Auto Kill All com arma e aimbot",
+    Default = false, 
+    Callback = function(state)
+        autoKillGunActive = state
+
+        local function followAndAttack()
+            while autoKillGunActive do
+                local player = game.Players.LocalPlayer
+                local character = player.Character
+                local gun = character:FindFirstChildOfClass("Tool")
+
+                -- Equipar a arma automaticamente se não estiver equipada
+                if not gun or not gun.Name:lower():find("gun") then
+                    for _, tool in pairs(player.Backpack:GetChildren()) do
+                        if tool:IsA("Tool") and tool.Name:lower():find("gun") then
+                            character.Humanoid:EquipTool(tool)
+                            gun = tool
+                            break
+                        end
+                    end
+                end
+
+                if gun and gun.Name:lower():find("gun") then
+                for _, target in pairs(game.Players:GetPlayers()) do
+                        if target ~= player then
+                            local targetCharacter = target.Character
+                            if targetCharacter and targetCharacter:FindFirstChild("Humanoid") then
+                                -- Função para seguir o alvo e atacar
+                                local function followTarget()
+                                    while autoKillGunActive and targetCharacter.Humanoid.Health > 0 do
+                                        -- Teleportar para uma posição fixa atrás do jogador alvo e olhar para ele
+                                        local targetPosition = targetCharacter.PrimaryPart.Position
+                                        local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
+                                        character:SetPrimaryPartCFrame(CFrame.new(behindPosition, targetPosition))
+                                        
+                                        -- Aimbot para mirar automaticamente
+                                        local Aimbot = loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Aimbot-V3/main/src/Aimbot.lua"))()
+                                        Aimbot.Load()
+                                        Aimbot.Settings.AimPart = "Head" -- Mirar na cabeça
+                                        Aimbot.Settings.Sensitivity = 0 -- Sensibilidade zero para mira instantânea
+
+                                        -- Auto click para atacar mais rápido
+                                        if gun:FindFirstChild("Handle") then
+                                            fireclickdetector(gun.Handle.ClickDetector)
+                                        end
+                                        wait(0.05) -- Aumentar a velocidade de ataque
+                                    end
+                                end
+                                followTarget()
+                            end
+                        end
+                    end
+                end
+                wait(0.1) -- Reduzir o tempo de espera para ataques mais rápidos
+            end
+        end
+
+        if autoKillGunActive then
+            followAndAttack()
+            print("Auto Kill All (Arma) ativado")
+        else
+            print("Auto Kill All (Arma) desativado")
+        end
+    end 
+})
+
