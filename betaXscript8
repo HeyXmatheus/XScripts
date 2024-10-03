@@ -13,7 +13,8 @@ local Window = Fluent:CreateWindow({
 
 local Tabs = {
     Main = Window:AddTab({ Title = "inicio" }),
-    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" }),
+    AutoKills = Window:AddTab({ Title = "Auto Kills" })
 }
 
 -- Parágrafos 
@@ -116,174 +117,62 @@ Tabs.Main:AddToggle("GodModeToggle",
             end
             print("God Mode desativado")
         end
-    end 
+    end
 })
 
--- Noclip funcional
-local noclipActive = false
-Tabs.Main:AddToggle("NoclipToggle", 
-{
-    Title = "Ativar/Desativar Noclip", 
-    Description = "Ativa ou desativa o Noclip",
-    Default = false, 
-    Callback = function(state)
-        noclipActive = state
-        local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
+-- Função para seguir o personagem alvo até que ele morra
+local function followAndKillTarget(target)
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
-        if noclipActive then
-            game:GetService("RunService").Stepped:Connect(function()
-                if noclipActive then
-                    for _, part in pairs(character:GetDescendants()) do
-                        if part:IsA("BasePart") then
-                            part.CanCollide = false
-                        end
-                    end
-                end
-            end)
+    while target and target.Parent and target.Character and target.Character:FindFirstChild("Humanoid") and target.Character.Humanoid.Health > 0 do
+        humanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -2) -- Fica atrás do alvo
+        game:GetService("VirtualUser"):Button1Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+        wait(0.1) -- Ajuste o tempo de espera conforme necessário
+        game:GetService("VirtualUser"):Button1Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+    end
+end
+
+-- Auto Kill Sword com auto click rápido
+Tabs.Main:AddButton({ Title = "Auto Kill Sword", Callback = function() 
+    local success, err = pcall(function()
+        local target = game.Players:FindFirstChild("NomeDoAlvo") -- Substitua "NomeDoAlvo" pelo nome do alvo
+        if target then
+            followAndKillTarget(target)
         else
-            for _, part in pairs(character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.CanCollide = true
-                end
+            print("Alvo não encontrado")
+        end
+    end)
+    if not success then
+        print("Erro ao executar Auto Kill Sword: " .. err)
+    end
+end })
+
+-- Auto Kill All Gun com aimbot e auto click
+Tabs.AutoKills:AddButton({ Title = "Auto Kill All Gun", Callback = function() 
+    local success, err = pcall(function()
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player ~= game.Players.LocalPlayer then
+                followAndKillTarget(player)
             end
         end
-    end 
-})
+    end)
+    if not success then
+        print("Erro ao executar Auto Kill All Gun: " .. err)
+    end
+end })
 
--- Auto Kill All com espada
-local autoKillSwordActive = false
-Tabs.Main:AddToggle("AutoKillSwordToggle", 
-{
-    Title = "Ativar/Desativar Auto Kill All (Espada)", 
-    Description = "Ativa ou desativa o Auto Kill All com espada",
-    Default = false, 
-    Callback = function(state)
-        autoKillSwordActive = state
-
-        local function followAndAttack()
-            while autoKillSwordActive do
-                local player = game.Players.LocalPlayer
-                local character = player.Character
-                local sword = character:FindFirstChildOfClass("Tool")
-
-                -- Equipar a espada automaticamente se não estiver equipada
-                if not sword or not sword.Name:lower():find("sword") then
-                    for _, tool in pairs(player.Backpack:GetChildren()) do
-                        if tool:IsA("Tool") and tool.Name:lower():find("sword") then
-                            character.Humanoid:EquipTool(tool)
-                            sword = tool
-                            break
-                        end
-                    end
-                end
-
-                if sword and sword.Name:lower():find("sword") then
-                    for _, target in pairs(game.Players:GetPlayers()) do
-                        if target ~= player then
-                            local targetCharacter = target.Character
-                            if targetCharacter and targetCharacter:FindFirstChild("Humanoid") then
-                                -- Função para seguir o alvo e atacar
-                                local function followTarget()
-                                    while autoKillSwordActive and targetCharacter.Humanoid.Health > 0 do
-                                        -- Teleportar para uma posição fixa atrás do jogador alvo e olhar para ele
-                                        local targetPosition = targetCharacter.PrimaryPart.Position
-                                        local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
-                                        character:SetPrimaryPartCFrame(CFrame.new(behindPosition, targetPosition))
-                                        
-                                        -- Auto click para atacar mais rápido
-                                        if sword:FindFirstChild("Handle") then
-                                            fireclickdetector(sword.Handle.ClickDetector)
-                                        end
-                                        wait(0.05) -- Aumentar a velocidade de ataque
-                                    end
-                                end
-                                followTarget()
-                            end
-                        end
-                    end
-                end
-                wait(0.1) -- Reduzir o tempo de espera para ataques mais rápidos
+-- Auto Kill All Laser com aimbot e auto click
+Tabs.AutoKills:AddButton({ Title = "Auto Kill All Laser", Callback = function() 
+    local success, err = pcall(function()
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player ~= game.Players.LocalPlayer then
+                followAndKillTarget(player)
             end
         end
-
-        if autoKillSwordActive then
-            followAndAttack()
-            print("Auto Kill All (Espada) ativado")
-        else
-            print("Auto Kill All (Espada) desativado")
-        end
-    end 
-})
-
--- Auto Kill All com arma e aimbot
-local autoKillGunActive = false
-Tabs.Main:AddToggle("AutoKillGunToggle", 
-{
-    Title = "Ativar/Desativar Auto Kill All (Arma)", 
-    Description = "Ativa ou desativa o Auto Kill All com arma e aimbot",
-    Default = false, 
-    Callback = function(state)
-        autoKillGunActive = state
-
-        local function followAndAttack()
-            while autoKillGunActive do
-                local player = game.Players.LocalPlayer
-                local character = player.Character
-                local gun = character:FindFirstChildOfClass("Tool")
-
-                -- Equipar a arma automaticamente se não estiver equipada
-                if not gun or not gun.Name:lower():find("gun") then
-                    for _, tool in pairs(player.Backpack:GetChildren()) do
-                        if tool:IsA("Tool") and tool.Name:lower():find("gun") then
-                            character.Humanoid:EquipTool(tool)
-                            gun = tool
-                            break
-                        end
-                    end
-                end
-
-                if gun and gun.Name:lower():find("gun") then
-                for _, target in pairs(game.Players:GetPlayers()) do
-                        if target ~= player then
-                            local targetCharacter = target.Character
-                            if targetCharacter and targetCharacter:FindFirstChild("Humanoid") then
-                                -- Função para seguir o alvo e atacar
-                                local function followTarget()
-                                    while autoKillGunActive and targetCharacter.Humanoid.Health > 0 do
-                                        -- Teleportar para uma posição fixa atrás do jogador alvo e olhar para ele
-                                        local targetPosition = targetCharacter.PrimaryPart.Position
-                                        local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
-                                        character:SetPrimaryPartCFrame(CFrame.new(behindPosition, targetPosition))
-                                        
-                                        -- Aimbot para mirar automaticamente
-                                        local Aimbot = loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Aimbot-V3/main/src/Aimbot.lua"))()
-                                        Aimbot.Load()
-                                        Aimbot.Settings.AimPart = "Head" -- Mirar na cabeça
-                                        Aimbot.Settings.Sensitivity = 0 -- Sensibilidade zero para mira instantânea
-
-                                        -- Auto click para atacar mais rápido
-                                        if gun:FindFirstChild("Handle") then
-                                            fireclickdetector(gun.Handle.ClickDetector)
-                                        end
-                                        wait(0.05) -- Aumentar a velocidade de ataque
-                                    end
-                                end
-                                followTarget()
-                            end
-                        end
-                    end
-                end
-                wait(0.1) -- Reduzir o tempo de espera para ataques mais rápidos
-            end
-        end
-
-        if autoKillGunActive then
-            followAndAttack()
-            print("Auto Kill All (Arma) ativado")
-        else
-            print("Auto Kill All (Arma) desativado")
-        end
-    end 
-})
-
+    end)
+    if not success then
+        print("Erro ao executar Auto Kill All Laser: " .. err)
+    end
+end })
