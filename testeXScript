@@ -2,34 +2,34 @@
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
 -- Aviso ao executar
-Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
+Fluent:Notify({ Title = "executado!", Content = "executando com sucesso" })
 Fluent:Notify({ Title = "Servidor XScripts oficial discord!", Content = "https://discord.gg/qsYR297DR2" })
 
 local Window = Fluent:CreateWindow({
-    Title = "XScript Universal " .. Fluent.Version,
+    Title = "XScript universal" .. Fluent.Version,
     TabWidth = 160, 
     Size = UDim2.fromOffset(580, 460), 
     Theme = "Amethyst"
 })
 
 local Tabs = {
-    Main = Window:AddTab({ Title = "Início", Icon = "house" }), -- Ícone de casa adicionado
-    LocalPlayer = Window:AddTab({ Title = "Local Player", Icon = "user" })
+    Main = Window:AddTab({ Title = "inicio" }),
+    LocalPlayer = Window:AddTab({ Title = "Local Player", Icon = "home" }) -- Usando ícone de casa
 }
 
 -- Parágrafos 
-Tabs.Main:AddParagraph({ Title = "XScript versão beta", Content = "https://discord.gg/qsYR297DR2" })
+Tabs.Main:AddParagraph({ Title = "XScript versão beta", Content = " https://discord.gg/qsYR297DR2" })
 
--- Funções da aba Início
-Tabs.Main:AddButton({ Title = "Pulo Infinito", Callback = function() 
+-- Botões 
+Tabs.Main:AddButton({ Title = "pulo infinito", Callback = function() 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
 end })
 
-Tabs.Main:AddButton({ Title = "Fly GUI", Callback = function() 
+Tabs.Main:AddButton({ Title = "Fly gui", Callback = function() 
     loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fly'))()
 end })
 
-Tabs.Main:AddButton({ Title = "Jogar Alguém no Void GUI", Callback = function() 
+Tabs.Main:AddButton({ Title = "jogar alguém no void gui", Callback = function() 
     loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fling'))()
 end })
 
@@ -122,10 +122,10 @@ local function followAndAttack()
 end
 
 -- Alternador para ativar/desativar o ataque automático
-local Toggle = Tabs.Main:AddToggle("autoKill", 
+Tabs.Main:AddToggle("autoKill", 
 {
     Title = "Auto Kill all (Sword)", 
-    Description = "Mate todos do Servidor (necessita de espada)",
+    Description = "mate todos do Servidor (necessita de espada)",
     Default = false, 
     Callback = function(state)
         autoKill = state
@@ -215,7 +215,7 @@ local function toggleGodMode(state)
 end
 
 -- Alternador para ativar/desativar o God Mode
-local Toggle = Tabs.Main:AddToggle("godMode", 
+Tabs.Main:AddToggle("godMode", 
 {
     Title = "God Mode", 
     Description = "Ativa ou desativa o God Mode (talvez não funcione está em beta!)",
@@ -241,48 +241,26 @@ local function toggleNoclip(state)
         end
         print("Noclip ativado")
     else
-            -- Reativar colisões
-            for _, part in pairs(player.Character:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.CanCollide = true
-                end
+        -- Ativar colisões novamente
+        for _, part in pairs(player.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
             end
-            print("Noclip desativado")
         end
+        print("Noclip desativado")
     end
 end
 
--- Alternador para ativar/desativar noclip
-local Toggle = Tabs.LocalPlayer:AddToggle("noclip", 
+-- Alternador para ativar/desativar o Noclip
+Tabs.LocalPlayer:AddToggle("noclip", 
 {
     Title = "Noclip", 
-    Description = "Ativa ou desativa o noclip.",
+    Description = "Permite passar através de objetos",
     Default = false, 
     Callback = function(state)
         toggleNoclip(state)
     end 
 })
 
--- Função para desativar a gravidade
-local gravityOff = false
-local function toggleGravity(state)
-    if state then
-        workspace.Gravity = 0
-        print("Gravidade desativada")
-    else
-        workspace.Gravity = 196.2
-        print("Gravidade ativada")
-    end
-end
-
--- Alternador para ativar/desativar gravidade
-local Toggle = Tabs.LocalPlayer:AddToggle("gravity", 
-{
-    Title = "Desativar Gravidade", 
-    Description = "Ativa ou desativa a gravidade.",
-    Default = false, 
-    Callback = function(state)
-        gravityOff = state
-        toggleGravity(gravityOff)
-    end 
-})
+-- Abrir a interface
+Window:Open()
