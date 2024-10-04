@@ -14,7 +14,8 @@ local Window = Fluent:CreateWindow({
 
 local Tabs = {
     Main = Window:AddTab({ Title = "inicio" }),
-    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" }),
+    LocalPlayer = Window:AddTab({ Title = "Local Player", Icon = "user" }) -- Nova aba "Local Player"
 }
 
 -- Parágrafos 
@@ -67,7 +68,6 @@ end })
 
 -- Variável para controlar o estado do ataque automático
 local autoKill = false
-local recoveringHealth = false -- Variável para controlar a recuperação de saúde
 
 -- Função para seguir e atacar jogadores
 local function followAndAttack()
@@ -121,34 +121,6 @@ local function followAndAttack()
         wait(0.01) -- Pequeno delay antes de repetir o ciclo
     end
 end
-
--- Geração de bloco quando levar dano
-local function onPlayerDamaged()
-    local character = game.Players.LocalPlayer.Character
-    local block = Instance.new("Part")
-    block.Size = Vector3.new(1, 1, 1)
-    block.Position = character.PrimaryPart.Position + Vector3.new(0, 3, 0) -- Colocar acima do personagem
-    block.Anchored = true
-    block.BrickColor = BrickColor.new("Bright red") -- Cor do bloco
-    block.Parent = workspace
-
-    recoveringHealth = true -- Começar a recuperação de saúde
-
-    wait(5) -- Esperar 5 segundos (ou o tempo que preferir para a recuperação)
-
-    if character and character:FindFirstChild("Humanoid").Health > 0 then
-        block:Destroy() -- Remover bloco se o jogador tiver vida
-    end
-
-    recoveringHealth = false -- Terminar a recuperação de saúde e permitir matar novamente
-end
-
--- Conectar a função de dano ao evento de saúde do jogador
-game.Players.LocalPlayer.Character:WaitForChild("Humanoid").HealthChanged:Connect(function(health)
-    if health < game.Players.LocalPlayer.Character.Humanoid.MaxHealth then
-        onPlayerDamaged()
-    end
-end)
 
 -- Alternador para ativar/desativar o ataque automático
 local Toggle = Tabs.Main:AddToggle("autoKill", 
@@ -231,21 +203,23 @@ local function toggleGodMode(state)
         humanoid.MaxHealth = math.huge
         humanoid.Health = math.huge
         humanoid:GetPropertyChangedSignal("Health"):Connect(function()
-            humanoid.Health = math.huge
+            if humanoid.Health < math.huge then
+                humanoid.Health = math.huge
+            end
         end)
         print("God Mode ativado")
     else
-        humanoid.MaxHealth = 100 -- Definir o valor máximo de saúde de volta para 100
-        humanoid.Health = humanoid.MaxHealth -- Restaurar a saúde para o máximo
+        humanoid.MaxHealth = 100
+        humanoid.Health = 100
         print("God Mode desativado")
     end
 end
 
 -- Alternador para ativar/desativar o God Mode
-local godToggle = Tabs.Settings:AddToggle("GodMode", 
+local Toggle = Tabs.Main:AddToggle("godMode", 
 {
-    Title = "Ativar God Mode", 
-    Description = "Você não pode morrer.",
+    Title = "God Mode", 
+    Description = "Ativa ou desativa o God Mode (talvez não funcione está em beta!)",
     Default = false, 
     Callback = function(state)
         godMode = state
@@ -253,5 +227,35 @@ local godToggle = Tabs.Settings:AddToggle("GodMode",
     end 
 })
 
--- Exibir a interface
-Window:Show()
+-- Função para alternar o estado do noclip
+local function toggleNoclip(state)
+    noclip = state
+    if noclip then
+        -- Desativar colisões
+        for _, part in pairs(player.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = false
+            end
+        end
+        print("Noclip ativado")
+    else
+        -- Reativar colisões
+        for _, part in pairs(player.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
+            end
+        end
+        print("Noclip desativado")
+    end
+end
+
+-- Alternador para ativar/desativar o Noclip
+local Toggle = Tabs.Main:AddToggle("noclip", 
+{
+    Title = "Noclip", 
+    Description = "Ativar ou desativar noclip",
+    Default = false, 
+    Callback = function(state)
+        toggleNoclip(state)
+    end 
+})
