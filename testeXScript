@@ -17,7 +17,7 @@ local Tabs = {
     kill = Window:AddTab({ Title = "Kill All", Icon = "play" }),
     guis = Window:AddTab({ Title = "Guis", Icon = "file" }),
     localplayer = Window:AddTab({ Title = "Local Player", Icon = "user" }),
-confi = Window:AddTab({ Title = "Configurações", Icon = "settings" })
+    confi = Window:AddTab({ Title = "Configurações", Icon = "settings" })
 }
 
 -- Botões 
@@ -226,19 +226,24 @@ local Toggle = Tabs.localplayer:AddToggle("godMode",
     end 
 })
 
--- Função para alternar o estado do noclip
+-- Função para ativar/desativar o noclip
 local player = game.Players.LocalPlayer
 local noclip = false
 
 local function toggleNoclip(state)
     noclip = state
     if noclip then
-        -- Desativar colisões
-        for _, part in pairs(player.Character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = false
+        print("Noclip ativado")
+        -- Loop contínuo para desativar colisões
+        game:GetService("RunService").Stepped:Connect(function()
+            if noclip and player.Character then
+                for _, part in pairs(player.Character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = false
+                    end
+                end
             end
-        end
+        end)
         print("Noclip ativado")
     else
         -- Ativar colisões
