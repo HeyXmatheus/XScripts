@@ -2,34 +2,42 @@
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
 -- Aviso ao executar
-Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
+Fluent:Notify({ Title = "executado!", Content = "executando com sucesso" })
 Fluent:Notify({ Title = "Servidor XScripts oficial discord!", Content = "https://discord.gg/qsYR297DR2" })
 
 local Window = Fluent:CreateWindow({
-    Title = "XScript universal " .. Fluent.Version,
+    Title = "XScript universal" .. Fluent.Version,
     TabWidth = 160, 
     Size = UDim2.fromOffset(580, 460), 
     Theme = "Amethyst"
 })
 
 local Tabs = {
-    Main = Window:AddTab({ Title = "Início" }),
-    Settings = Window:AddTab({ Title = "Configurações", Icon = "settings" })
+    Main = Window:AddTab({ Title = "inicio" }),
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 }
 
--- Parágrafos
-Tabs.Main:AddParagraph({ Title = "XScript versão beta", Content = "https://discord.gg/qsYR297DR2" })
+-- Adicionando a imagem do adesivo na interface
+local imageLabel = Instance.new("ImageLabel", Window)
+imageLabel.Size = UDim2.new(0, 300, 0, 200) -- Tamanho do label
+imageLabel.Position = UDim2.new(0.5, -150, 0, 20) -- Posição (ajuste conforme necessário)
+imageLabel.Image = "rbxassetid://75031288960778" -- ID do adesivo
+imageLabel.BackgroundTransparency = 1 -- Torna o fundo transparente
+imageLabel.BorderSizePixel = 0 -- Remove a borda
 
--- Botões
-Tabs.Main:AddButton({ Title = "Pulo Infinito", Callback = function() 
+-- Parágrafos 
+Tabs.Main:AddParagraph({ Title = "XScript versão beta", Content = " https://discord.gg/qsYR297DR2" })
+
+-- Botões 
+Tabs.Main:AddButton({ Title = "pulo infinito", Callback = function() 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
 end })
 
-Tabs.Main:AddButton({ Title = "Fly GUI", Callback = function() 
+Tabs.Main:AddButton({ Title = "Fly gui", Callback = function() 
     loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fly'))()
 end })
 
-Tabs.Main:AddButton({ Title = "Jogar Alguém no Void GUI", Callback = function() 
+Tabs.Main:AddButton({ Title = "jogar alguém no void gui", Callback = function() 
     loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fling'))()
 end })
 
@@ -125,7 +133,7 @@ end
 local Toggle = Tabs.Main:AddToggle("autoKill", 
 {
     Title = "Auto Kill all (Sword)", 
-    Description = "Mate todos do servidor (necessita de espada)",
+    Description = "mate todos do Servidor (necessita de espada)",
     Default = false, 
     Callback = function(state)
         autoKill = state
@@ -218,89 +226,10 @@ end
 local Toggle = Tabs.Main:AddToggle("godMode", 
 {
     Title = "God Mode", 
-    Description = "Ativa ou desativa o God Mode (beta)",
+    Description = "Ativa ou desativa o God Mode (talvez não funcione está em beta!)",
     Default = false, 
     Callback = function(state)
         godMode = state
         toggleGodMode(godMode)
     end 
-})
-
--- Função para alternar o estado do noclip
-local player = game.Players.LocalPlayer
-local noclip = false
-
-local function toggleNoclip(state)
-    noclip = state
-    if noclip then
-        -- Desativar colisões
-        for _, part in pairs(player.Character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = false
-            end
-        end
-        print("Noclip ativado")
-    else
-        -- Ativar colisões
-        for _, part in pairs(player.Character:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.CanCollide = true
-        end
-    end
-    print("Noclip desativado")
-end
-end
-
-local Toggle = Tabs.Main:AddToggle("noclip", 
-{
-    Title = "Noclip", 
-    Description = "Atravessar paredes",
-    Default = false, 
-    Callback = function(state)
-        toggleNoclip(state)
-        if state then
-            print("Noclip ativado")
-        else
-            print("Noclip desativado")
-        end
-    end 
-})
-
--- Sliders
-local Slider = Tabs.Main:AddSlider("pulo", 
-{
-    Title = "Ajuste de Pulo",
-    Description = "Muda o pulo do jogador",
-    Default = 2,
-    Min = 0,
-    Max = 5,
-    Rounding = 1,
-    Callback = function(Value)
-        local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        local humanoid = character:WaitForChild("Humanoid")
-        
-        -- Ajustar o pulo do jogador
-        humanoid.JumpPower = Value * 50  -- Multiplica o valor para aumentar o impacto
-        print("Pulo ajustado para:", Value)
-    end
-})
-
-local Slider = Tabs.Main:AddSlider("velocidade", 
-{
-    Title = "Ajuste de Velocidade",
-    Description = "Muda a velocidade do jogador",
-    Default = 2,
-    Min = 0,
-    Max = 5,
-    Rounding = 1,
-    Callback = function(Value)
-        local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        local humanoid = character:WaitForChild("Humanoid")
-        
-        -- Ajustar a velocidade de caminhada
-        humanoid.WalkSpeed = Value * 10  -- Multiplica o valor para aumentar o impacto
-        print("Velocidade ajustada para:", Value)
-    end
 })
