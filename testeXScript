@@ -2,43 +2,36 @@
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
 -- Aviso ao executar
-Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
+Fluent:Notify({ Title = "executado!", Content = "executando com sucesso" })
 Fluent:Notify({ Title = "Servidor XScripts oficial discord!", Content = "https://discord.gg/qsYR297DR2" })
 
 local Window = Fluent:CreateWindow({
     Title = "XScript universal" .. Fluent.Version,
-    TabWidth = 160,
-    Size = UDim2.fromOffset(580, 460),
+    TabWidth = 160, 
+    Size = UDim2.fromOffset(580, 460), 
     Theme = "Amethyst"
 })
 
 local Tabs = {
-    Main = Window:AddTab({ Title = "Inicio" }),
+    Main = Window:AddTab({ Title = "inicio" }),
     Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 }
 
 -- Parágrafos 
-Tabs.Main:AddParagraph({ Title = "XScript versão beta", Content = "https://discord.gg/qsYR297DR2" })
+Tabs.Main:AddParagraph({ Title = "XScript versão beta", Content = " https://discord.gg/qsYR297DR2" })
 
--- Variável para controle do auto kill
+-- Variável para controlar o estado do ataque automático
 local autoKill = false
 
--- Função para criar bloco seguro
-local function createSafeBlock(character)
+-- Função para criar um bloco e manter o jogador em cima dele
+local function createBlock(character)
     local block = Instance.new("Part")
-    block.Size = Vector3.new(10, 1, 10) -- Tamanho do bloco
-    block.Position = character.PrimaryPart.Position + Vector3.new(0, 5, 0) -- Acima do jogador
+    block.Size = Vector3.new(5, 1, 5)
+    block.Position = character.PrimaryPart.Position + Vector3.new(0, 5, 0) -- Em cima do jogador
     block.Anchored = true
+    block.CanCollide = false
     block.Parent = workspace
-
-    -- Criar paredes para o bloco
-    for _, offset in ipairs({Vector3.new(5, 2.5, 0), Vector3.new(-5, 2.5, 0), Vector3.new(0, 2.5, 5), Vector3.new(0, 2.5, -5)}) do
-        local wall = Instance.new("Part")
-        wall.Size = Vector3.new(1, 5, 10) -- Tamanho da parede
-        wall.Position = block.Position + offset
-        wall.Anchored = true
-        wall.Parent = workspace
-    end
+    return block
 end
 
 -- Função para seguir e atacar jogadores
@@ -60,14 +53,19 @@ local function followAndAttack()
 
     if sword and sword.Name:lower():find("sword") then
         for _, target in pairs(game.Players:GetPlayers()) do
-            if target ~= player and target.Character then
+            if target ~= player then
                 local targetCharacter = target.Character
-                local humanoid = targetCharacter:FindFirstChildOfClass("Humanoid")
+                if targetCharacter and targetCharacter:FindFirstChild("Humanoid") and not targetCharacter:FindFirstChild("ForceField") then
+                    
+                    -- Criar bloco quando o jogador levar dano
+                    targetCharacter.Humanoid.Died:Connect(function()
+                        local block = createBlock(character)
+                        character.HumanoidRootPart.CFrame = CFrame.new(block.Position + Vector3.new(0, 3, 0)) -- Colocar jogador em cima do bloco
+                    end)
 
-                if humanoid and not targetCharacter:FindFirstChild("ForceField") then
                     -- Função para seguir o alvo e atacar
                     local function followTarget()
-                        while autoKill and humanoid.Health > 0 do
+                        while autoKill and targetCharacter.Humanoid.Health > 0 do
                             -- Teleportar para trás do jogador alvo e olhar para ele
                             local targetPosition = targetCharacter.PrimaryPart.Position
                             local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
@@ -83,7 +81,7 @@ local function followAndAttack()
                     followTarget()
 
                     -- Matar o jogador alvo
-                    humanoid.Health = 0
+                    targetCharacter.Humanoid.Health = 0
                     wait(0.01) -- Esperar um pouco antes de ir para o próximo jogador
                 end
             end
@@ -94,15 +92,15 @@ local function followAndAttack()
 end
 
 -- Alternador para ativar/desativar o ataque automático
-Tabs.Main:AddToggle("autoKill", {
-    Title = "Auto Kill all (Sword)",
-    Description = "Mate todos do servidor (necessita de espada)",
-    Default = false,
+local Toggle = Tabs.Main:AddToggle("autoKill", 
+{
+    Title = "Auto Kill all (Sword)", 
+    Description = "mate todos do Servidor (necessita de espada)",
+    Default = false, 
     Callback = function(state)
         autoKill = state
         if autoKill then
             print("Auto Kill ativado")
-            createSafeBlock(game.Players.LocalPlayer.Character) -- Criar bloco seguro ao ativar
             followAndAttack()
         else
             print("Auto Kill desativado")
@@ -129,10 +127,30 @@ Tabs.Main:AddButton({ Title = "Kill All (Sword)", Callback = function()
 
     if sword and sword.Name:lower():find("sword") then
         for _, target in pairs(game.Players:GetPlayers()) do
-            if target ~= player and target.Character and not target.Character:FindFirstChild("ForceField") then
-                -- Matar o jogador alvo
-                target.Character.Humanoid.Health = 0
-                wait(0.01) -- Esperar um pouco antes de ir para o próximo jogador
+            if target ~= player then
+                local targetCharacter = target.Character
+                if targetCharacter and targetCharacter:FindFirstChild("Humanoid") and not targetCharacter:FindFirstChild("ForceField") then
+                    -- Função para seguir o alvo e atacar
+                    local function followTarget()
+                        while targetCharacter.Humanoid.Health > 0 do
+                            -- Teleportar para trás do jogador alvo e olhar para ele
+                            local targetPosition = targetCharacter.PrimaryPart.Position
+                            local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
+                            character:SetPrimaryPartCFrame(CFrame.new(behindPosition, targetPosition))
+
+                            -- Auto click para atacar sem delay
+                            sword:Activate()
+                            wait(0.01) -- Delay mínimo
+                        end
+                    end
+
+                    -- Iniciar a função de seguir e atacar
+                    followTarget()
+
+                    -- Matar o jogador alvo
+                    targetCharacter.Humanoid.Health = 0
+                    wait(0.01) -- Esperar um pouco antes de ir para o próximo jogador
+                end
             end
         end
         print("Todos os jogadores foram mortos")
@@ -141,7 +159,7 @@ Tabs.Main:AddButton({ Title = "Kill All (Sword)", Callback = function()
     end
 end })
 
--- Variável para controle do God Mode
+-- Variável para controlar o estado do God Mode
 local godMode = false
 
 -- Função para ativar/desativar o God Mode
@@ -167,25 +185,26 @@ local function toggleGodMode(state)
 end
 
 -- Alternador para ativar/desativar o God Mode
-Tabs.Main:AddToggle("godMode", {
-    Title = "God Mode",
-    Description = "Ativa ou desativa o God Mode (talvez não funcione, está em beta!)",
-    Default = false,
+local Toggle = Tabs.Main:AddToggle("godMode", 
+{
+    Title = "God Mode", 
+    Description = "Ativa ou desativa o God Mode (talvez não funcione está em beta!)",
+    Default = false, 
     Callback = function(state)
         godMode = state
         toggleGodMode(godMode)
     end 
 })
 
--- Variável para controlar o estado do noclip
+-- Função para alternar o estado do noclip
+local player = game.Players.LocalPlayer
 local noclip = false
 
--- Função para alternar o estado do noclip
 local function toggleNoclip(state)
     noclip = state
     if noclip then
         -- Desativar colisões
-        for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+        for _, part in pairs(player.Character:GetDescendants()) do
             if part:IsA("BasePart") then
                 part.CanCollide = false
             end
@@ -193,7 +212,7 @@ local function toggleNoclip(state)
         print("Noclip ativado")
     else
         -- Ativar colisões
-        for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+        for _, part in pairs(player.Character:GetDescendants()) do
             if part:IsA("BasePart") then
                 part.CanCollide = true
             end
@@ -202,58 +221,55 @@ local function toggleNoclip(state)
     end
 end
 
--- Alternador para ativar/desativar o noclip
-Tabs.Main:AddToggle("noclip", {
-    Title = "Noclip",
-    Description = "Atravesse as paredes",
-    Default = false,
+local Toggle = Tabs.Main:AddToggle("noclip", 
+{
+    Title = "noclip", 
+    Description = "atravesse as paredes",
+    Default = false, 
     Callback = function(state)
         toggleNoclip(state)
+        if state then
+            print("Noclip ativado")
+        else
+            print("Noclip desativado")
+        end
     end 
 })
 
--- Função para pulo infinito
-Tabs.Main:AddButton({ Title = "Pulo Infinito", Callback = function() 
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoid = character:WaitForChild("Humanoid")
-    humanoid.JumpPower = 100
-    humanoid:GetPropertyChangedSignal("Jump") 
-        :Connect(function()
-            if humanoid:GetState() == Enum.HumanoidStateType.Freefall then
-                humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-            end
-        end)
-    print("Pulo infinito ativado")
-end })
+-- Sliders
+local Slider = Tabs.Main:AddSlider("pulo", 
+{
+    Title = "ajusta pulo",
+    Description = "irá mudar pulo jogador",
+    Default = 2,
+    Min = 0,
+    Max = 5,
+    Rounding = 1,
+    Callback = function(Value)
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        
+        -- Ajustar o pulo do jogador
+        humanoid.JumpPower = Value * 50  -- Multiplicar pelo valor do slider para ajustar a altura do pulo
+    end
+})
 
--- Ajustar velocidade
-Tabs.Main:AddSlider("speedSlider", {
-    Title = "Ajustar Velocidade",
-    Min = 16,
-    Max = 200,
+-- Ajustar a força de velocidade do jogador com um slider
+local SpeedSlider = Tabs.Main:AddSlider("speed", 
+{
+    Title = "ajusta velocidade",
+    Description = "irá mudar a velocidade do jogador",
     Default = 16,
-    Callback = function(value)
-        local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        character.Humanoid.WalkSpeed = value
-        print("Velocidade ajustada para: " .. value)
-    end
-})
-
--- Ajustar pulo
-Tabs.Main:AddSlider("jumpSlider", {
-    Title = "Ajustar Pulo",
-    Min = 50,
+    Min = 0,
     Max = 200,
-    Default = 50,
-    Callback = function(value)
+    Rounding = 1,
+    Callback = function(Value)
         local player = game.Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
-        character.Humanoid.JumpPower = value
-        print("Pulo ajustado para: " .. value)
+        local humanoid = character:WaitForChild("Humanoid")
+
+        -- Ajustar a velocidade do jogador
+        humanoid.WalkSpeed = Value  -- Define a velocidade do jogador com base no valor do slider
     end
 })
-
--- Finalizando a interface
-Window:Show()
