@@ -14,28 +14,31 @@ local Window = Fluent:CreateWindow({
 
 local Tabs = {
     Tabinfo = Window:AddTab({ Title = "Tab Info" }),
-    Main = Window:AddTab({ Title = "Inicio", Icon = "home" }),
-    kill = Window:AddTab({ Title = "Kill All", Icon = "home" }),
-    localplayer = Window:AddTab({ Title = "Local Player", Icon = "user" })
+    update = Window:AddTab({ Title = "Update Log", Icon = "star" }),
+    kill = Window:AddTab({ Title = "Kill All", Icon = "play" }),
+    guis = Window:AddTab({ Title = "Guis", Icon = "file" }),
+    localplayer = Window:AddTab({ Title = "Local Player", Icon = "user" }),
+confi = Window:AddTab({ Title = "Configurações", Icon = "settings" })
 }
 
+
 -- Parágrafos 
-Tabs.Main:AddParagraph({ Title = "XScript versão beta", Content = " https://discord.gg/qsYR297DR2" })
+Tabs.star:AddParagraph({ Title = "XScript versão:1.0 oque chegou de novo?", Content = " Nova Interface , Arrumado alguns bugs. Servidor oficial XScripts: https://discord.gg/qsYR297DR2" })
 
 -- Botões 
-Tabs.Main:AddButton({ Title = "pulo infinito", Callback = function() 
+Tabs.localplayer:AddButton({ Title = "pulo infinito", Callback = function() 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
 end })
 
-Tabs.Main:AddButton({ Title = "Fly gui", Callback = function() 
+Tabs.guis:AddButton({ Title = "Fly gui", Callback = function() 
     loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fly'))()
 end })
 
-Tabs.Main:AddButton({ Title = "jogar alguém no void gui", Callback = function() 
+Tabs.guis:AddButton({ Title = "jogar alguém no void gui", Callback = function() 
     loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fling'))()
 end })
 
-Tabs.Main:AddButton({ Title = "Remover Lag e Texturas", Callback = function() 
+Tabs.confi:AddButton({ Title = "Remover Lag e Texturas", Callback = function() 
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
 
@@ -124,7 +127,7 @@ local function followAndAttack()
 end
 
 -- Alternador para ativar/desativar o ataque automático
-local Toggle = Tabs.Main:AddToggle("autoKill", 
+local Toggle = Tabs.kill:AddToggle("autoKill", 
 {
     Title = "Auto Kill all (Sword)", 
     Description = "mate todos do Servidor (necessita de espada)",
@@ -141,7 +144,7 @@ local Toggle = Tabs.Main:AddToggle("autoKill",
 })
 
 -- Botão para executar o Kill All manualmente
-Tabs.Main:AddButton({ Title = "Kill All (Sword)", Callback = function() 
+Tabs.kill:AddButton({ Title = "Kill All (Sword)", Callback = function() 
     local player = game.Players.LocalPlayer
     local character = player.Character
     local sword = character:FindFirstChildOfClass("Tool")
@@ -217,7 +220,7 @@ local function toggleGodMode(state)
 end
 
 -- Alternador para ativar/desativar o God Mode
-local Toggle = Tabs.Main:AddToggle("godMode", 
+local Toggle = Tabs.localplayer:AddToggle("godMode", 
 {
     Title = "God Mode", 
     Description = "Ativa ou desativa o God Mode (talvez não funcione está em beta!)",
@@ -253,7 +256,7 @@ local function toggleNoclip(state)
     end
 end
 
-local Toggle = Tabs.Main:AddToggle("noclip", 
+local Toggle = Tabs.localplayer:AddToggle("noclip", 
 {
     Title = "noclip", 
     Description = "atravesse as paredes",
@@ -269,7 +272,7 @@ local Toggle = Tabs.Main:AddToggle("noclip",
 })
 
 -- Sliders
-local Slider = Tabs.Main:AddSlider("pulo", 
+local Slider = Tabs.localplayer:AddSlider("pulo", 
 {
     Title = "ajusta pulo",
     Description = "irá mudar pulo jogador",
