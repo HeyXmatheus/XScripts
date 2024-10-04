@@ -286,7 +286,7 @@ local Slider = Tabs.Main:AddSlider("pulo",
     end
 })
 
-local Slider = Tabs.Main:AddSlider("velocidade", 
+local Slider = Tabs.localplayer:AddSlider("velocidade", 
 {
     Title = "Velocidade",
     Description = "Ajusta a velocidade do jogador",
