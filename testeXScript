@@ -13,7 +13,9 @@ local Window = Fluent:CreateWindow({
 })
 
 local Tabs = {
-    Main = Window:AddTab({ Title = "inicio" }),
+    Tabinfo = Window:AddTab({ Title = "Tab Info" }),
+    Main = Window:AddTab({ Title = "Inicio", Icon = "home" }),
+    Main = Window:AddTab({ Title = "Inicio", Icon = "home" }),
     localplayer = Window:AddTab({ Title = "Local Player", Icon = "user" })
 }
 
