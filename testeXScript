@@ -5,14 +5,6 @@ local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/
 Fluent:Notify({ Title = "executado!", Content = "executando com sucesso" })
 Fluent:Notify({ Title = "Servidor XScripts oficial discord!", Content = "https://discord.gg/qsYR297DR2" })
 
--- Criar um bloco na workspace
-local newBlock = Instance.new("Part") -- Cria uma nova instância do bloco
-newBlock.Size = Vector3.new(4, 1, 4) -- Define o tamanho do bloco
-newBlock.Position = Vector3.new(0, 10, 0) -- Define a posição do bloco
-newBlock.Anchored = true -- Ancorar o bloco para que ele não caia
-newBlock.Color = Color3.fromRGB(255, 0, 0) -- Define a cor do bloco (vermelho)
-newBlock.Parent = game.Workspace -- Define o pai do bloco como Workspace
-
 local Window = Fluent:CreateWindow({
     Title = "XScript universal" .. Fluent.Version,
     TabWidth = 160, 
@@ -25,60 +17,17 @@ local Tabs = {
     Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 }
 
--- Parágrafos 
-Tabs.Main:AddParagraph({ Title = "XScript versão beta", Content = " https://discord.gg/qsYR297DR2" })
-
--- Botões 
-Tabs.Main:AddButton({ Title = "pulo infinito", Callback = function() 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
-end })
-
-Tabs.Main:AddButton({ Title = "Fly gui", Callback = function() 
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fly'))()
-end })
-
-Tabs.Main:AddButton({ Title = "jogar alguém no void gui", Callback = function() 
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fling'))()
-end })
-
-Tabs.Main:AddButton({ Title = "Remover Lag e Texturas", Callback = function() 
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-
-    -- Desativar texturas
-    for _, part in pairs(workspace:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.Material = Enum.Material.SmoothPlastic
-            if part:FindFirstChildOfClass("Decal") then
-                part:FindFirstChildOfClass("Decal"):Destroy()
-            end
-            if part:FindFirstChildOfClass("Texture") then
-                part:FindFirstChildOfClass("Texture"):Destroy()
-            end
-        end
-    end
-
-    -- Desativar efeitos de partículas
-    for _, effect in pairs(workspace:GetDescendants()) do
-        if effect:IsA("ParticleEmitter") or effect:IsA("Trail") then
-            effect.Enabled = false
-        end
-    end
-
-    -- Desativar iluminação desnecessária
-    game.Lighting.GlobalShadows = false
-    game.Lighting.FogEnd = 9e9
-    game.Lighting.Brightness = 0
-
-    print("Lag e texturas removidos")
-end })
-
 -- Variável para controlar o estado do ataque automático
 local autoKill = false
+local player = game.Players.LocalPlayer
+local teleportBlock = Instance.new("Part") -- Bloco para teleportar
+teleportBlock.Size = Vector3.new(1, 1, 1)
+teleportBlock.Position = Vector3.new(0, 50, 0) -- Posição do bloco
+teleportBlock.Anchored = true
+teleportBlock.Parent = workspace
 
 -- Função para seguir e atacar jogadores
 local function followAndAttack()
-    local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local sword = character:FindFirstChildOfClass("Tool")
 
@@ -114,6 +63,14 @@ local function followAndAttack()
                         end
                     end
 
+                    -- Conectar evento de dano
+                    humanoid.HealthChanged:Connect(function()
+                        if humanoid.Health <= 0 then
+                            -- Teleportar para o bloco quando levar dano
+                            character:SetPrimaryPartCFrame(teleportBlock.CFrame)
+                        end
+                    end)
+
                     -- Iniciar a função de seguir e atacar
                     followTarget()
 
@@ -147,7 +104,6 @@ local Toggle = Tabs.Main:AddToggle("autoKill",
 
 -- Botão para executar o Kill All manualmente
 Tabs.Main:AddButton({ Title = "Kill All (Sword)", Callback = function() 
-    local player = game.Players.LocalPlayer
     local character = player.Character
     local sword = character:FindFirstChildOfClass("Tool")
 
@@ -166,10 +122,11 @@ Tabs.Main:AddButton({ Title = "Kill All (Sword)", Callback = function()
         for _, target in pairs(game.Players:GetPlayers()) do
             if target ~= player then
                 local targetCharacter = target.Character
-                if targetCharacter and targetCharacter:FindFirstChild("Humanoid") and not targetCharacter:FindFirstChild("ForceField") then
-                    -- Matar o jogador alvo
-                    targetCharacter.Humanoid.Health = 0
-                    wait(0.01) -- Esperar um pouco antes de ir para o próximo jogador
+                if targetCharacter and targetCharacter:FindFirstChild("Humanoid") then
+                    if not targetCharacter:FindFirstChild("ForceField") then
+                        -- Matar o jogador alvo
+                        targetCharacter.Humanoid.Health = 0
+                    end
                 end
             end
         end
@@ -179,12 +136,9 @@ Tabs.Main:AddButton({ Title = "Kill All (Sword)", Callback = function()
     end
 end })
 
--- Variável para controlar o estado do God Mode
-local godMode = false
-
 -- Função para ativar/desativar o God Mode
+local godMode = false
 local function toggleGodMode(state)
-    local player = game.Players.LocalPlayer
     local character = player.Character
     local humanoid = character:FindFirstChild("Humanoid")
 
@@ -217,9 +171,7 @@ local Toggle = Tabs.Main:AddToggle("godMode",
 })
 
 -- Função para alternar o estado do noclip
-local player = game.Players.LocalPlayer
 local noclip = false
-
 local function toggleNoclip(state)
     noclip = state
     if noclip then
@@ -232,13 +184,13 @@ local function toggleNoclip(state)
         print("Noclip ativado")
     else
         -- Ativar colisões
-for _, part in pairs(player.Character:GetDescendants()) do
-    if part:IsA("BasePart") then
-        part.CanCollide = true
+        for _, part in pairs(player.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
+            end
+        end
+        print("Noclip desativado")
     end
-end
-print("Noclip desativado")
-end
 end
 
 local Toggle = Tabs.Main:AddToggle("noclip", 
@@ -265,7 +217,7 @@ local Slider = Tabs.Main:AddSlider("speedSlider",
     Min = 0, 
     Max = 100, 
     Callback = function(value)
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
+        player.Character.Humanoid.WalkSpeed = value
         print("Velocidade ajustada para: " .. value)
     end 
 })
@@ -278,7 +230,7 @@ local Slider = Tabs.Main:AddSlider("jumpSlider",
     Min = 0, 
     Max = 100, 
     Callback = function(value)
-        game.Players.LocalPlayer.Character.Humanoid.JumpPower = value
+        player.Character.Humanoid.JumpPower = value
         print("Altura do pulo ajustada para: " .. value)
     end 
 })
