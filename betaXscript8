@@ -14,13 +14,14 @@ local Window = Fluent:CreateWindow({
 
 local Tabs = {
     Main = Window:AddTab({ Title = "inicio" }),
-    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" }),
+    LocalPlayer = Window:AddTab({ Title = "Local Player", Icon = "user" }) -- Nova aba para Local Player
 }
 
 -- Parágrafos 
 Tabs.Main:AddParagraph({ Title = "XScript versão beta", Content = " https://discord.gg/qsYR297DR2" })
 
--- Botões 
+-- Botões e funções da aba Principal
 Tabs.Main:AddButton({ Title = "pulo infinito", Callback = function() 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
 end })
@@ -241,7 +242,7 @@ local function toggleNoclip(state)
         end
         print("Noclip ativado")
     else
-        -- Ativar colisões
+        -- Ativar colisões novamente
         for _, part in pairs(player.Character:GetDescendants()) do
             if part:IsA("BasePart") then
                 part.CanCollide = true
@@ -251,56 +252,47 @@ local function toggleNoclip(state)
     end
 end
 
-local Toggle = Tabs.Main:AddToggle("noclip", 
+-- Alternador para ativar/desativar o noclip
+Tabs.Main:AddToggle("noclip", 
 {
-    Title = "noclip", 
-    Description = "atravesse as paredes",
+    Title = "Noclip", 
+    Description = "Permite atravessar objetos (borda)",
     Default = false, 
     Callback = function(state)
         toggleNoclip(state)
-        if state then
-            print("Noclip ativado")
-        else
-            print("Noclip desativado")
-        end
     end 
 })
 
--- Sliders
-local Slider = Tabs.Main:AddSlider("pulo", 
-{
-    Title = "ajusta pulo",
-    Description = "irá mudar pulo jogador",
-    Default = 2,
-    Min = 0,
-    Max = 5,
-    Rounding = 1,
-    Callback = function(Value)
+-- Sliders para ajustar pulo e velocidade na aba Local Player
+local jumpSlider = Tabs.LocalPlayer:AddSlider({
+    Title = "Ajustar Pulo",
+    Min = 50,
+    Max = 500,
+    Default = 50,
+    Callback = function(value)
         local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        local humanoid = character:WaitForChild("Humanoid")
-        
-        -- Ajustar o pulo do jogador
-        humanoid.JumpPower = Value * 50  -- Multiplica o valor para aumentar o impacto
-        print("Pulo mudou para:", Value)
-    end
+        local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.JumpPower = value
+            print("Pulo ajustado para: " .. value)
+        end
+    end,
 })
 
-local Slider = Tabs.Main:AddSlider("velocidade", 
-{
-    Title = "Velocidade",
-    Description = "Ajusta a velocidade do jogador",
-    Default = 2,
-    Min = 0,
-    Max = 5,
-    Rounding = 1,
-    Callback = function(Value)
+local speedSlider = Tabs.LocalPlayer:AddSlider({
+    Title = "Ajustar Velocidade",
+    Min = 16,
+    Max = 100,
+    Default = 16,
+    Callback = function(value)
         local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        local humanoid = character:WaitForChild("Humanoid")
-        
-        -- Define a velocidade de caminhada
-        humanoid.WalkSpeed = Value * 10  -- Multiplica o valor para aumentar o impacto
-        print("Velocidade mudou para:", Value)
-    end
+        local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.WalkSpeed = value
+            print("Velocidade ajustada para: " .. value)
+        end
+    end,
 })
+
+-- Encerrar a GUI
+Fluent:End()
