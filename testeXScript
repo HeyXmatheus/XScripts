@@ -20,76 +20,135 @@ local Tabs = {
 -- Parágrafos 
 Tabs.Main:AddParagraph({ Title = "XScript versão beta", Content = " https://discord.gg/qsYR297DR2" })
 
+-- Botões 
+Tabs.Main:AddButton({ Title = "pulo infinito", Callback = function() 
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
+end })
+
+Tabs.Main:AddButton({ Title = "Fly gui", Callback = function() 
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fly'))()
+end })
+
+Tabs.Main:AddButton({ Title = "jogar alguém no void gui", Callback = function() 
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fling'))()
+end })
+
+Tabs.Main:AddButton({ Title = "Remover Lag e Texturas", Callback = function() 
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    -- Desativar texturas
+    for _, part in pairs(workspace:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.Material = Enum.Material.SmoothPlastic
+            if part:FindFirstChildOfClass("Decal") then
+                part:FindFirstChildOfClass("Decal"):Destroy()
+            end
+            if part:FindFirstChildOfClass("Texture") then
+                part:FindFirstChildOfClass("Texture"):Destroy()
+            end
+        end
+    end
+
+    -- Desativar efeitos de partículas
+    for _, effect in pairs(workspace:GetDescendants()) do
+        if effect:IsA("ParticleEmitter") or effect:IsA("Trail") then
+            effect.Enabled = false
+        end
+    end
+
+    -- Desativar iluminação desnecessária
+    game.Lighting.GlobalShadows = false
+    game.Lighting.FogEnd = 9e9
+    game.Lighting.Brightness = 0
+
+    print("Lag e texturas removidos")
+end })
+
 -- Variável para controlar o estado do ataque automático
 local autoKill = false
-
--- Função para criar um bloco e manter o jogador em cima dele
-local function createBlock(character)
-    local block = Instance.new("Part")
-    block.Size = Vector3.new(5, 1, 5)
-    block.Position = character.PrimaryPart.Position + Vector3.new(0, 5, 0) -- Em cima do jogador
-    block.Anchored = true
-    block.CanCollide = false
-    block.Parent = workspace
-    return block
-end
+local recoveringHealth = false -- Variável para controlar a recuperação de saúde
 
 -- Função para seguir e atacar jogadores
 local function followAndAttack()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local sword = character:FindFirstChildOfClass("Tool")
+    while autoKill do
+        local player = game.Players.LocalPlayer
+        local character = player.Character
+        local sword = character:FindFirstChildOfClass("Tool")
 
-    -- Equipar a espada automaticamente se não estiver equipada
-    if not sword or not sword.Name:lower():find("sword") then
-        for _, tool in pairs(player.Backpack:GetChildren()) do
-            if tool:IsA("Tool") and tool.Name:lower():find("sword") then
-                character.Humanoid:EquipTool(tool)
-                sword = tool
-                break
-            end
-        end
-    end
-
-    if sword and sword.Name:lower():find("sword") then
-        for _, target in pairs(game.Players:GetPlayers()) do
-            if target ~= player then
-                local targetCharacter = target.Character
-                if targetCharacter and targetCharacter:FindFirstChild("Humanoid") and not targetCharacter:FindFirstChild("ForceField") then
-                    
-                    -- Criar bloco quando o jogador levar dano
-                    targetCharacter.Humanoid.Died:Connect(function()
-                        local block = createBlock(character)
-                        character.HumanoidRootPart.CFrame = CFrame.new(block.Position + Vector3.new(0, 3, 0)) -- Colocar jogador em cima do bloco
-                    end)
-
-                    -- Função para seguir o alvo e atacar
-                    local function followTarget()
-                        while autoKill and targetCharacter.Humanoid.Health > 0 do
-                            -- Teleportar para trás do jogador alvo e olhar para ele
-                            local targetPosition = targetCharacter.PrimaryPart.Position
-                            local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
-                            character:SetPrimaryPartCFrame(CFrame.new(behindPosition, targetPosition))
-
-                            -- Auto click para atacar sem delay
-                            sword:Activate()
-                            wait(0.01) -- Delay mínimo
-                        end
-                    end
-
-                    -- Iniciar a função de seguir e atacar
-                    followTarget()
-
-                    -- Matar o jogador alvo
-                    targetCharacter.Humanoid.Health = 0
-                    wait(0.01) -- Esperar um pouco antes de ir para o próximo jogador
+        -- Equipar a espada automaticamente se não estiver equipada
+        if not sword or not sword.Name:lower():find("sword") then
+            for _, tool in pairs(player.Backpack:GetChildren()) do
+                if tool:IsA("Tool") and tool.Name:lower():find("sword") then
+                    character.Humanoid:EquipTool(tool)
+                    sword = tool
+                    break
                 end
             end
         end
-    else
-        print("Você precisa estar com uma espada equipada")
+
+        if sword and sword.Name:lower():find("sword") then
+            for _, target in pairs(game.Players:GetPlayers()) do
+                if target ~= player then
+                    local targetCharacter = target.Character
+                    if targetCharacter and targetCharacter:FindFirstChild("Humanoid") and not targetCharacter:FindFirstChild("ForceField") then
+                        -- Função para seguir o alvo e atacar
+                        local function followTarget()
+                            while autoKill and targetCharacter.Humanoid.Health > 0 do
+                                -- Teleportar para trás do jogador alvo e olhar para ele
+                                local targetPosition = targetCharacter.PrimaryPart.Position
+                                local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
+                                character:SetPrimaryPartCFrame(CFrame.new(behindPosition, targetPosition))
+
+                                -- Auto click para atacar sem delay
+                                sword:Activate()
+                                wait(0.01) -- Delay mínimo
+                            end
+                        end
+
+                        -- Iniciar a função de seguir e atacar
+                        followTarget()
+
+                        -- Matar o jogador alvo
+                        targetCharacter.Humanoid.Health = 0
+                        wait(0.01) -- Esperar um pouco antes de ir para o próximo jogador
+                    end
+                end
+            end
+        else
+            print("Você precisa estar com uma espada equipada")
+        end
+        wait(0.01) -- Pequeno delay antes de repetir o ciclo
     end
 end
+
+-- Geração de bloco quando levar dano
+local function onPlayerDamaged()
+    local character = game.Players.LocalPlayer.Character
+    local block = Instance.new("Part")
+    block.Size = Vector3.new(1, 1, 1)
+    block.Position = character.PrimaryPart.Position + Vector3.new(0, 3, 0) -- Colocar acima do personagem
+    block.Anchored = true
+    block.BrickColor = BrickColor.new("Bright red") -- Cor do bloco
+    block.Parent = workspace
+
+    recoveringHealth = true -- Começar a recuperação de saúde
+
+    wait(5) -- Esperar 5 segundos (ou o tempo que preferir para a recuperação)
+
+    if character and character:FindFirstChild("Humanoid").Health > 0 then
+        block:Destroy() -- Remover bloco se o jogador tiver vida
+    end
+
+    recoveringHealth = false -- Terminar a recuperação de saúde e permitir matar novamente
+end
+
+-- Conectar a função de dano ao evento de saúde do jogador
+game.Players.LocalPlayer.Character:WaitForChild("Humanoid").HealthChanged:Connect(function(health)
+    if health < game.Players.LocalPlayer.Character.Humanoid.MaxHealth then
+        onPlayerDamaged()
+    end
+end)
 
 -- Alternador para ativar/desativar o ataque automático
 local Toggle = Tabs.Main:AddToggle("autoKill", 
@@ -172,23 +231,21 @@ local function toggleGodMode(state)
         humanoid.MaxHealth = math.huge
         humanoid.Health = math.huge
         humanoid:GetPropertyChangedSignal("Health"):Connect(function()
-            if humanoid.Health < math.huge then
-                humanoid.Health = math.huge
-            end
+            humanoid.Health = math.huge
         end)
         print("God Mode ativado")
     else
-        humanoid.MaxHealth = 100
-        humanoid.Health = 100
+        humanoid.MaxHealth = 100 -- Definir o valor máximo de saúde de volta para 100
+        humanoid.Health = humanoid.MaxHealth -- Restaurar a saúde para o máximo
         print("God Mode desativado")
     end
 end
 
 -- Alternador para ativar/desativar o God Mode
-local Toggle = Tabs.Main:AddToggle("godMode", 
+local godToggle = Tabs.Settings:AddToggle("GodMode", 
 {
-    Title = "God Mode", 
-    Description = "Ativa ou desativa o God Mode (talvez não funcione está em beta!)",
+    Title = "Ativar God Mode", 
+    Description = "Você não pode morrer.",
     Default = false, 
     Callback = function(state)
         godMode = state
@@ -196,80 +253,5 @@ local Toggle = Tabs.Main:AddToggle("godMode",
     end 
 })
 
--- Função para alternar o estado do noclip
-local player = game.Players.LocalPlayer
-local noclip = false
-
-local function toggleNoclip(state)
-    noclip = state
-    if noclip then
-        -- Desativar colisões
-        for _, part in pairs(player.Character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = false
-            end
-        end
-        print("Noclip ativado")
-    else
-        -- Ativar colisões
-        for _, part in pairs(player.Character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = true
-            end
-        end
-        print("Noclip desativado")
-    end
-end
-
-local Toggle = Tabs.Main:AddToggle("noclip", 
-{
-    Title = "noclip", 
-    Description = "atravesse as paredes",
-    Default = false, 
-    Callback = function(state)
-        toggleNoclip(state)
-        if state then
-            print("Noclip ativado")
-        else
-            print("Noclip desativado")
-        end
-    end 
-})
-
--- Sliders
-local Slider = Tabs.Main:AddSlider("pulo", 
-{
-    Title = "ajusta pulo",
-    Description = "irá mudar pulo jogador",
-    Default = 2,
-    Min = 0,
-    Max = 5,
-    Rounding = 1,
-    Callback = function(Value)
-        local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        local humanoid = character:WaitForChild("Humanoid")
-        
-        -- Ajustar o pulo do jogador
-        humanoid.JumpPower = Value * 50  -- Multiplicar pelo valor do slider para ajustar a altura do pulo
-    end
-})
-
--- Ajustar a força de velocidade do jogador com um slider
-local SpeedSlider = Tabs.Main:AddSlider("speed", 
-{
-    Title = "ajusta velocidade",
-    Description = "irá mudar a velocidade do jogador",
-    Default = 16,
-    Min = 0,
-    Max = 200,
-    Rounding = 1,
-    Callback = function(Value)
-        local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        local humanoid = character:WaitForChild("Humanoid")
-
-        -- Ajustar a velocidade do jogador
-        humanoid.WalkSpeed = Value  -- Define a velocidade do jogador com base no valor do slider
-    end
-})
+-- Exibir a interface
+Window:Show()
