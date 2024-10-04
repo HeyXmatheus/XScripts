@@ -14,16 +14,11 @@ local Window = Fluent:CreateWindow({
 
 local Tabs = {
     Tabinfo = Window:AddTab({ Title = "Tab Info" }),
-    update = Window:AddTab({ Title = "Update Log", Icon = "star" }),
     kill = Window:AddTab({ Title = "Kill All", Icon = "play" }),
     guis = Window:AddTab({ Title = "Guis", Icon = "file" }),
     localplayer = Window:AddTab({ Title = "Local Player", Icon = "user" }),
 confi = Window:AddTab({ Title = "Configurações", Icon = "settings" })
 }
-
-
--- Parágrafos 
-Tabs.star:AddParagraph({ Title = "XScript versão:1.0 oque chegou de novo?", Content = " Nova Interface , Arrumado alguns bugs. Servidor oficial XScripts: https://discord.gg/qsYR297DR2" })
 
 -- Botões 
 Tabs.localplayer:AddButton({ Title = "pulo infinito", Callback = function() 
