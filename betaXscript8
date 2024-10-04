@@ -14,7 +14,7 @@ local Window = Fluent:CreateWindow({
 
 local Tabs = {
     Main = Window:AddTab({ Title = "inicio" }),
-    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+    localplayer = Window:AddTab({ Title = "Local Player", Icon = "user" })
 }
 
 -- Parágrafos 
@@ -286,7 +286,7 @@ local Slider = Tabs.Main:AddSlider("pulo",
     end
 })
 
-local Slider = Tabs.Main:AddSlider("velocidade", 
+local Slider = Tabs.localplayer:AddSlider("velocidade", 
 {
     Title = "Velocidade",
     Description = "Ajusta a velocidade do jogador",
