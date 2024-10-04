@@ -17,6 +17,7 @@ local Tabs = {
     kill = Window:AddTab({ Title = "Kill All", Icon = "play" }),
     guis = Window:AddTab({ Title = "Guis", Icon = "file" }),
     localplayer = Window:AddTab({ Title = "Local Player", Icon = "user" }),
+    troll = Window:AddTab({ Title = "Troll", Icon = "Warning" }),
     confi = Window:AddTab({ Title = "Configurações", Icon = "settings" })
 }
 
