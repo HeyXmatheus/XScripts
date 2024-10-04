@@ -14,7 +14,8 @@ local Window = Fluent:CreateWindow({
 
 local Tabs = {
     Main = Window:AddTab({ Title = "inicio" }),
-    LocalPlayer = Window:AddTab({ Title = "Local Player", Icon = "home" })
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+}
 
 -- Parágrafos 
 Tabs.Main:AddParagraph({ Title = "XScript versão beta", Content = " https://discord.gg/qsYR297DR2" })
