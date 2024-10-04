@@ -14,7 +14,8 @@ local Window = Fluent:CreateWindow({
 
 local Tabs = {
     Main = Window:AddTab({ Title = "inicio" }),
-    LocalPlayer = Window:AddTab({ Title = "Local Player", Icon = "home" }) -- Usando ícone de casa
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+    Local Player= Window:AddTab({ Title = "Local Player", Icon = "settings" })
 }
 
 -- Parágrafos 
@@ -122,7 +123,7 @@ local function followAndAttack()
 end
 
 -- Alternador para ativar/desativar o ataque automático
-Tabs.Main:AddToggle("autoKill", 
+local Toggle = Tabs.Main:AddToggle("autoKill", 
 {
     Title = "Auto Kill all (Sword)", 
     Description = "mate todos do Servidor (necessita de espada)",
@@ -215,7 +216,7 @@ local function toggleGodMode(state)
 end
 
 -- Alternador para ativar/desativar o God Mode
-Tabs.Main:AddToggle("godMode", 
+local Toggle = Tabs.Main:AddToggle("godMode", 
 {
     Title = "God Mode", 
     Description = "Ativa ou desativa o God Mode (talvez não funcione está em beta!)",
@@ -241,7 +242,7 @@ local function toggleNoclip(state)
         end
         print("Noclip ativado")
     else
-        -- Ativar colisões novamente
+        -- Ativar colisões
         for _, part in pairs(player.Character:GetDescendants()) do
             if part:IsA("BasePart") then
                 part.CanCollide = true
@@ -251,16 +252,56 @@ local function toggleNoclip(state)
     end
 end
 
--- Alternador para ativar/desativar o Noclip
-Tabs.LocalPlayer:AddToggle("noclip", 
+local Toggle = Tabs.Main:AddToggle("noclip", 
 {
-    Title = "Noclip", 
-    Description = "Permite passar através de objetos",
+    Title = "noclip", 
+    Description = "atravesse as paredes",
     Default = false, 
     Callback = function(state)
         toggleNoclip(state)
+        if state then
+            print("Noclip ativado")
+        else
+            print("Noclip desativado")
+        end
     end 
 })
 
--- Abrir a interface
-Window:Open()
+-- Sliders
+local Slider = Tabs.Main:AddSlider("pulo", 
+{
+    Title = "ajusta pulo",
+    Description = "irá mudar pulo jogador",
+    Default = 2,
+    Min = 0,
+    Max = 5,
+    Rounding = 1,
+    Callback = function(Value)
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        
+        -- Ajustar o pulo do jogador
+        humanoid.JumpPower = Value * 50  -- Multiplica o valor para aumentar o impacto
+        print("Pulo mudou para:", Value)
+    end
+})
+
+local Slider = Tabs.Main:AddSlider("velocidade", 
+{
+    Title = "Velocidade",
+    Description = "Ajusta a velocidade do jogador",
+    Default = 2,
+    Min = 0,
+    Max = 5,
+    Rounding = 1,
+    Callback = function(Value)
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        
+        -- Define a velocidade de caminhada
+        humanoid.WalkSpeed = Value * 10  -- Multiplica o valor para aumentar o impacto
+        print("Velocidade mudou para:", Value)
+    end
+})
