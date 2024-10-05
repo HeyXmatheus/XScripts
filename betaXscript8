@@ -14,55 +14,61 @@ local Window = Fluent:CreateWindow({
 
 local Tabs = {
     Tabinfo = Window:AddTab({ Title = "Tab Info" }),
-    kill = Window:AddTab({ Title = "Kill All", Icon = "home" }),
-    fling = Window:AddTab({ Title = "Fling All", Icon = "star" }),
+    kill = Window:AddTab({ Title = "Kill All", Icon = "play" }),
     guis = Window:AddTab({ Title = "Guis", Icon = "file" }),
     localplayer = Window:AddTab({ Title = "Local Player", Icon = "user" }),
-    confi = Window:AddTab({ Title = "Configurações", Icon = "settings" }),
-    troll = Window:AddTab({ Title = "Troll", Icon = "face" }) -- Nova aba para Troll
+confi = Window:AddTab({ Title = "Configurações", Icon = "settings" })
 }
 
--- Função para flungar todos os jogadores
-local autoFling = false
+-- Botões 
+Tabs.localplayer:AddButton({ Title = "pulo infinito", Callback = function() 
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
+end })
 
-local function followAndFling()
-    while autoFling do
-        local player = game.Players.LocalPlayer
-        for _, target in pairs(game.Players:GetPlayers()) do
-            if target ~= player then
-                local targetCharacter = target.Character
-                if targetCharacter and targetCharacter:FindFirstChild("Humanoid") and not targetCharacter:FindFirstChild("ForceField") then
-                    -- Flingar o jogador alvo
-                    targetCharacter.HumanoidRootPart.Velocity = Vector3.new(0, 50, 0) -- Sobe para o void
-                    targetCharacter.HumanoidRootPart.CFrame = CFrame.new(math.random(-100, 100), math.random(100, 200), math.random(-100, 100)) -- Muda a posição no void
-                    wait(0.01) -- Delay para evitar sobrecarga
-                end
+Tabs.guis:AddButton({ Title = "Fly gui", Callback = function() 
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fly'))()
+end })
+
+Tabs.guis:AddButton({ Title = "jogar alguém no void gui", Callback = function() 
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fling'))()
+end })
+
+Tabs.confi:AddButton({ Title = "Remover Lag e Texturas", Callback = function() 
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    -- Desativar texturas
+    for _, part in pairs(workspace:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.Material = Enum.Material.SmoothPlastic
+            if part:FindFirstChildOfClass("Decal") then
+                part:FindFirstChildOfClass("Decal"):Destroy()
+            end
+            if part:FindFirstChildOfClass("Texture") then
+                part:FindFirstChildOfClass("Texture"):Destroy()
             end
         end
-        wait(0.01) -- Delay para repetir o ciclo
     end
-end
 
--- Alternador para ativar/desativar o Auto Fling
-local ToggleFling = Tabs.troll:AddToggle("autoFling", 
-{
-    Title = "Auto Fling All", 
-    Description = "Flingar todos do Servidor para o void",
-    Default = false, 
-    Callback = function(state)
-        autoFling = state
-        if autoFling then
-            print("Auto Fling ativado")
-            followAndFling()
-        else
-            print("Auto Fling desativado")
+    -- Desativar efeitos de partículas
+    for _, effect in pairs(workspace:GetDescendants()) do
+        if effect:IsA("ParticleEmitter") or effect:IsA("Trail") then
+            effect.Enabled = false
         end
-    end 
-})
+    end
 
--- Adicionar a função de Auto Kill All aqui
+    -- Desativar iluminação desnecessária
+    game.Lighting.GlobalShadows = false
+    game.Lighting.FogEnd = 9e9
+    game.Lighting.Brightness = 0
+
+    print("Lag e texturas removidos")
+end })
+
+-- Variável para controlar o estado do ataque automático
 local autoKill = false
 
+-- Função para seguir e atacar jogadores
 local function followAndAttack()
     while autoKill do
         local player = game.Players.LocalPlayer
@@ -116,7 +122,7 @@ local function followAndAttack()
 end
 
 -- Alternador para ativar/desativar o ataque automático
-local ToggleKill = Tabs.kill:AddToggle("autoKill", 
+local Toggle = Tabs.kill:AddToggle("autoKill", 
 {
     Title = "Auto Kill all (Sword)", 
     Description = "mate todos do Servidor (necessita de espada)",
@@ -209,7 +215,7 @@ local function toggleGodMode(state)
 end
 
 -- Alternador para ativar/desativar o God Mode
-local ToggleGodMode = Tabs.localplayer:AddToggle("godMode", 
+local Toggle = Tabs.localplayer:AddToggle("godMode", 
 {
     Title = "God Mode", 
     Description = "Ativa ou desativa o God Mode (talvez não funcione está em beta!)",
@@ -220,23 +226,81 @@ local ToggleGodMode = Tabs.localplayer:AddToggle("godMode",
     end 
 })
 
--- Função para ativar/desativar o noclip
+-- Função para alternar o estado do noclip
 local player = game.Players.LocalPlayer
 local noclip = false
 
 local function toggleNoclip(state)
     noclip = state
     if noclip then
-        print("Noclip ativado")
-        -- Loop contínuo para desativar colisões
-game:GetService("RunService").Stepped:Connect(function()
-    if noclip and player.Character then
+        -- Desativar colisões
         for _, part in pairs(player.Character:GetDescendants()) do
             if part:IsA("BasePart") then
                 part.CanCollide = false
             end
         end
+        print("Noclip ativado")
+    else
+        -- Ativar colisões
+        for _, part in pairs(player.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
+            end
+        end
+        print("Noclip desativado")
     end
-end)
-print("Noclip desativado")
 end
+
+local Toggle = Tabs.localplayer:AddToggle("noclip", 
+{
+    Title = "noclip", 
+    Description = "atravesse as paredes",
+    Default = false, 
+    Callback = function(state)
+        toggleNoclip(state)
+        if state then
+            print("Noclip ativado")
+        else
+            print("Noclip desativado")
+        end
+    end 
+})
+
+-- Sliders
+local Slider = Tabs.localplayer:AddSlider("pulo", 
+{
+    Title = "ajusta pulo",
+    Description = "irá mudar pulo jogador",
+    Default = 2,
+    Min = 0,
+    Max = 5,
+    Rounding = 1,
+    Callback = function(Value)
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        
+        -- Ajustar o pulo do jogador
+        humanoid.JumpPower = Value * 50  -- Multiplica o valor para aumentar o impacto
+        print("Pulo mudou para:", Value)
+    end
+})
+
+local Slider = Tabs.localplayer:AddSlider("velocidade", 
+{
+    Title = "Velocidade",
+    Description = "Ajusta a velocidade do jogador",
+    Default = 2,
+    Min = 0,
+    Max = 5,
+    Rounding = 1,
+    Callback = function(Value)
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        
+        -- Define a velocidade de caminhada
+        humanoid.WalkSpeed = Value * 10  -- Multiplica o valor para aumentar o impacto
+        print("Velocidade mudou para:", Value)
+    end
+})
