@@ -14,10 +14,10 @@ local Window = Fluent:CreateWindow({
 
 local Tabs = {
     Tabinfo = Window:AddTab({ Title = "Tab Info" }),
-    kill = Window:AddTab({ Title = "Kill All", Icon = "play" }),
+    kill = Window:AddTab({ Title = "Kill All", Icon = "home" }),
     guis = Window:AddTab({ Title = "Guis", Icon = "file" }),
     localplayer = Window:AddTab({ Title = "Local Player", Icon = "user" }),
-    troll = Window:AddTab({ Title = "Troll", Icon = "Warning" }),
+    troll = Window:AddTab({ Title = "Troll", Icon = "star" }),
     confi = Window:AddTab({ Title = "Configurações", Icon = "settings" })
 }
 
