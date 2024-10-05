@@ -15,61 +15,54 @@ local Window = Fluent:CreateWindow({
 local Tabs = {
     Tabinfo = Window:AddTab({ Title = "Tab Info" }),
     kill = Window:AddTab({ Title = "Kill All", Icon = "home" }),
+    fling = Window:AddTab({ Title = "Fling All", Icon = "star" }),
     guis = Window:AddTab({ Title = "Guis", Icon = "file" }),
     localplayer = Window:AddTab({ Title = "Local Player", Icon = "user" }),
-    troll = Window:AddTab({ Title = "Troll", Icon = "star" }),
-    confi = Window:AddTab({ Title = "Configurações", Icon = "settings" })
-}
+    confi = Window:AddTab({ Title = "Configurações", Icon = "settings" }),
+    troll = Window:AddTab({ Title = "Troll", Icon = "face" }) -- Nova aba para Troll
+})
 
--- Botões 
-Tabs.localplayer:AddButton({ Title = "pulo infinito", Callback = function() 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
-end })
+-- Função para flungar todos os jogadores
+local autoFling = false
 
-Tabs.guis:AddButton({ Title = "Fly gui", Callback = function() 
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fly'))()
-end })
-
-Tabs.guis:AddButton({ Title = "jogar alguém no void gui", Callback = function() 
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fling'))()
-end })
-
-Tabs.confi:AddButton({ Title = "Remover Lag e Texturas", Callback = function() 
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-
-    -- Desativar texturas
-    for _, part in pairs(workspace:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.Material = Enum.Material.SmoothPlastic
-            if part:FindFirstChildOfClass("Decal") then
-                part:FindFirstChildOfClass("Decal"):Destroy()
-            end
-            if part:FindFirstChildOfClass("Texture") then
-                part:FindFirstChildOfClass("Texture"):Destroy()
+local function followAndFling()
+    while autoFling do
+        local player = game.Players.LocalPlayer
+        for _, target in pairs(game.Players:GetPlayers()) do
+            if target ~= player then
+                local targetCharacter = target.Character
+                if targetCharacter and targetCharacter:FindFirstChild("Humanoid") and not targetCharacter:FindFirstChild("ForceField") then
+                    -- Flingar o jogador alvo
+                    targetCharacter.HumanoidRootPart.Velocity = Vector3.new(0, 50, 0) -- Sobe para o void
+                    targetCharacter.HumanoidRootPart.CFrame = CFrame.new(math.random(-100, 100), math.random(100, 200), math.random(-100, 100)) -- Muda a posição no void
+                    wait(0.01) -- Delay para evitar sobrecarga
+                end
             end
         end
+        wait(0.01) -- Delay para repetir o ciclo
     end
+end
 
-    -- Desativar efeitos de partículas
-    for _, effect in pairs(workspace:GetDescendants()) do
-        if effect:IsA("ParticleEmitter") or effect:IsA("Trail") then
-            effect.Enabled = false
+-- Alternador para ativar/desativar o Auto Fling
+local ToggleFling = Tabs.troll:AddToggle("autoFling", 
+{
+    Title = "Auto Fling All", 
+    Description = "Flingar todos do Servidor para o void",
+    Default = false, 
+    Callback = function(state)
+        autoFling = state
+        if autoFling then
+            print("Auto Fling ativado")
+            followAndFling()
+        else
+            print("Auto Fling desativado")
         end
-    end
+    end 
+})
 
-    -- Desativar iluminação desnecessária
-    game.Lighting.GlobalShadows = false
-    game.Lighting.FogEnd = 9e9
-    game.Lighting.Brightness = 0
-
-    print("Lag e texturas removidos")
-end })
-
--- Variável para controlar o estado do ataque automático
+-- Adicionar a função de Auto Kill All aqui
 local autoKill = false
 
--- Função para seguir e atacar jogadores
 local function followAndAttack()
     while autoKill do
         local player = game.Players.LocalPlayer
@@ -123,7 +116,7 @@ local function followAndAttack()
 end
 
 -- Alternador para ativar/desativar o ataque automático
-local Toggle = Tabs.kill:AddToggle("autoKill", 
+local ToggleKill = Tabs.kill:AddToggle("autoKill", 
 {
     Title = "Auto Kill all (Sword)", 
     Description = "mate todos do Servidor (necessita de espada)",
@@ -216,7 +209,7 @@ local function toggleGodMode(state)
 end
 
 -- Alternador para ativar/desativar o God Mode
-local Toggle = Tabs.localplayer:AddToggle("godMode", 
+local ToggleGodMode = Tabs.localplayer:AddToggle("godMode", 
 {
     Title = "God Mode", 
     Description = "Ativa ou desativa o God Mode (talvez não funcione está em beta!)",
@@ -228,37 +221,29 @@ local Toggle = Tabs.localplayer:AddToggle("godMode",
 })
 
 -- Função para ativar/desativar o noclip
+local player = game.Players.LocalPlayer
+local noclip = false
+
 local function toggleNoclip(state)
     noclip = state
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoid = character:FindFirstChild("Humanoid")
-
     if noclip then
         print("Noclip ativado")
-        humanoid:ChangeState(Enum.HumanoidStateType.Physics)
-        character.DescendantAdded:Connect(function(child)
-            if child:IsA("BasePart") then
-                child.CanCollide = false
-            end
-        end)
-
-        -- Girar mais rápido
-        while noclip do
-            character:SetPrimaryPartCFrame(character.PrimaryPart.CFrame * CFrame.Angles(0, math.rad(10), 0))
-            wait(0.1) -- Velocidade de rotação
-        end
-    else
-        print("Noclip desativado")
-        for _, part in pairs(character:GetDescendants()) do
+        -- Loop contínuo para desativar colisões
+game:GetService("RunService").Stepped:Connect(function()
+    if noclip and player.Character then
+        for _, part in pairs(player.Character:GetDescendants()) do
             if part:IsA("BasePart") then
-                part.CanCollide = true
+                part.CanCollide = false
             end
         end
     end
+end)
+
+print("Noclip desativado")
 end
 
 -- Alternador para ativar/desativar o noclip
-local NoclipToggle = Tabs.localplayer:AddToggle("noclip", 
+local ToggleNoclip = Tabs.localplayer:AddToggle("noclip", 
 {
     Title = "Noclip", 
     Description = "Ativa ou desativa o Noclip",
@@ -268,15 +253,36 @@ local NoclipToggle = Tabs.localplayer:AddToggle("noclip",
     end 
 })
 
--- Adiciona uma opção de movimentação enquanto gira
-Tabs.localplayer:AddButton({ Title = "Andar enquanto gira", Callback = function()
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoid = character:FindFirstChild("Humanoid")
-    
-    while noclip do
-        humanoid:Move(Vector3.new(0, 0, 1), true) -- Move o personagem para frente
-        wait(0.1) -- Ajuste a velocidade de movimento
-    end
-end })
+-- Variável para controlar o estado do Auto Fling
+local autoFling = false
 
--- Para completar o código, adicione a lógica de ativação do toggle e outros botões se necessário
+local function followAndFling()
+    while autoFling do
+        local player = game.Players.LocalPlayer
+        for _, target in pairs(game.Players:GetPlayers()) do
+            if target ~= player then
+                local targetCharacter = target.Character
+                if targetCharacter and targetCharacter:FindFirstChild("Humanoid") and not targetCharacter:FindFirstChild("ForceField") then
+                    -- Flingar o jogador alvo
+                    targetCharacter.HumanoidRootPart.Velocity = Vector3.new(0, 50, 0) -- Sobe para o void
+                    targetCharacter.HumanoidRootPart.CFrame = CFrame.new(math.random(-100, 100), math.random(100, 200), math.random(-100, 100)) -- Muda a posição no void
+                    wait(0.01) -- Delay para evitar sobrecarga
+                end
+            end
+        end
+        wait(0.01) -- Delay para repetir o ciclo
+    end
+end
+
+-- Alternador para ativar/desativar o Auto Fling
+local ToggleFling = Tabs.troll:AddToggle("autoFling", 
+{
+    Title = "Auto Fling All", 
+    Description = "Flingar todos do Servidor para o void",
+    Default = false, 
+    Callback = function(state)
+        autoFling = state
+        if autoFling then
+            print("Auto Fling ativado")
+            followAndFling()
+⬤
