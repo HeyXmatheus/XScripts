@@ -1,124 +1,312 @@
--- Plato configuration
-local accountId = 53103; -- Plato account id [IMPORTANT]
-local allowPassThrough = false; -- Allow user through if error occurs, may reduce security
-local allowKeyRedeeming = false; -- Automatically check keys to redeem if valid
-local useDataModel = false;
+-- Carregar biblioteca
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
--- Plato callbacks
-local onMessage = function(message)
-    --logic
-end;
+-- Aviso ao executar
+Fluent:Notify({ Title = "executado!", Content = "executando com sucesso" })
+Fluent:Notify({ Title = "Servidor XScripts oficial discord!", Content = "https://discord.gg/qsYR297DR2" })
 
--- Plato internals [START]
-local fRequest, fStringFormat, fSpawn, fWait = request or http.request or http_request or syn.request, string.format, task.spawn, task.wait;
-local localPlayerId = game:GetService("Players").LocalPlayer.UserId;
-local rateLimit, rateLimitCountdown, errorWait = false, 0, false;
--- Plato internals [END]
+local Window = Fluent:CreateWindow({
+    Title = "XScript universal 🔥 | Versão 1.0.0 ",
+    TabWidth = 160, 
+    Size = UDim2.fromOffset(580, 460), 
+    Theme = "Amethyst"
+})
 
--- Plato global functions [START]
-function getLink()
-    return fStringFormat("https://gateway.platoboost.com/a/%i?id=%i", accountId, localPlayerId);
-end;
+local Tabs = {
+    Tabinfo = Window:AddTab({ Title = "Tab Info" }),
+    kill = Window:AddTab({ Title = "Kill All", Icon = "home" }),
+    guis = Window:AddTab({ Title = "Guis", Icon = "file" }),
+    localplayer = Window:AddTab({ Title = "Local Player", Icon = "user" }),
+    troll = Window:AddTab({ Title = "Troll", Icon = "star" }),
+    confi = Window:AddTab({ Title = "Configurações", Icon = "settings" })
+}
 
-function verify(key)
-    if errorWait or rateLimit then 
-        return false;
-    end;
+-- Botões 
+Tabs.localplayer:AddButton({ Title = "pulo infinito", Callback = function() 
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
+end })
 
-    onMessage("Checking key...");
+Tabs.guis:AddButton({ Title = "Fly gui", Callback = function() 
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fly'))()
+end })
 
-    if (useDataModel) then
-        local status, result = pcall(function() 
-            return game:HttpGetAsync(fStringFormat("https://api-gateway.platoboost.com/v1/public/whitelist/%i/%i?key=%s", accountId, localPlayerId, key));
-        end);
-        
-        if status then
-            if string.find(result, "true") then
-                onMessage("Successfully whitelisted!");
-                return true;
-            elseif string.find(result, "false") then
-                if allowKeyRedeeming then
-                    local status1, result1 = pcall(function()
-                        return game:HttpPostAsync(fStringFormat("https://api-gateway.platoboost.com/v1/authenticators/redeem/%i/%i/%s", accountId, localPlayerId, key), {});
-                    end);
+Tabs.guis:AddButton({ Title = "jogar alguém no void gui", Callback = function() 
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fling'))()
+end })
 
-                    if status1 then
-                        if string.find(result1, "true") then
-                            onMessage("Successfully redeemed key!");
-                            return true;
-                        end;
-                    end;
-                end;
-                
-                onMessage("Key is invalid!");
-                return false;
-            else
-                return false;
-            end;
+Tabs.confi:AddButton({ Title = "Remover Lag e Texturas", Callback = function() 
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    -- Desativar texturas
+    for _, part in pairs(workspace:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.Material = Enum.Material.SmoothPlastic
+            if part:FindFirstChildOfClass("Decal") then
+                part:FindFirstChildOfClass("Decal"):Destroy()
+            end
+            if part:FindFirstChildOfClass("Texture") then
+                part:FindFirstChildOfClass("Texture"):Destroy()
+            end
+        end
+    end
+
+    -- Desativar efeitos de partículas
+    for _, effect in pairs(workspace:GetDescendants()) do
+        if effect:IsA("ParticleEmitter") or effect:IsA("Trail") then
+            effect.Enabled = false
+        end
+    end
+
+    -- Desativar iluminação desnecessária
+    game.Lighting.GlobalShadows = false
+    game.Lighting.FogEnd = 9e9
+    game.Lighting.Brightness = 0
+
+    print("Lag e texturas removidos")
+end })
+
+-- Variável para controlar o estado do ataque automático
+local autoKill = false
+
+-- Função para seguir e atacar jogadores
+local function followAndAttack()
+    while autoKill do
+        local player = game.Players.LocalPlayer
+        local character = player.Character
+        local sword = character:FindFirstChildOfClass("Tool")
+
+        -- Equipar a espada automaticamente se não estiver equipada
+        if not sword or not sword.Name:lower():find("sword") then
+            for _, tool in pairs(player.Backpack:GetChildren()) do
+                if tool:IsA("Tool") and tool.Name:lower():find("sword") then
+                    character.Humanoid:EquipTool(tool)
+                    sword = tool
+                    break
+                end
+            end
+        end
+
+        if sword and sword.Name:lower():find("sword") then
+            for _, target in pairs(game.Players:GetPlayers()) do
+                if target ~= player then
+                    local targetCharacter = target.Character
+                    if targetCharacter and targetCharacter:FindFirstChild("Humanoid") and not targetCharacter:FindFirstChild("ForceField") then
+                        -- Função para seguir o alvo e atacar
+                        local function followTarget()
+                            while autoKill and targetCharacter.Humanoid.Health > 0 do
+                                -- Teleportar para trás do jogador alvo e olhar para ele
+                                local targetPosition = targetCharacter.PrimaryPart.Position
+                                local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
+                                character:SetPrimaryPartCFrame(CFrame.new(behindPosition, targetPosition))
+
+                                -- Auto click para atacar sem delay
+                                sword:Activate()
+                                wait(0.01) -- Delay mínimo
+                            end
+                        end
+
+                        -- Iniciar a função de seguir e atacar
+                        followTarget()
+
+                        -- Matar o jogador alvo
+                        targetCharacter.Humanoid.Health = 0
+                        wait(0.01) -- Esperar um pouco antes de ir para o próximo jogador
+                    end
+                end
+            end
         else
-            onMessage("An error occured while contacting the server!");
-            return allowPassThrough;
-        end;
+            print("Você precisa estar com uma espada equipada")
+        end
+        wait(0.01) -- Pequeno delay antes de repetir o ciclo
+    end
+end
+
+-- Alternador para ativar/desativar o ataque automático
+local Toggle = Tabs.kill:AddToggle("autoKill", 
+{
+    Title = "Auto Kill all (Sword)", 
+    Description = "mate todos do Servidor (necessita de espada)",
+    Default = false, 
+    Callback = function(state)
+        autoKill = state
+        if autoKill then
+            print("Auto Kill ativado")
+            followAndAttack()
+        else
+            print("Auto Kill desativado")
+        end
+    end 
+})
+
+-- Botão para executar o Kill All manualmente
+Tabs.kill:AddButton({ Title = "Kill All (Sword)", Callback = function() 
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    local sword = character:FindFirstChildOfClass("Tool")
+
+    -- Equipar a espada automaticamente se não estiver equipada
+    if not sword or not sword.Name:lower():find("sword") then
+        for _, tool in pairs(player.Backpack:GetChildren()) do
+            if tool:IsA("Tool") and tool.Name:lower():find("sword") then
+                character.Humanoid:EquipTool(tool)
+                sword = tool
+                break
+            end
+        end
+    end
+
+    if sword and sword.Name:lower():find("sword") then
+        for _, target in pairs(game.Players:GetPlayers()) do
+            if target ~= player then
+                local targetCharacter = target.Character
+                if targetCharacter and targetCharacter:FindFirstChild("Humanoid") and not targetCharacter:FindFirstChild("ForceField") then
+                    -- Função para seguir o alvo e atacar
+                    local function followTarget()
+                        while targetCharacter.Humanoid.Health > 0 do
+                            -- Teleportar para trás do jogador alvo e olhar para ele
+                            local targetPosition = targetCharacter.PrimaryPart.Position
+                            local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
+                            character:SetPrimaryPartCFrame(CFrame.new(behindPosition, targetPosition))
+
+                            -- Auto click para atacar sem delay
+                            sword:Activate()
+                            wait(0.01) -- Delay mínimo
+                        end
+                    end
+
+                    -- Iniciar a função de seguir e atacar
+                    followTarget()
+
+                    -- Matar o jogador alvo
+                    targetCharacter.Humanoid.Health = 0
+                    wait(0.01) -- Esperar um pouco antes de ir para o próximo jogador
+                end
+            end
+        end
+        print("Todos os jogadores foram mortos")
     else
-        local status, result = pcall(function() 
-            return fRequest({
-                Url = fStringFormat("https://api-gateway.platoboost.com/v1/public/whitelist/%i/%i?key=%s", accountId, localPlayerId, key),
-                Method = "GET"
-            });
-        end);
+        print("Você precisa estar com uma espada equipada")
+    end
+end })
 
-        if status then
-            if result.StatusCode == 200 then
-                if string.find(result.Body, "true") then
-                    onMessage("Successfully whitelisted key!");
-                    return true;
-                else
-                    if (allowKeyRedeeming) then
-                        local status1, result1 = pcall(function() 
-                            return fRequest({
-                                Url = fStringFormat("https://api-gateway.platoboost.com/v1/authenticators/redeem/%i/%i/%s", accountId, localPlayerId, key),
-                                Method = "POST"
-                            });
-                        end);
+-- Variável para controlar o estado do God Mode
+local godMode = false
 
-                        if status1 then
-                            if result1.StatusCode == 200 then
-                                if string.find(result1.Body, "true") then
-                                    onMessage("Successfully redeemed key!");
-                                    return true;
-                                end;
-                            end;
-                        end;
-                    end;
-                    
-                    return false;
-                end;
-            elseif result.StatusCode == 204 then
-                onMessage("Account wasn't found, check accountId");
-                return false;
-            elseif result.StatusCode == 429 then
-                if not rateLimit then 
-                    rateLimit = true;
-                    rateLimitCountdown = 10;
-                    fSpawn(function() 
-                        while rateLimit do
-                            onMessage(fStringFormat("You are being rate-limited, please slow down. Try again in %i second(s).", rateLimitCountdown));
-                            fWait(1);
-                            rateLimitCountdown = rateLimitCountdown - 1;
-                            if rateLimitCountdown < 0 then
-                                rateLimit = false;
-                                rateLimitCountdown = 0;
-                                onMessage("Rate limit is over, please try again.");
-                            end;
-                        end;
-                    end); 
-                end;
-            else
-                return allowPassThrough;
-            end;    
+-- Função para ativar/desativar o God Mode
+local function toggleGodMode(state)
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    local humanoid = character:FindFirstChild("Humanoid")
+
+    if state then
+        humanoid.MaxHealth = math.huge
+        humanoid.Health = math.huge
+        humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+            if humanoid.Health < math.huge then
+                humanoid.Health = math.huge
+            end
+        end)
+        print("God Mode ativado")
+    else
+        humanoid.MaxHealth = 100
+        humanoid.Health = 100
+        print("God Mode desativado")
+    end
+end
+
+-- Alternador para ativar/desativar o God Mode
+local Toggle = Tabs.localplayer:AddToggle("godMode", 
+{
+    Title = "God Mode", 
+    Description = "Ativa ou desativa o God Mode (talvez não funcione está em beta!)",
+    Default = false, 
+    Callback = function(state)
+        godMode = state
+        toggleGodMode(godMode)
+    end 
+})
+
+-- Função para ativar/desativar o noclip
+local player = game.Players.LocalPlayer
+local noclip = false
+
+local function toggleNoclip(state)
+    noclip = state
+    if noclip then
+        print("Noclip ativado")
+        -- Loop contínuo para desativar colisões
+        game:GetService("RunService").Stepped:Connect(function()
+            if noclip and player.Character then
+                for _, part in pairs(player.Character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = false
+                    end
+                end
+            end
+        end)
+        print("Noclip ativado")
+    else
+        -- Ativar colisões
+        for _, part in pairs(player.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
+            end
+        end
+        print("Noclip desativado")
+    end
+end
+
+local Toggle = Tabs.localplayer:AddToggle("noclip", 
+{
+    Title = "noclip", 
+    Description = "atravesse as paredes",
+    Default = false, 
+    Callback = function(state)
+        toggleNoclip(state)
+        if state then
+            print("Noclip ativado")
         else
-            return allowPassThrough;
-        end;
-    end;
-end;
--- Plato global functions [END]
+            print("Noclip desativado")
+        end
+    end 
+})
+
+-- Sliders
+local Slider = Tabs.localplayer:AddSlider("pulo", 
+{
+    Title = "ajusta pulo",
+    Description = "irá mudar pulo jogador",
+    Default = 2,
+    Min = 0,
+    Max = 5,
+    Rounding = 1,
+    Callback = function(Value)
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        
+        -- Ajustar o pulo do jogador
+        humanoid.JumpPower = Value * 50  -- Multiplica o valor para aumentar o impacto
+        print("Pulo mudou para:", Value)
+    end
+})
+
+local Slider = Tabs.localplayer:AddSlider("velocidade", 
+{
+    Title = "Velocidade",
+    Description = "Ajusta a velocidade do jogador",
+    Default = 2,
+    Min = 0,
+    Max = 5,
+    Rounding = 1,
+    Callback = function(Value)
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        
+        -- Define a velocidade de caminhada
+        humanoid.WalkSpeed = Value * 10  -- Multiplica o valor para aumentar o impacto
+        print("Velocidade mudou para:", Value)
+    end
+})
