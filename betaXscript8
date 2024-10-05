@@ -237,7 +237,26 @@ Tabs.kill:AddButton({ Title = "Kill All (Sword)", Callback = function()
     end
 end })
 
--- Slider de Velocidade
+-- Sliders
+local Slider = Tabs.localplayer:AddSlider("pulo", 
+{
+    Title = "ajusta pulo",
+    Description = "irá mudar pulo jogador",
+    Default = 2,
+    Min = 0,
+    Max = 5,
+    Rounding = 1,
+    Callback = function(Value)
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        
+        -- Ajustar o pulo do jogador
+        humanoid.JumpPower = Value * 50  -- Multiplica o valor para aumentar o impacto
+        print("Pulo mudou para:", Value)
+    end
+})
+
 local Slider = Tabs.localplayer:AddSlider("velocidade", 
 {
     Title = "Velocidade",
