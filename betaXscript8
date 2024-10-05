@@ -52,9 +52,7 @@ if isBlocked(LocalPlayer.UserId) or isInHR(LocalPlayer) then
     return
 end
 
--- Continuar com o restante do código
-
--- Botões 
+-- Botões
 Tabs.localplayer:AddButton({ Title = "pulo infinito", Callback = function() 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
 end })
@@ -234,45 +232,29 @@ Tabs.kill:AddButton({ Title = "Kill All (Sword)", Callback = function()
                 end
             end
         end
-        print("Todos os jogadores foram mortos")
     else
         print("Você precisa estar com uma espada equipada")
     end
 end })
 
--- Variável para controlar o estado do God Mode
-local godMode = false
-
--- Função para ativar/desativar o God Mode
-local function toggleGodMode(state)
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoid = character:FindFirstChild("Humanoid")
-
-    if state then
-        humanoid.MaxHealth = math.huge
-        humanoid.Health = math.huge
-        humanoid:GetPropertyChangedSignal("Health"):Connect(function()
-            if humanoid.Health < math.huge then
-                humanoid.Health = math.huge
-            end
-        end)
-        print("God Mode ativado")
-    else
-        humanoid.MaxHealth = 100
-        humanoid.Health = 100
-        print("God Mode desativado")
-    end
-end
-
--- Alternador para ativar/desativar o God Mode
-local Toggle = Tabs.localplayer:AddToggle("godMode", 
+-- Slider de Velocidade
+local Slider = Tabs.localplayer:AddSlider("velocidade", 
 {
-    Title = "God Mode", 
-    Description = "Ativa ou desativa o God Mode (talvez não funcione está em beta!)",
-    Default = false, 
-    Callback = function(state)
-        godMode = state
-        toggleGodMode(godMode)
-    end 
+    Title = "Velocidade",
+    Description = "Ajusta a velocidade do jogador",
+    Default = 2,
+    Min = 0,
+    Max = 5,
+    Rounding = 1,
+    Callback = function(Value)
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        
+        -- Define a velocidade de caminhada
+        humanoid.WalkSpeed = Value * 10  -- Multiplica o valor para aumentar o impacto
+        print("Velocidade mudou para:", Value)
+    end
 })
+
+-- Fim do código
