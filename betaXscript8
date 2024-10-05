@@ -62,6 +62,10 @@ Tabs.guis:AddButton({ Title = "Fly gui", Callback = function()
     loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fly'))()
 end })
 
+Tabs.tools:AddButton({ Title = "Tp tool", Callback = function() 
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/tptool'))()
+end })
+
 Tabs.guis:AddButton({ Title = "jogar alguém no void gui", Callback = function() 
     loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fling'))()
 end })
