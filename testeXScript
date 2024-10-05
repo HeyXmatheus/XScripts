@@ -21,50 +21,55 @@ local Tabs = {
     confi = Window:AddTab({ Title = "Configurações", Icon = "settings" })
 }
 
--- Função para alternar o modo helicóptero
-local isHelicopterMode = false
-local helicopterConnection
+-- Botões 
+Tabs.localplayer:AddButton({ Title = "pulo infinito", Callback = function() 
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
+end })
 
-local function toggleHelicopterMode()
+Tabs.guis:AddButton({ Title = "Fly gui", Callback = function() 
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fly'))()
+end })
+
+Tabs.guis:AddButton({ Title = "jogar alguém no void gui", Callback = function() 
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fling'))()
+end })
+
+Tabs.confi:AddButton({ Title = "Remover Lag e Texturas", Callback = function() 
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
 
-    if isHelicopterMode then
-        -- Desativar o helicóptero
-        isHelicopterMode = false
-        if helicopterConnection then
-            helicopterConnection:Disconnect()  -- Desconectar o loop de rotação
-        end
-        print("Helicopter mode desativado")
-    else
-        -- Ativar o helicóptero
-        isHelicopterMode = true
-        print("Helicopter mode ativado")
-
-        -- Função para rotacionar o personagem continuamente
-        helicopterConnection = game:GetService("RunService").Stepped:Connect(function()
-            if character and character:FindFirstChild("HumanoidRootPart") then
-                -- Rotaciona o personagem em torno do eixo Y
-                character:SetPrimaryPartCFrame(character.PrimaryPart.CFrame * CFrame.Angles(0, math.rad(10), 0))
+    -- Desativar texturas
+    for _, part in pairs(workspace:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.Material = Enum.Material.SmoothPlastic
+            if part:FindFirstChildOfClass("Decal") then
+                part:FindFirstChildOfClass("Decal"):Destroy()
             end
-        end)
+            if part:FindFirstChildOfClass("Texture") then
+                part:FindFirstChildOfClass("Texture"):Destroy()
+            end
+        end
     end
-end
 
--- Adicionando o botão de helicóptero alternador na aba Troll
-Tabs.troll:AddToggle("helicopterToggle", 
-{
-    Title = "Helicóptero Toggle", 
-    Description = "Ativar/Desativar helicóptero", 
-    Default = false, 
-    Callback = function(state)
-        toggleHelicopterMode()
+    -- Desativar efeitos de partículas
+    for _, effect in pairs(workspace:GetDescendants()) do
+        if effect:IsA("ParticleEmitter") or effect:IsA("Trail") then
+            effect.Enabled = false
+        end
     end
-})
 
--- Função de Kill All com espada
+    -- Desativar iluminação desnecessária
+    game.Lighting.GlobalShadows = false
+    game.Lighting.FogEnd = 9e9
+    game.Lighting.Brightness = 0
+
+    print("Lag e texturas removidos")
+end })
+
+-- Variável para controlar o estado do ataque automático
 local autoKill = false
 
+-- Função para seguir e atacar jogadores
 local function followAndAttack()
     while autoKill do
         local player = game.Players.LocalPlayer
@@ -118,7 +123,7 @@ local function followAndAttack()
 end
 
 -- Alternador para ativar/desativar o ataque automático
-Tabs.kill:AddToggle("autoKill", 
+local Toggle = Tabs.kill:AddToggle("autoKill", 
 {
     Title = "Auto Kill all (Sword)", 
     Description = "mate todos do Servidor (necessita de espada)",
@@ -185,9 +190,10 @@ Tabs.kill:AddButton({ Title = "Kill All (Sword)", Callback = function()
     end
 end })
 
--- Função para ativar/desativar o God Mode
+-- Variável para controlar o estado do God Mode
 local godMode = false
 
+-- Função para ativar/desativar o God Mode
 local function toggleGodMode(state)
     local player = game.Players.LocalPlayer
     local character = player.Character
@@ -210,7 +216,7 @@ local function toggleGodMode(state)
 end
 
 -- Alternador para ativar/desativar o God Mode
-Tabs.localplayer:AddToggle("godMode", 
+local Toggle = Tabs.localplayer:AddToggle("godMode", 
 {
     Title = "God Mode", 
     Description = "Ativa ou desativa o God Mode (talvez não funcione está em beta!)",
@@ -222,90 +228,55 @@ Tabs.localplayer:AddToggle("godMode",
 })
 
 -- Função para ativar/desativar o noclip
-local player = game.Players.LocalPlayer
-local noclip = false
-
 local function toggleNoclip(state)
     noclip = state
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:FindFirstChild("Humanoid")
+
     if noclip then
         print("Noclip ativado")
-        -- Loop contínuo para desativar colisões
-        game:GetService("RunService").Stepped:Connect(function()
-            if noclip and player.Character then
-                for _, part in pairs(player.Character:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        part.CanCollide = false
-                    end
-                end
+        humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+        character.DescendantAdded:Connect(function(child)
+            if child:IsA("BasePart") then
+                child.CanCollide = false
             end
         end)
-        print("Noclip ativado")
+
+        -- Girar mais rápido
+        while noclip do
+            character:SetPrimaryPartCFrame(character.PrimaryPart.CFrame * CFrame.Angles(0, math.rad(10), 0))
+            wait(0.1) -- Velocidade de rotação
+        end
     else
-        -- Ativar colisões
-        for _, part in pairs(player.Character:GetDescendants()) do
+        print("Noclip desativado")
+        for _, part in pairs(character:GetDescendants()) do
             if part:IsA("BasePart") then
                 part.CanCollide = true
             end
         end
-        print("Noclip desativado")
     end
 end
 
--- Alternador para ativar/desativar o Noclip
-Tabs.localplayer:AddToggle("noclip", 
+-- Alternador para ativar/desativar o noclip
+local NoclipToggle = Tabs.localplayer:AddToggle("noclip", 
 {
     Title = "Noclip", 
-    Description = "Ativar ou desativar o noclip",
+    Description = "Ativa ou desativa o Noclip",
     Default = false, 
     Callback = function(state)
         toggleNoclip(state)
-    end
+    end 
 })
 
--- Função para ajustar a velocidade de caminhada do jogador
-Tabs.localplayer:AddSlider("WalkSpeed", 
-{
-    Title = "Velocidade de Caminhada",
-    Description = "Ajuste a velocidade de caminhada do jogador",
-    Min = 16, 
-    Max = 300, 
-    Default = 16, 
-    Callback = function(value)
-        local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        character.Humanoid.WalkSpeed = value
-        print("Velocidade de caminhada ajustada para: " .. value)
+-- Adiciona uma opção de movimentação enquanto gira
+Tabs.localplayer:AddButton({ Title = "Andar enquanto gira", Callback = function()
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:FindFirstChild("Humanoid")
+    
+    while noclip do
+        humanoid:Move(Vector3.new(0, 0, 1), true) -- Move o personagem para frente
+        wait(0.1) -- Ajuste a velocidade de movimento
     end
-})
-
--- Função para ajustar a altura do pulo do jogador
-Tabs.localplayer:AddSlider("JumpPower", 
-{
-    Title = "Altura do Pulo",
-    Description = "Ajuste a altura do pulo do jogador",
-    Min = 50, 
-    Max = 300, 
-    Default = 50, 
-    Callback = function(value)
-        local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        character.Humanoid.JumpPower = value
-        print("Altura do pulo ajustada para: " .. value)
-    end
-})
-
--- Adicionando botões de interface e configurações
-Tabs.guis:AddButton({ Title = "Fechar o Gui", Callback = function()
-    Window:Close()
-    print("Gui fechado")
 end })
 
-Tabs.confi:AddButton({ Title = "Reabrir Gui", Callback = function()
-    Window:Open()
-    print("Gui reaberto")
-end })
-
-Tabs.confi:AddButton({ Title = "Destruir Gui", Callback = function()
-    Window:Destroy()
-    print("Gui destruído")
-end })
+-- Para completar o código, adicione a lógica de ativação do toggle e outros botões se necessário
