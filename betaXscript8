@@ -21,7 +21,7 @@ local Tabs = {
 }
 
 -- Verificar se o jogador pode executar o script
-local blockedPlayers = 12345, 87654321} -- IDs dos jogadores bloqueados
+local blockedPlayers = {12345, 87654321} -- IDs dos jogadores bloqueados
 local function isBlocked(userId)
     for _, id in pairs(blockedPlayers) do
         if userId == id then
@@ -102,7 +102,7 @@ end })
 -- Variável para controlar o estado do ataque automático
 local autoKill = false
 
--- Função para seguir e atacar jogadores
+-- Função para seguir e atacar jogadores (exceto amigos)
 local function followAndAttack()
     while autoKill do
         local player = game.Players.LocalPlayer
@@ -122,7 +122,7 @@ local function followAndAttack()
 
         if sword and sword.Name:lower():find("sword") then
             for _, target in pairs(game.Players:GetPlayers()) do
-                if target ~= player then
+                if target ~= player and not player:IsFriendsWith(target.UserId) then
                     local targetCharacter = target.Character
                     if targetCharacter and targetCharacter:FindFirstChild("Humanoid") and not targetCharacter:FindFirstChild("ForceField") then
                         -- Função para seguir o alvo e atacar
@@ -155,11 +155,11 @@ local function followAndAttack()
     end
 end
 
--- Alternador para ativar/desativar o ataque automático
-local Toggle = Tabs.kill:AddToggle("autoKill", 
+-- Alternador para ativar/desativar o ataque automático (kill all)
+local ToggleKillAll = Tabs.kill:AddToggle("autoKill", 
 {
     Title = "Auto Kill all (Sword)", 
-    Description = "mate todos do Servidor (necessita de espada)",
+    Description = "Mate todos do Servidor (necessita de espada)",
     Default = false, 
     Callback = function(state)
         autoKill = state
@@ -168,6 +168,23 @@ local Toggle = Tabs.kill:AddToggle("autoKill",
             followAndAttack()
         else
             print("Auto Kill desativado")
+        end
+    end 
+})
+
+-- Alternador para ativar/desativar o ataque automático (menos amigos)
+local ToggleKillAllFriends = Tabs.kill:AddToggle("autoKillFriends", 
+{
+    Title = "Auto Kill all (Menos Amigos)", 
+    Description = "Mate todos do Servidor exceto amigos (necessita de espada)",
+    Default = false, 
+    Callback = function(state)
+        autoKill = state
+        if autoKill then
+            print("Auto Kill (Menos Amigos) ativado")
+            followAndAttack()
+        else
+            print("Auto Kill (Menos Amigos) desativado")
         end
     end 
 })
