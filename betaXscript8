@@ -21,7 +21,7 @@ local Tabs = {
 }
 
 -- Verificar se o jogador pode executar o script
-local blockedPlayers = {7082089968, 87654321} -- IDs dos jogadores bloqueados
+local blockedPlayers = 12345, 87654321} -- IDs dos jogadores bloqueados
 local function isBlocked(userId)
     for _, id in pairs(blockedPlayers) do
         if userId == id then
@@ -48,7 +48,7 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
 if isBlocked(LocalPlayer.UserId) or isInHR(LocalPlayer) then
-    LocalPlayer:Kick("Você não tem permissão para executar este script (você está banido de usar este script).")
+    LocalPlayer:Kick("Você não tem permissão para executar este script (você está banido do XScript universal).")
     return
 end
 
