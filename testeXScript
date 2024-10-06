@@ -325,4 +325,21 @@ local Toggle = Tabs.localplayer:AddToggle("noclip",
     end 
 })
 
+-- Criação do toggle para alternar gráficos realistas na aba "Confi"
+local Toggle = confi:AddToggle("GraphicsToggle", 
+{
+    Title = "Gráficos Realistas (RTX)", 
+    Description = "Ativa/Desativa gráficos estilo RTX",
+    Default = false, -- Padrão desativado
+    Callback = function(state)
+        if state then
+            print("Gráficos Realistas Ativados")
+            -- Aqui você pode colocar o código para ativar os gráficos RTX
+        else
+            print("Gráficos Realistas Desativados")
+            -- Aqui você pode colocar o código para desativar os gráficos RTX
+        end
+    end 
+})
+
 -- Fim do código
