@@ -2,65 +2,26 @@
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
 -- Aviso ao executar
-Fluent:Notify({ Title = "executado!", Content = "executando com sucesso" })
-Fluent:Notify({ Title = "Servidor XScripts oficial discord!", Content = "https://discord.gg/qsYR297DR2" })
+Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
 
 local Window = Fluent:CreateWindow({
-    Title = "XScript universal 🔥 | Versão 1.0.0 ",
-    TabWidth = 160, 
-    Size = UDim2.fromOffset(580, 460), 
+    Title = "XScript universal 🔥 | Versão 1.0.0",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
     Theme = "Amethyst"
 })
 
 local Tabs = {
-    Tabinfo = Window:AddTab({ Title = "Tab Info" }),
-    scripts = Window:AddTab({ Title = "Scripts", Icon = "play" }),
-
--- Verificar se o jogador pode executar o script
-local blockedPlayers = {72720,71828} -- IDs dos jogadores bloqueados
-local function isBlocked(userId)
-    for _, id in pairs(blockedPlayers) do
-        if userId == id then
-            return true
-        end
-    end
-    return false
-end
-
--- Função para verificar se o jogador está na HR (high rank)
-local hrRanks = {"HighRank", "Owner", "Admin"} -- Definir os ranks de HR
-local function isInHR(player)
-    local rank = player:GetRoleInGroup(1234567) -- Coloque o ID do grupo
-    for _, r in pairs(hrRanks) do
-        if rank == r then
-            return true
-        end
-    end
-    return false
-end
-
--- Checar se o jogador é bloqueado ou está na HR
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-
-if isBlocked(LocalPlayer.UserId) or isInHR(LocalPlayer) then
-    LocalPlayer:Kick("Você não tem permissão para executar este script (você está banido do XScript universal) Entre no https://discord.gg/qsYR297DR2 e faça um pedido de desban.")
-    return
-end
+    scripts = Window:AddTab({ Title = "XScripts", Icon = "user" }),
+}
 
 -- Botões
-Tabs.localplayer:AddButton({ Title = "pulo infinito", Callback = function() 
+Tabs.scripts:AddButton({ Title = "XScript universal", Callback = function() 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
 end })
 
-Tabs.guis:AddButton({ Title = "Fly gui", Callback = function() 
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fly'))()
-end })
-
-Tabs.tools:AddButton({ Title = "Tp tool", Callback = function() 
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/tptool'))()
-end })
-
-Tabs.guis:AddButton({ Title = "jogar alguém no void gui", Callback = function() 
+Tabs.guis:AddButton({ Title = "Toilet Verse tower defence", Callback = function() 
     loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fling'))()
 end })
+
+-- Fim do código
