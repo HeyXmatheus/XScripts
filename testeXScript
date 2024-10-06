@@ -15,13 +15,14 @@ local Window = Fluent:CreateWindow({
 local Tabs = {
     Tabinfo = Window:AddTab({ Title = "Tab Info" }),
     kill = Window:AddTab({ Title = "Kill All", Icon = "play" }),
+    tools = Window:AddTab({ Title = "Tools", Icon = "wrench" }),
     guis = Window:AddTab({ Title = "Guis", Icon = "file" }),
     localplayer = Window:AddTab({ Title = "Local Player", Icon = "user" }),
     confi = Window:AddTab({ Title = "Configurações", Icon = "settings" })
 }
 
 -- Verificar se o jogador pode executar o script
-local blockedPlayers = {12345, 87654321} -- IDs dos jogadores bloqueados
+local blockedPlayers = {72720,71828} -- IDs dos jogadores bloqueados
 local function isBlocked(userId)
     for _, id in pairs(blockedPlayers) do
         if userId == id then
@@ -48,19 +49,21 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
 if isBlocked(LocalPlayer.UserId) or isInHR(LocalPlayer) then
-    LocalPlayer:Kick("Você não tem permissão para executar este script (você está banido do XScript universal).")
+    LocalPlayer:Kick("Você não tem permissão para executar este script (você está banido do XScript universal) Entre no https://discord.gg/qsYR297DR2 e faça um pedido de desban.")
     return
 end
 
--- Continuar com o restante do código
-
--- Botões 
+-- Botões
 Tabs.localplayer:AddButton({ Title = "pulo infinito", Callback = function() 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
 end })
 
 Tabs.guis:AddButton({ Title = "Fly gui", Callback = function() 
     loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fly'))()
+end })
+
+Tabs.tools:AddButton({ Title = "Tp tool", Callback = function() 
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/tptool'))()
 end })
 
 Tabs.guis:AddButton({ Title = "jogar alguém no void gui", Callback = function() 
@@ -234,45 +237,92 @@ Tabs.kill:AddButton({ Title = "Kill All (Sword)", Callback = function()
                 end
             end
         end
-        print("Todos os jogadores foram mortos")
     else
         print("Você precisa estar com uma espada equipada")
     end
 end })
 
--- Variável para controlar o estado do God Mode
-local godMode = false
+-- Sliders
+local Slider = Tabs.localplayer:AddSlider("pulo", 
+{
+    Title = "ajusta pulo",
+    Description = "irá mudar pulo jogador",
+    Default = 2,
+    Min = 0,
+    Max = 5,
+    Rounding = 1,
+    Callback = function(Value)
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        
+        -- Ajustar o pulo do jogador
+        humanoid.JumpPower = Value * 50  -- Multiplica o valor para aumentar o impacto
+        print("Pulo mudou para:", Value)
+    end
+})
 
--- Função para ativar/desativar o God Mode
-local function toggleGodMode(state)
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoid = character:FindFirstChild("Humanoid")
+local Slider = Tabs.localplayer:AddSlider("velocidade", 
+{
+    Title = "Velocidade",
+    Description = "Ajusta a velocidade do jogador",
+    Default = 2,
+    Min = 0,
+    Max = 5,
+    Rounding = 1,
+    Callback = function(Value)
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        
+        -- Define a velocidade de caminhada
+        humanoid.WalkSpeed = Value * 10  -- Multiplica o valor para aumentar o impacto
+        print("Velocidade mudou para:", Value)
+    end
+})
+ -- Função para ativar/desativar o noclip
+local player = game.Players.LocalPlayer
+local noclip = false
 
-    if state then
-        humanoid.MaxHealth = math.huge
-        humanoid.Health = math.huge
-        humanoid:GetPropertyChangedSignal("Health"):Connect(function()
-            if humanoid.Health < math.huge then
-                humanoid.Health = math.huge
+local function toggleNoclip(state)
+    noclip = state
+    if noclip then
+        print("Noclip ativado")
+        -- Loop contínuo para desativar colisões
+        game:GetService("RunService").Stepped:Connect(function()
+            if noclip and player.Character then
+                for _, part in pairs(player.Character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = false
+                    end
+                end
             end
         end)
-        print("God Mode ativado")
+        print("Noclip ativado")
     else
-        humanoid.MaxHealth = 100
-        humanoid.Health = 100
-        print("God Mode desativado")
+        -- Ativar colisões
+        for _, part in pairs(player.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
+            end
+        end
+        print("Noclip desativado")
     end
 end
 
--- Alternador para ativar/desativar o God Mode
-local Toggle = Tabs.localplayer:AddToggle("godMode", 
+local Toggle = Tabs.localplayer:AddToggle("noclip", 
 {
-    Title = "God Mode", 
-    Description = "Ativa ou desativa o God Mode (talvez não funcione está em beta!)",
+    Title = "noclip", 
+    Description = "atravesse as paredes",
     Default = false, 
     Callback = function(state)
-        godMode = state
-        toggleGodMode(godMode)
+        toggleNoclip(state)
+        if state then
+            print("Noclip ativado")
+        else
+            print("Noclip desativado")
+        end
     end 
 })
+
+-- Fim do código
