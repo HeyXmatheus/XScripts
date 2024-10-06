@@ -1,3 +1,6 @@
+--kick
+game.Players.LocalPlayer:Kick("o XScript universal está em manutenção. Tente novamente mais tarde.")
+
 -- Carregar biblioteca
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
@@ -309,23 +312,20 @@ local function toggleNoclip(state)
         print("Noclip desativado")
     end
 end
-})
 
-local Toggle = Tabs.confi:AddToggle("GraphicsToggle", 
+local Toggle = Tabs.localplayer:AddToggle("noclip", 
 {
-    Title = "Gráficos Realistas (RTX)", 
-    Description = "Ativa/Desativa gráficos estilo RTX",
-    Default = false, -- Padrão desativado
+    Title = "noclip", 
+    Description = "atravesse as paredes",
+    Default = false, 
     Callback = function(state)
+        toggleNoclip(state)
         if state then
-            print("Gráficos Realistas Ativados")
-            -- Aqui você pode colocar o código para ativar os gráficos RTX
+            print("Noclip ativado")
         else
-            print("Gráficos Realistas Desativados")
-            -- Aqui você pode colocar o código para desativar os gráficos RTX
+            print("Noclip desativado")
         end
     end 
 })
-
 
 -- Fim do código
