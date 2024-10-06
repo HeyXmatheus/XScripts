@@ -280,5 +280,49 @@ local Slider = Tabs.localplayer:AddSlider("velocidade",
         print("Velocidade mudou para:", Value)
     end
 })
+ -- Função para ativar/desativar o noclip
+local player = game.Players.LocalPlayer
+local noclip = false
+
+local function toggleNoclip(state)
+    noclip = state
+    if noclip then
+        print("Noclip ativado")
+        -- Loop contínuo para desativar colisões
+        game:GetService("RunService").Stepped:Connect(function()
+            if noclip and player.Character then
+                for _, part in pairs(player.Character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = false
+                    end
+                end
+            end
+        end)
+        print("Noclip ativado")
+    else
+        -- Ativar colisões
+        for _, part in pairs(player.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
+            end
+        end
+        print("Noclip desativado")
+    end
+end
+
+local Toggle = Tabs.localplayer:AddToggle("noclip", 
+{
+    Title = "noclip", 
+    Description = "atravesse as paredes",
+    Default = false, 
+    Callback = function(state)
+        toggleNoclip(state)
+        if state then
+            print("Noclip ativado")
+        else
+            print("Noclip desativado")
+        end
+    end 
+})
 
 -- Fim do código
