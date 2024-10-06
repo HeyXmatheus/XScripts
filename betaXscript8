@@ -15,15 +15,22 @@ local Window = Fluent:CreateWindow({
 })
 
 local Tabs = {
-    scripts = Window:AddTab({ Title = "XScripts", Icon = "user" })}
+    scripts = Window:AddTab({ Title = "XScripts", Icon = "user" }),
+}
 
 -- Botões
-Tabs.scripts:AddButton({ Title = "XScript universal", Callback = function() 
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/XScriptUniversal'))()
+Tabs.scripts:AddButton({
+    Title = "XScript universal", 
+    Callback = function() 
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/XScriptUniversal'))()
+    end
+})
 
-Tabs.scripts:AddButton({ Title = "Toilet Verse tower defence", Callback = function() 
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/toiletverse'))()
-
-end })
+Tabs.scripts:AddButton({
+    Title = "Toilet Verse tower defence", 
+    Callback = function() 
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/toiletverse'))()
+    end 
+})
 
 -- Fim do código
