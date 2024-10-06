@@ -3,36 +3,74 @@ local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/
 
 -- Aviso ao executar
 Fluent:Notify({ Title = "executado!", Content = "executando com sucesso" })
+Fluent:Notify({ Title = "Servidor XScripts oficial discord!", Content = "https://discord.gg/qsYR297DR2" })
 
 local Window = Fluent:CreateWindow({
-    Title = "XScript universal" .. Fluent.Version,
+    Title = "XScript universal 🔥 | Versão 1.0.0 ",
     TabWidth = 160, 
     Size = UDim2.fromOffset(580, 460), 
     Theme = "Amethyst"
 })
 
 local Tabs = {
-    Main = Window:AddTab({ Title = "inicio" }),
-    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+    Tabinfo = Window:AddTab({ Title = "Tab Info" }),
+    kill = Window:AddTab({ Title = "Kill All", Icon = "play" }),
+    tools = Window:AddTab({ Title = "Tools", Icon = "wrench" }),
+    guis = Window:AddTab({ Title = "Guis", Icon = "file" }),
+    localplayer = Window:AddTab({ Title = "Local Player", Icon = "user" }),
+    confi = Window:AddTab({ Title = "Configurações", Icon = "settings" })
 }
 
--- Parágrafos 
-Tabs.Main:AddParagraph({ Title = "XScript", Content = "versao beta" })
+-- Verificar se o jogador pode executar o script
+local blockedPlayers = {72720,71828} -- IDs dos jogadores bloqueados
+local function isBlocked(userId)
+    for _, id in pairs(blockedPlayers) do
+        if userId == id then
+            return true
+        end
+    end
+    return false
+end
 
--- Botões 
-Tabs.Main:AddButton({ Title = "pulo infinito", Callback = function() 
+-- Função para verificar se o jogador está na HR (high rank)
+local hrRanks = {"HighRank", "Owner", "Admin"} -- Definir os ranks de HR
+local function isInHR(player)
+    local rank = player:GetRoleInGroup(1234567) -- Coloque o ID do grupo
+    for _, r in pairs(hrRanks) do
+        if rank == r then
+            return true
+        end
+    end
+    return false
+end
+
+-- Checar se o jogador é bloqueado ou está na HR
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+if isBlocked(LocalPlayer.UserId) or isInHR(LocalPlayer) then
+    LocalPlayer:Kick("Você não tem permissão para executar este script (você está banido do XScript universal) Entre no https://discord.gg/qsYR297DR2 e faça um pedido de desban.")
+    return
+end
+
+-- Botões
+Tabs.localplayer:AddButton({ Title = "pulo infinito", Callback = function() 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
 end })
 
-Tabs.Main:AddButton({ Title = "Fly gui", Callback = function() 
+Tabs.guis:AddButton({ Title = "Fly gui", Callback = function() 
     loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fly'))()
 end })
 
-Tabs.Main:AddButton({ Title = "Fling gui", Callback = function() 
+Tabs.tools:AddButton({ Title = "Tp tool", Callback = function() 
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/tptool'))()
+end })
+
+Tabs.guis:AddButton({ Title = "jogar alguém no void gui", Callback = function() 
     loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fling'))()
 end })
 
-Tabs.Main:AddButton({ Title = "Remover Lag e Texturas", Callback = function() 
+Tabs.confi:AddButton({ Title = "Remover Lag e Texturas", Callback = function() 
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
 
@@ -67,7 +105,7 @@ end })
 -- Variável para controlar o estado do ataque automático
 local autoKill = false
 
--- Função para seguir e atacar jogadores
+-- Função para seguir e atacar jogadores (exceto amigos)
 local function followAndAttack()
     while autoKill do
         local player = game.Players.LocalPlayer
@@ -87,9 +125,9 @@ local function followAndAttack()
 
         if sword and sword.Name:lower():find("sword") then
             for _, target in pairs(game.Players:GetPlayers()) do
-                if target ~= player then
+                if target ~= player and not player:IsFriendsWith(target.UserId) then
                     local targetCharacter = target.Character
-                    if targetCharacter and targetCharacter:FindFirstChild("Humanoid") then
+                    if targetCharacter and targetCharacter:FindFirstChild("Humanoid") and not targetCharacter:FindFirstChild("ForceField") then
                         -- Função para seguir o alvo e atacar
                         local function followTarget()
                             while autoKill and targetCharacter.Humanoid.Health > 0 do
@@ -120,11 +158,11 @@ local function followAndAttack()
     end
 end
 
--- Alternador para ativar/desativar o ataque automático
-local Toggle = Tabs.Main:AddToggle("autoKill", 
+-- Alternador para ativar/desativar o ataque automático (kill all)
+local ToggleKillAll = Tabs.kill:AddToggle("autoKill", 
 {
-    Title = "Auto Kill (Sword)", 
-    Description = "Ativa ou desativa o ataque automático",
+    Title = "Auto Kill all (Sword)", 
+    Description = "Mate todos do Servidor (necessita de espada)",
     Default = false, 
     Callback = function(state)
         autoKill = state
@@ -137,8 +175,25 @@ local Toggle = Tabs.Main:AddToggle("autoKill",
     end 
 })
 
+-- Alternador para ativar/desativar o ataque automático (menos amigos)
+local ToggleKillAllFriends = Tabs.kill:AddToggle("autoKillFriends", 
+{
+    Title = "Auto Kill all (Menos Amigos)", 
+    Description = "Mate todos do Servidor exceto amigos (necessita de espada)",
+    Default = false, 
+    Callback = function(state)
+        autoKill = state
+        if autoKill then
+            print("Auto Kill (Menos Amigos) ativado")
+            followAndAttack()
+        else
+            print("Auto Kill (Menos Amigos) desativado")
+        end
+    end 
+})
+
 -- Botão para executar o Kill All manualmente
-Tabs.Main:AddButton({ Title = "Kill All (Sword)", Callback = function() 
+Tabs.kill:AddButton({ Title = "Kill All (Sword)", Callback = function() 
     local player = game.Players.LocalPlayer
     local character = player.Character
     local sword = character:FindFirstChildOfClass("Tool")
@@ -158,7 +213,7 @@ Tabs.Main:AddButton({ Title = "Kill All (Sword)", Callback = function()
         for _, target in pairs(game.Players:GetPlayers()) do
             if target ~= player then
                 local targetCharacter = target.Character
-                if targetCharacter and targetCharacter:FindFirstChild("Humanoid") then
+                if targetCharacter and targetCharacter:FindFirstChild("Humanoid") and not targetCharacter:FindFirstChild("ForceField") then
                     -- Função para seguir o alvo e atacar
                     local function followTarget()
                         while targetCharacter.Humanoid.Health > 0 do
@@ -182,91 +237,13 @@ Tabs.Main:AddButton({ Title = "Kill All (Sword)", Callback = function()
                 end
             end
         end
-        print("Todos os jogadores foram mortos")
     else
         print("Você precisa estar com uma espada equipada")
     end
 end })
 
--- Variável para controlar o estado do God Mode
-local godMode = false
-
--- Função para ativar/desativar o God Mode
-local function toggleGodMode(state)
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoid = character:FindFirstChild("Humanoid")
-
-    if state then
-        humanoid.MaxHealth = math.huge
-        humanoid.Health = math.huge
-        humanoid:GetPropertyChangedSignal("Health"):Connect(function()
-            if humanoid.Health < math.huge then
-                humanoid.Health = math.huge
-            end
-        end)
-        print("God Mode ativado")
-    else
-        humanoid.MaxHealth = 100
-        humanoid.Health = 100
-        print("God Mode desativado")
-    end
-end
-
--- Alternador para ativar/desativar o God Mode
-local Toggle = Tabs.Main:AddToggle("godMode", 
-{
-    Title = "God Mode", 
-    Description = "Ativa ou desativa o God Mode",
-    Default = false, 
-    Callback = function(state)
-        godMode = state
-        toggleGodMode(godMode)
-    end 
-})
-
--- Função para alternar o estado do noclip
-local player = game.Players.LocalPlayer
-local noclip = false
-
-local function toggleNoclip(state)
-    noclip = state
-    if noclip then
-        -- Desativar colisões
-        for _, part in pairs(player.Character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = false
-            end
-        end
-        print("Noclip ativado")
-    else
-        -- Ativar colisões
-        for _, part in pairs(player.Character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = true
-            end
-        end
-        print("Noclip desativado")
-    end
-end
-
-local Toggle = Tabs.Main:AddToggle("noclip", 
-{
-    Title = "noclip", 
-    Description = "Ativa ou desativa o noclip",
-    Default = false, 
-    Callback = function(state)
-        toggleNoclip(state)
-        if state then
-            print("Noclip ativado")
-        else
-            print("Noclip desativado")
-        end
-    end 
-})
-
 -- Sliders
-local Slider = Tabs.Main:AddSlider("pulo", 
+local Slider = Tabs.localplayer:AddSlider("pulo", 
 {
     Title = "ajusta pulo",
     Description = "irá mudar pulo jogador",
@@ -275,11 +252,17 @@ local Slider = Tabs.Main:AddSlider("pulo",
     Max = 5,
     Rounding = 1,
     Callback = function(Value)
-        print("pulo mudou para:", Value)
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        
+        -- Ajustar o pulo do jogador
+        humanoid.JumpPower = Value * 50  -- Multiplica o valor para aumentar o impacto
+        print("Pulo mudou para:", Value)
     end
 })
 
-local Slider = Tabs.Main:AddSlider("velocidade", 
+local Slider = Tabs.localplayer:AddSlider("velocidade", 
 {
     Title = "Velocidade",
     Description = "Ajusta a velocidade do jogador",
@@ -294,5 +277,52 @@ local Slider = Tabs.Main:AddSlider("velocidade",
         
         -- Define a velocidade de caminhada
         humanoid.WalkSpeed = Value * 10  -- Multiplica o valor para aumentar o impacto
+        print("Velocidade mudou para:", Value)
     end
 })
+ -- Função para ativar/desativar o noclip
+local player = game.Players.LocalPlayer
+local noclip = false
+
+local function toggleNoclip(state)
+    noclip = state
+    if noclip then
+        print("Noclip ativado")
+        -- Loop contínuo para desativar colisões
+        game:GetService("RunService").Stepped:Connect(function()
+            if noclip and player.Character then
+                for _, part in pairs(player.Character:GetDescendants()) do
+                    if part:IsA("BasePart") then
+                        part.CanCollide = false
+                    end
+                end
+            end
+        end)
+        print("Noclip ativado")
+    else
+        -- Ativar colisões
+        for _, part in pairs(player.Character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
+            end
+        end
+        print("Noclip desativado")
+    end
+end
+
+local Toggle = Tabs.localplayer:AddToggle("noclip", 
+{
+    Title = "noclip", 
+    Description = "atravesse as paredes",
+    Default = false, 
+    Callback = function(state)
+        toggleNoclip(state)
+        if state then
+            print("Noclip ativado")
+        else
+            print("Noclip desativado")
+        end
+    end 
+})
+
+-- Fim do código
