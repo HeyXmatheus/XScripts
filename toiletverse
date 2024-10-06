@@ -1,0 +1,66 @@
+-- Carregar biblioteca
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
+-- Aviso ao executar
+Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
+Fluent:Notify({ Title = "Servidor XScripts oficial discord!", Content = "https://discord.gg/qsYR297DR2" })
+
+local Window = Fluent:CreateWindow({
+    Title = "XScript Toilet Verse 🔥 | Versão 1.0.0 ",
+    TabWidth = 160, 
+    Size = UDim2.fromOffset(580, 460), 
+    Theme = "Amethyst"
+})
+
+local Tabs = {
+    Tabinfo = Window:AddTab({ Title = "Tab Info" }),
+    farm = Window:AddTab({ Title = "Auto Farm", Icon = "play" }),
+    other = Window:AddTab({ Title = "Outros", Icon = "wrench" }),
+}
+
+-- Variável para controlar o estado da coleta automática de moedas
+local autoCollectCoins = false
+local collectingCoins = false -- Variável para controlar se estamos coletando moedas
+
+-- Função para teletransportar moedas para o jogador
+local function teleportCoins()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+    while collectingCoins do
+        task.wait(0.1) -- Tempo entre as coletas (ajuste conforme necessário)
+
+        for _, coin in pairs(workspace:GetChildren()) do
+            if coin:IsA("Part") and coin.Name == "Coin" then -- Verifica se é uma moeda
+                coin.Position = humanoidRootPart.Position -- Teleporta a moeda para a posição do jogador
+            end
+        end
+    end
+end
+
+-- Alternador para ativar/desativar a coleta automática de moedas
+Tabs.farm:AddToggle("autoCollectCoins", 
+{
+    Title = "Auto Collect Coins e esmeraldas", 
+    Description = "Ativa ou desativa a coleta automática de moedas e esmeraldas.",
+    Default = false, 
+    Callback = function(state)
+        autoCollectCoins = state
+        if autoCollectCoins then
+            collectingCoins = true -- Inicia a coleta de moedas
+            print("Coleta automática de moedas ativada")
+            teleportCoins()
+        else
+            collectingCoins = false -- Para a coleta de moedas
+            print("Coleta automática de moedas desativada")
+        end
+    end 
+})
+
+-- Aqui você pode adicionar mais funcionalidades nas outras abas
+Tabs.other:AddButton({ Title = "Outro Botão", Callback = function() 
+    print("Outro botão foi clicado!")
+end })
+
+-- Fim do código
