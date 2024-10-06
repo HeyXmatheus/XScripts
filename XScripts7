@@ -8,7 +8,7 @@ Fluent:Notify({ Title = "Servidor XScripts oficial discord!", Content = "https:/
 local Window = Fluent:CreateWindow({
     Title = "XScript universal 🔥 | Versão 1.0.0 ",
     TabWidth = 160, 
-    Size = UDim2.fromOffset(380, 460), 
+    Size = UDim2.fromOffset(587, 460), 
     Theme = "Amethyst"
 })
 
