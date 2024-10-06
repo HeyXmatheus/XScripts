@@ -309,6 +309,7 @@ local function toggleNoclip(state)
         print("Noclip desativado")
     end
 end
+})
 
 local Toggle = Tabs.confi:AddToggle("GraphicsToggle", 
 {
