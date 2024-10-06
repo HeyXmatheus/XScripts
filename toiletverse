@@ -14,12 +14,13 @@ local Window = Fluent:CreateWindow({
 
 local Tabs = {
     Tabinfo = Window:AddTab({ Title = "Tab Info" }),
-    autoFarms = Window:AddTab({ Title = "Auto Farms", Icon = "home" }), -- Renomeado para "Auto Farms"
+    autoFarms = Window:AddTab({ Title = "Auto Farms", Icon = "farm" }), -- Renomeado para "Auto Farms"
 }
 
 -- Variáveis para controlar a coleta automática
 local collectingCoins = false
 local collectingHealingItems = false
+local parasitarActive = false
 
 -- Função para teletransportar moedas para o jogador
 local function teleportCoins()
@@ -55,6 +56,19 @@ local function teleportHealingItems()
     end
 end
 
+-- Função para ativar/desativar parasitar
+local function toggleParasitar()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    while parasitarActive do
+        task.wait(0.1) -- Tempo entre as ativações
+
+        -- Implementação do parasitar (a lógica exata depende de como o parasitar funciona no jogo)
+        -- Aqui, você deve adicionar a lógica para fazer o parasita "pegar" os inimigos ou algo similar
+    end
+end
+
 -- Alternador para ativar/desativar a coleta automática de moedas
 Tabs.autoFarms:AddToggle("autoCollectCoins", 
 {
@@ -85,6 +99,23 @@ Tabs.autoFarms:AddToggle("autoCollectHealingItems",
             teleportHealingItems()
         else
             print("Coleta automática de curativos desativada")
+        end
+    end 
+})
+
+-- Alternador para ativar/desativar o parasitar
+Tabs.autoFarms:AddToggle("autoParasitar", 
+{
+    Title = "Auto Parasitar", 
+    Description = "Ativa ou desativa a habilidade de parasitar inimigos.",
+    Default = false, 
+    Callback = function(state)
+        parasitarActive = state
+        if parasitarActive then
+            print("Auto Parasitar ativado")
+            toggleParasitar()
+        else
+            print("Auto Parasitar desativado")
         end
     end 
 })
