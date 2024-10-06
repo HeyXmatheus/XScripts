@@ -2,7 +2,7 @@
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
 -- Aviso ao executar
-Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
+Fluent:Notify({ Title = "executado!", Content = "executando com sucesso" })
 Fluent:Notify({ Title = "Servidor XScripts oficial discord!", Content = "https://discord.gg/qsYR297DR2" })
 
 local Window = Fluent:CreateWindow({
@@ -14,110 +14,85 @@ local Window = Fluent:CreateWindow({
 
 local Tabs = {
     Tabinfo = Window:AddTab({ Title = "Tab Info" }),
-    autoFarms = Window:AddTab({ Title = "Auto Farms", Icon = "farm" }), -- Renomeado para "Auto Farms"
+    kill = Window:AddTab({ Title = "Kill All", Icon = "play" }),
+    tools = Window:AddTab({ Title = "Tools", Icon = "wrench" }),
+    guis = Window:AddTab({ Title = "Guis", Icon = "file" }),
+    localplayer = Window:AddTab({ Title = "Local Player", Icon = "user" }),
+    confi = Window:AddTab({ Title = "Configurações", Icon = "settings" }),
+    autofarms = Window:AddTab({ Title = "Auto Farms", Icon = "leaf" }) -- Nova aba "Auto Farms"
 }
 
--- Variáveis para controlar a coleta automática
-local collectingCoins = false
-local collectingHealingItems = false
-local parasitarActive = false
+-- ... (O restante do seu código permanece inalterado) ...
 
--- Função para teletransportar moedas para o jogador
-local function teleportCoins()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-    while collectingCoins do
-        task.wait(0.1) -- Tempo entre as coletas
-
+-- Alternador para coletar moedas
+local autoCollectCoins = false
+local function collectCoins()
+    while autoCollectCoins do
+        wait(0.1) -- Ajuste o tempo conforme necessário
         for _, coin in pairs(workspace:GetChildren()) do
-            if coin:IsA("Part") and coin.Name == "Coin" then -- Verifica se é uma moeda
-                coin.Position = humanoidRootPart.Position -- Teleporta a moeda para a posição do jogador
+            if coin:IsA("Part") and coin.Name == "Coin" then
+                coin.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame -- Teleporta a moeda para o jogador
             end
         end
     end
 end
 
--- Função para teletransportar curativos para o jogador
-local function teleportHealingItems()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+local ToggleCollectCoins = Tabs.autofarms:AddToggle("Auto Collect Coins", 
+{
+    Title = "Coletar Moedas Automaticamente", 
+    Default = false, 
+    Callback = function(state)
+        autoCollectCoins = state
+        if autoCollectCoins then
+            collectCoins() -- Iniciar a coleta de moedas
+        end
+    end 
+})
 
-    while collectingHealingItems do
-        task.wait(0.1) -- Tempo entre as coletas
-
-        for _, item in pairs(workspace:GetChildren()) do
-            if item:IsA("Part") and item.Name == "HealingItem" then -- Verifica se é um item de cura
-                item.Position = humanoidRootPart.Position -- Teleporta o curativo para a posição do jogador
+-- Alternador para coletar Heal
+local autoCollectHeal = false
+local function collectHeal()
+    while autoCollectHeal do
+        wait(0.1) -- Ajuste o tempo conforme necessário
+        for _, heal in pairs(workspace:GetChildren()) do
+            if heal:IsA("Part") and heal.Name == "Heal" then
+                heal.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame -- Teleporta o curativo para o jogador
             end
         end
     end
 end
 
--- Função para ativar/desativar parasitar
-local function toggleParasitar()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
+local ToggleCollectHeal = Tabs.autofarms:AddToggle("Auto Collect Heal", 
+{
+    Title = "Coletar Curativos Automaticamente", 
+    Default = false, 
+    Callback = function(state)
+        autoCollectHeal = state
+        if autoCollectHeal then
+            collectHeal() -- Iniciar a coleta de curativos
+        end
+    end 
+})
 
-    while parasitarActive do
-        task.wait(0.1) -- Tempo entre as ativações
-
-        -- Implementação do parasitar (a lógica exata depende de como o parasitar funciona no jogo)
-        -- Aqui, você deve adicionar a lógica para fazer o parasita "pegar" os inimigos ou algo similar
+-- Alternador para auto parasitar
+local autoParasite = false
+local function parasitar()
+    while autoParasite do
+        wait(0.1) -- Ajuste o tempo conforme necessário
+        -- Lógica para parasitar (defina conforme sua necessidade)
     end
 end
 
--- Alternador para ativar/desativar a coleta automática de moedas
-Tabs.autoFarms:AddToggle("autoCollectCoins", 
+local ToggleParasite = Tabs.autofarms:AddToggle("Auto Parasitar", 
 {
-    Title = "Auto Collect Coins", 
-    Description = "Ativa ou desativa a coleta automática de moedas.",
+    Title = "Parasitar Automaticamente", 
     Default = false, 
     Callback = function(state)
-        collectingCoins = state
-        if collectingCoins then
-            print("Coleta automática de moedas ativada")
-            teleportCoins()
-        else
-            print("Coleta automática de moedas desativada")
+        autoParasite = state
+        if autoParasite then
+            parasitar() -- Iniciar a lógica de parasitar
         end
     end 
 })
 
--- Alternador para ativar/desativar a coleta automática de curativos
-Tabs.autoFarms:AddToggle("autoCollectHealingItems", 
-{
-    Title = "Auto Collect Healing Items", 
-    Description = "Ativa ou desativa a coleta automática de curativos.",
-    Default = false, 
-    Callback = function(state)
-        collectingHealingItems = state
-        if collectingHealingItems then
-            print("Coleta automática de curativos ativada")
-            teleportHealingItems()
-        else
-            print("Coleta automática de curativos desativada")
-        end
-    end 
-})
-
--- Alternador para ativar/desativar o parasitar
-Tabs.autoFarms:AddToggle("autoParasitar", 
-{
-    Title = "Auto Parasitar", 
-    Description = "Ativa ou desativa a habilidade de parasitar inimigos.",
-    Default = false, 
-    Callback = function(state)
-        parasitarActive = state
-        if parasitarActive then
-            print("Auto Parasitar ativado")
-            toggleParasitar()
-        else
-            print("Auto Parasitar desativado")
-        end
-    end 
-})
-
--- Fim do código
+-- ... (O restante do seu código permanece inalterado) ...
