@@ -22,7 +22,7 @@ local Tabs = {
 }
 
 -- Verificar se o jogador pode executar o script
-local blockedPlayers = {7082089968,71828} -- IDs dos jogadores bloqueados
+local blockedPlayers = {82822,71828} -- IDs dos jogadores bloqueados
 local function isBlocked(userId)
     for _, id in pairs(blockedPlayers) do
         if userId == id then
