@@ -1,0 +1,72 @@
+-- Carregar biblioteca
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
+-- Aviso ao executar
+Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
+Fluent:Notify({ Title = "Servidor XScripts oficial Discord!", Content = "https://discord.gg/qsYR297DR2" })
+
+local Window = Fluent:CreateWindow({
+    Title = "XScript Really Easy Obby | Versão 1.0.0", -- Título modificado
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Theme = "Amethyst"
+})
+
+local Tabs = {
+    teleport = Window:AddTab({ Title = "Teleport", Icon = "map" }), -- Aba "Teleport"
+    freeUGC = Window:AddTab({ Title = "Free UGC", Icon = "star" }) -- Nova aba "Free UGC"
+}
+
+-- Função para teleportar o jogador para o checkpoint e para o final
+local function teleportToLocations()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    -- Teleporta para o checkpoint
+    local checkpoint = workspace.Stages.Stage130.Checkpoint.Checkpoint
+    if checkpoint then
+        character:MoveTo(checkpoint.Position)
+        wait(1) -- Espera um segundo antes de continuar
+    end
+
+    -- Teleporta para a posição final
+    local endPosition = workspace.Stages.END["The End Obby..!!"]:GetChildren()[55]
+    if endPosition then
+        character:MoveTo(endPosition.Position)
+    end
+end
+
+-- Botão para teleportar para o checkpoint e fim na aba "Teleport"
+Tabs.teleport:AddButton({
+    Title = "Teleportar para Checkpoint e Fim",
+    Callback = function()
+        teleportToLocations() -- Chama a função de teleport
+    end
+})
+
+-- Função para coletar 20 itens na aba "Free UGC"
+local function collectUGCItems()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    for i = 1, 20 do
+        wait(0.5) -- Ajusta o tempo de espera para evitar sobrecarga
+        local collectible = workspace.ColdplayStages.Collectibles:GetChildren()[30]
+
+        if collectible then
+            character:MoveTo(collectible.Position) -- Teleporta para o item
+            wait(0.5) -- Aguarda meio segundo para o personagem se mover
+        else
+            Fluent:Notify({ Title = "Erro", Content = "Item não encontrado!" }) -- Mensagem de erro caso não encontre o item
+            break -- Sai do loop se o item não for encontrado
+        end
+    end
+end
+
+-- Botão para coletar itens na aba "Free UGC"
+Tabs.freeUGC:AddButton({
+    Title = "Coletar 20 Free UGC",
+    Callback = function()
+        collectUGCItems() -- Chama a função de coletar itens
+    end
+})
