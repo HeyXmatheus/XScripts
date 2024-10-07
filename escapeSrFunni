@@ -25,7 +25,7 @@ local function teleportToNextSpawn()
     local character = player.Character or player.CharacterAdded:Wait()
 
     -- Teleportar para o spawn atual
-    local spawn = workspace.StartModel.PlayerSpawns["m" .. tostring(currentSpawnIndex)].go
+    local spawn = workspace.LocalObjects.PlayerSpawns["m" .. tostring(currentSpawnIndex)].go
     if spawn then
         character:MoveTo(spawn.Position)
         currentSpawnIndex = currentSpawnIndex + 1 -- Avança para o próximo spawn
