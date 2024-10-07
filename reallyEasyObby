@@ -6,72 +6,58 @@ Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
 Fluent:Notify({ Title = "Servidor XScripts oficial Discord!", Content = "https://discord.gg/qsYR297DR2" })
 
 local Window = Fluent:CreateWindow({
-    Title = "XScript Really Easy Obby | Versão 1.0.0", -- Título modificado
+    Title = "Really Easy Obby | Versão 1.0.0", -- Título atualizado
     TabWidth = 160,
     Size = UDim2.fromOffset(580, 460),
     Theme = "Amethyst"
 })
 
 local Tabs = {
-    teleport = Window:AddTab({ Title = "Teleport", Icon = "map" }), -- Aba "Teleport"
-    freeUGC = Window:AddTab({ Title = "Free UGC", Icon = "star" }) -- Nova aba "Free UGC"
+    autoFarm = Window:AddTab({ Title = "Auto Farm", Icon = "map" }) -- Aba renomeada para "Auto Farm"
 }
 
--- Função para teleportar o jogador para o checkpoint e para o final
-local function teleportToLocations()
+-- Variáveis de controle
+local teleporting = false -- Estado do alternador
+local currentCheckpointIndex = 1 -- Índice do checkpoint atual
+
+-- Função para teleportar o jogador entre os checkpoints
+local function teleportToNextCheckpoint()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
-
-    -- Teleporta para o checkpoint
-    local checkpoint = workspace.Stages.Stage130.Checkpoint.Checkpoint
+    
+    -- Teleportar para o checkpoint atual
+    local checkpoint = workspace.Checkpoints[tostring(currentCheckpointIndex)]
     if checkpoint then
         character:MoveTo(checkpoint.Position)
-        wait(1) -- Espera um segundo antes de continuar
-    end
-
-    -- Teleporta para a posição final
-    local endPosition = workspace.Stages.END["The End Obby..!!"]:GetChildren()[55]
-    if endPosition then
-        character:MoveTo(endPosition.Position)
+        currentCheckpointIndex = currentCheckpointIndex + 1 -- Avança para o próximo checkpoint
+        
+        -- Para a teleportação se atingir o checkpoint 101
+        if currentCheckpointIndex > 101 then
+            teleporting = false -- Para o teleport
+            print("Teleportação concluída ao atingir o checkpoint 101.")
+        end
     end
 end
 
--- Botão para teleportar para o checkpoint e fim na aba "Teleport"
-Tabs.teleport:AddButton({
-    Title = "Teleportar para Checkpoint e Fim",
-    Callback = function()
-        teleportToLocations() -- Chama a função de teleport
-    end
+-- Alternador para ativar/desativar o teleport
+local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle", 
+{
+    Title = "Auto Farm Checkpoints", 
+    Description = "Auto Farms checkpoints.",
+    Default = false, -- Esse "," é necessário em qualquer situação 
+    Callback = function(state)
+        teleporting = state
+        if teleporting then
+            print("Toggle On") -- Mensagem de ativação
+            while teleporting do
+                teleportToNextCheckpoint() -- Teleportar para o próximo checkpoint
+                wait(1) -- Espera 1 segundo antes de teleportar novamente
+            end
+        else
+            print("Toggle Off") -- Mensagem de desativação
+        end
+    end 
 })
 
--- Função para coletar até 20 itens espalhados na aba "Free UGC"
-local function collectUGCItems()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-
-    local collectibles = workspace.ColdplayStages.Collectibles:GetChildren()
-    local collectedCount = 0 -- Contador de itens coletados
-
-    for _, collectible in ipairs(collectibles) do
-        if collectedCount >= 20 then
-            break -- Para de coletar após 20 itens
-        end
-
-        if collectible:IsA("Part") then -- Verifica se é um item válido
-            character:MoveTo(collectible.Position) -- Teleporta para o item
-            wait(0.5) -- Aguarda meio segundo para o personagem se mover
-            collectedCount = collectedCount + 1 -- Incrementa o contador de itens coletados
-        end
-    end
-
-    -- Mensagem final informando quantos itens foram coletados
-    Fluent:Notify({ Title = "Coleta Completa", Content = "Itens coletados: " .. collectedCount })
-end
-
--- Botão para coletar itens na aba "Free UGC"
-Tabs.freeUGC:AddButton({
-    Title = "Coletar até 20 Free UGC",
-    Callback = function()
-        collectUGCItems() -- Chama a função de coletar itens
-    end
-})
+-- Mostra a janela da interface
+Fluent:ShowWindow()
