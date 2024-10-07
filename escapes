@@ -24,7 +24,7 @@ end
 Tabs.scripts:AddButton({
     Title = "escape da professora", 
     Callback = function() 
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/obbyeasy'))()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/escapeProf'))()
         closeInterface() -- Fecha a interface após executar o script
     end
 })
