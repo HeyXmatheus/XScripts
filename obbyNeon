@@ -5,7 +5,7 @@ local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/
 Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
 
 local Window = Fluent:CreateWindow({
-    Title = "XScript obby Neon 💡 | Versão 1.0.0", -- Título atualizado
+    Title = "XScript escape do Cowboy 🤠 | Versão 1.0.0", -- Título atualizado
     TabWidth = 160,
     Size = UDim2.fromOffset(390, 300),
     Theme = "Amethyst"
@@ -53,7 +53,7 @@ local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle",
             print("Toggle On") -- Mensagem de ativação
             while teleporting do
                 teleportToNextStage() -- Teleportar para o próximo estágio
-                wait(0) -- Não espera entre teletransportes para um efeito de teleporte rápido
+                wait(0.5) -- Espera 0.5 segundos entre teletransportes
             end
         else
             print("Toggle Off") -- Mensagem de desativação
