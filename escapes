@@ -40,7 +40,7 @@ Tabs.scripts:AddButton({
 Tabs.scripts:AddButton({
     Title = "Escape do Cozinheiro", 
     Callback = function() 
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/reallyEasyObby'))()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/escapePizza'))()
         closeInterface() -- Fecha a interface após executar o script
     end 
 })
