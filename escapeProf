@@ -13,7 +13,7 @@ local Window = Fluent:CreateWindow({
 
 local Tabs = {
     autoFarm = Window:AddTab({ Title = "Auto Farm", Icon = "map" }), -- Aba renomeada para "Auto Farm"
-    tools = Window:AddTab({ Title = "Tools", Icon = "tool" }) -- Nova aba "Tools"
+    tools = Window:AddTab({ Title = "Tools", Icon = "hammer" }) -- Nova aba "Tools"
 }
 
 -- Variáveis de controle
