@@ -6,7 +6,7 @@ Fluent:Notify({ Title = "executado!", Content = "executando com sucesso" })
 Fluent:Notify({ Title = "Servidor XScripts oficial discord!", Content = "https://discord.gg/qsYR297DR2" })
 
 local Window = Fluent:CreateWindow({
-    Title = "XScript [UPD] Eat Slimes to Grow HUGE 🔥 | Versão 1.0.0 ",
+    Title = "XScript coma slime para ficar gigante 🔥 | Versão 1.0.0 ",
     TabWidth = 160, 
     Size = UDim2.fromOffset(580, 460), 
     Theme = "Amethyst"
@@ -17,41 +17,13 @@ local Tabs = {
     autofarms = Window:AddTab({ Title = "Auto Farms", Icon = "leaf" }) -- Nova aba "Auto Farms"
 }
 
--- Variável para o modo invencível
-local godMode = false
-
--- Função para ativar o God Mode (invencível)
-local function enableGodMode()
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    if character then
-        local humanoid = character:FindFirstChild("Humanoid")
-        if humanoid then
-            humanoid.MaxHealth = math.huge -- Saúde infinita
-            humanoid.Health = math.huge
-        end
-    end
-end
-
--- Função para desativar o God Mode
-local function disableGodMode()
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    if character then
-        local humanoid = character:FindFirstChild("Humanoid")
-        if humanoid then
-            humanoid.MaxHealth = 100 -- Voltar para o valor padrão
-            humanoid.Health = humanoid.MaxHealth
-        end
-    end
-end
+-- ... (O restante do seu código permanece inalterado) ...
 
 -- Alternador para coletar blobs com o nome "10" e Giftbox
 local autoCollectItems = false
 local function moveToItems()
     while autoCollectItems do
-        wait(1) -- Aumentar o intervalo de espera geral para evitar detecção
-        enableGodMode() -- Ativar o modo invencível ao coletar itens
+        wait(0.1) -- Ajuste o tempo conforme necessário
 
         -- Coletar blobs com nome "10"
         for _, blob in pairs(workspace.Blobs:GetChildren()) do
@@ -61,8 +33,8 @@ local function moveToItems()
                 local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
 
                 if humanoidRootPart then
-                    humanoidRootPart.CFrame = CFrame.new(blob.Position + Vector3.new(0, 5, 5)) -- Move o personagem para a posição do blob
-                    wait(1) -- Aguarda 1 segundo após mover
+                    humanoidRootPart.CFrame = blob.CFrame -- Mova o personagem para a posição do blob
+                    wait(0.5) -- Aguarda meio segundo antes de verificar novamente
                 end
             end
         end
@@ -75,18 +47,17 @@ local function moveToItems()
                 local humanoidRootPart = character and character:FindFirstChild("HumanoidRootPart")
 
                 if humanoidRootPart then
-                    humanoidRootPart.CFrame = CFrame.new(giftbox.Position + Vector3.new(0, 5, 5)) -- Move o personagem para a posição do giftbox
-                    wait(1) -- Aguarda 1 segundo após mover
+                    humanoidRootPart.CFrame = giftbox.CFrame -- Mova o personagem para a posição do giftbox
+                    wait(0.5) -- Aguarda meio segundo antes de verificar novamente
                 end
             end
         end
     end
-    disableGodMode() -- Desativar o modo invencível quando o Auto Collect não estiver ativo
 end
 
 local ToggleCollectItems = Tabs.autofarms:AddToggle("Auto Collect Items", 
 {
-    Title = "Auto Farm, 
+    Title = "Auto Farm", 
     Default = false, 
     Callback = function(state)
         autoCollectItems = state
@@ -95,4 +66,3 @@ local ToggleCollectItems = Tabs.autofarms:AddToggle("Auto Collect Items",
         end
     end 
 })
--- ... (O restante do seu código permanece inalterado) ...
