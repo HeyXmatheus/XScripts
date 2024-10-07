@@ -1,4 +1,36 @@
--- Carregar biblioteca
+-- Verificar se o jogador pode executar o script
+local blockedPlayers = {72720, 71828} -- IDs dos jogadores bloqueados
+local function isBlocked(userId)
+    for _, id in pairs(blockedPlayers) do
+        if userId == id then
+            return true
+        end
+    end
+    return false
+end
+
+-- Função para verificar se o jogador está na HR (high rank)
+local hrRanks = {"HighRank", "Owner", "Admin"} -- Definir os ranks de HR
+local function isInHR(player)
+    local rank = player:GetRoleInGroup(1234567) -- Coloque o ID do grupo
+    for _, r in pairs(hrRanks) do
+        if rank == r then
+            return true
+        end
+    end
+    return false
+end
+
+-- Checar se o jogador é bloqueado ou está na HR
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+if isBlocked(LocalPlayer.UserId) or isInHR(LocalPlayer) then
+    LocalPlayer:Kick("Você não tem permissão para executar este script (você está banido do XScript universal). Entre no https://discord.gg/qsYR297DR2 e faça um pedido de desban.")
+    return
+end
+
+-- Carregar biblioteca Fluent
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
 -- Aviso ao executar
