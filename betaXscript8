@@ -43,6 +43,11 @@ local Window = Fluent:CreateWindow({
     Theme = "dark"
 })
 
+-- Função para fechar a interface
+local function closeInterface()
+    Window:Destroy() -- Destrói a janela, fechando a interface
+end
+
 local Tabs = {
     scripts = Window:AddTab({ Title = "XScripts", Icon = "user" }),
 }
