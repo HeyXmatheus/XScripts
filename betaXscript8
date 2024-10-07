@@ -1,5 +1,5 @@
 -- Verificar se o jogador pode executar o script
-local blockedPlayers = {4961316060, 7144552692} -- IDs dos jogadores bloqueados
+local blockedPlayers = {4961316060, 33} -- IDs dos jogadores bloqueados
 local function isBlocked(userId)
     for _, id in pairs(blockedPlayers) do
         if userId == id then
