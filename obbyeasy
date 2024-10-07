@@ -13,7 +13,7 @@ local Window = Fluent:CreateWindow({
 })
 
 local Tabs = {
-    teleport = Window:AddTab({ Title = "Teleport", Icon = "map" })
+    teleport = Window:AddTab({ Title = "Teleport", Icon = "map" }) -- Aba "Teleport"
 }
 
 -- Função para teleportar o jogador para o checkpoint e para o final
@@ -35,21 +35,12 @@ local function teleportToLocations()
     end
 end
 
--- Botão para teleportar
-local teleportButton = Tabs.teleport:AddButton("Teleportar para Checkpoint e Fim", 
-{
-    Title = "Clique para teleportar", 
+-- Botão para teleportar usando o estilo desejado
+Tabs.teleport:AddButton({
+    Title = "Teleportar para o Fim",
     Callback = function()
         teleportToLocations() -- Chama a função de teleport
-    end 
+    end
 })
 
--- Botão adicional (caso você queira personalizar ainda mais)
-local additionalButton = Tabs.teleport:AddButton("Outro Botão de Teleport", 
-{
-    Title = "Outro teleport", 
-    Callback = function()
-        -- Você pode adicionar outra função aqui, se necessário
-        Fluent:Notify({ Title = "Info", Content = "Este é um botão adicional." })
-    end 
-})
+-- Você pode adicionar mais botões aqui, se necessário
