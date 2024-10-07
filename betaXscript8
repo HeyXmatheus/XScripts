@@ -1,5 +1,22 @@
+-- Carregar biblioteca Fluent
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
+-- Aviso ao executar
+Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
+
+local Window = Fluent:CreateWindow({
+    Title = "XScript Painel Scripts 🔥 | Versão 1.0.0",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(390, 300),
+    Theme = "dark"
+})
+
+local Tabs = {
+    scripts = Window:AddTab({ Title = "XScripts", Icon = "user" }),
+}
+
 -- Verificar se o jogador pode executar o script
-local blockedPlayers = {4961316060, 33} -- IDs dos jogadores bloqueados
+local blockedPlayers = {72720,71828} -- IDs dos jogadores bloqueados
 local function isBlocked(userId)
     for _, id in pairs(blockedPlayers) do
         if userId == id then
@@ -26,27 +43,14 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
 if isBlocked(LocalPlayer.UserId) or isInHR(LocalPlayer) then
-    LocalPlayer:Kick("Você não tem permissão para executar este script (você está banido do XScript universal). Entre no https://discord.gg/qsYR297DR2 e faça um pedido de desban.")
+    LocalPlayer:Kick("Você não tem permissão para executar este script (você está banido do XScript universal) Entre no https://discord.gg/qsYR297DR2 e faça um pedido de desban.")
     return
 end
 
--- Carregar biblioteca Fluent
-local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
-
--- Aviso ao executar
-Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
-
-local Window = Fluent:CreateWindow({
-    Title = "XScript Painel Scripts 🔥 | Versão 1.0.0",
-    TabWidth = 160,
-    Size = UDim2.fromOffset(390, 300),
-    Theme = "dark"
-})
-
-local Tabs = {
-    scripts = Window:AddTab({ Title = "XScripts", Icon = "user" }),
-}
-
+-- Botões
+Tabs.localplayer:AddButton({ Title = "pulo infinito", Callback = function() 
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
+end })
 -- Função para fechar a interface
 local function closeInterface()
     Window:Destroy() -- ou Window.Visible = false, dependendo da sua implementação
