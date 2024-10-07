@@ -1,0 +1,65 @@
+-- Carregar biblioteca
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
+-- Aviso ao executar
+Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
+
+local Window = Fluent:CreateWindow({
+    Title = "XScript obby Neon 💡 | Versão 1.0.0", -- Título atualizado
+    TabWidth = 160,
+    Size = UDim2.fromOffset(390, 300),
+    Theme = "Amethyst"
+})
+
+local Tabs = {
+    autoFarm = Window:AddTab({ Title = "Auto Farm", Icon = "map" }) -- Aba renomeada para "Auto Farm"
+}
+
+-- Variáveis de controle
+local teleporting = false -- Estado do alternador
+local currentStageIndex = 1 -- Índice do estágio atual
+
+-- Função para teleportar o jogador entre os estágios
+local function teleportToNextStage()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    -- Obter o estágio atual
+    local stage = workspace.Stages[tostring(currentStageIndex)] -- Acessar estágio pelo índice
+    if stage then
+        character:MoveTo(stage.Position) -- Move o personagem para a posição do estágio
+        currentStageIndex = currentStageIndex + 1 -- Avança para o próximo estágio
+        
+        -- Para a teleportação se atingir o último estágio
+        if currentStageIndex > 57 then
+            teleporting = false -- Para o teleport
+            print("Teleportação concluída ao atingir o último estágio.")
+        end
+    else
+        teleporting = false -- Para o teleport se o estágio não existir
+        print("Estágio não encontrado: " .. tostring(currentStageIndex))
+    end
+end
+
+-- Alternador para ativar/desativar o teleport
+local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle", 
+{
+    Title = "Auto Zerar", 
+    Description = "Auto Final.",
+    Default = false, -- Esse "," é necessário em qualquer situação 
+    Callback = function(state)
+        teleporting = state
+        if teleporting then
+            print("Toggle On") -- Mensagem de ativação
+            while teleporting do
+                teleportToNextStage() -- Teleportar para o próximo estágio
+                wait(0) -- Não espera entre teletransportes para um efeito de teleporte rápido
+            end
+        else
+            print("Toggle Off") -- Mensagem de desativação
+        end
+    end 
+})
+
+-- Mostrar a janela da interface
+Window:ShowWindow()
