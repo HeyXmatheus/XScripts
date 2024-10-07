@@ -41,8 +41,8 @@ end
 -- Alternador para ativar/desativar o teleport
 local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle", 
 {
-    Title = "Auto Farm Spawns", 
-    Description = "Auto Farms player spawns.",
+    Title = "Auto Zerar", 
+    Description = "Auto Final.",
     Default = false, -- Esse "," é necessário em qualquer situação 
     Callback = function(state)
         teleporting = state
