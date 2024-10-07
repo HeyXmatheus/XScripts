@@ -33,6 +33,14 @@ Tabs.scripts:AddButton({
 })
 
 Tabs.scripts:AddButton({
+    Title = "[UPD] Eat Slimes to Grow HUGE", 
+    Callback = function() 
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/UPDEatSlimestoGrowHUGE'))()
+        closeInterface() -- Fecha a interface após executar o script
+    end
+})
+
+Tabs.scripts:AddButton({
     Title = "Toilet Verse tower defence", 
     Callback = function() 
         loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/toiletverse'))()
