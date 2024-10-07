@@ -12,7 +12,7 @@ local Window = Fluent:CreateWindow({
 })
 
 local Tabs = {
-    autoFarm = Window:AddTab({ Title = "Auto Farm", Icon = "map" }), -- Aba renomeada para "Auto Farm"
+    autoFarm = Window:AddTab({ Title = "Auto Farm", Icon = "map" }) -- Aba renomeada para "Auto Farm"
 }
 
 -- Variáveis de controle
@@ -56,29 +56,6 @@ local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle",
             print("Toggle Off") -- Mensagem de desativação
         end
     end 
-})
-
--- Função para teleportar o item Speed Coil para o jogador
-local function teleportSpeedCoil()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    local speedGiver = workspace.SpeedGiver
-    local speedCoil = speedGiver and speedGiver:FindFirstChild("Part") -- Acha a parte dentro do modelo SpeedGiver
-
-    if speedCoil then
-        speedCoil.Position = character.Position + Vector3.new(0, 5, 0) -- Teleporta o item acima do jogador
-        print("Speed Coil teleportado!")
-    else
-        print("Speed Coil não encontrado!")
-    end
-end
-
--- Botão para teleportar o Speed Coil
-Tabs.tools:AddButton({
-    Title = "Speed Coil",
-    Callback = function()
-        teleportSpeedCoil() -- Chama a função de teleport
-    end
 })
 
 -- Mostrar a janela da interface
