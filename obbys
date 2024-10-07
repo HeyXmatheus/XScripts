@@ -1,0 +1,40 @@
+-- Carregar biblioteca
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
+-- Aviso ao executar
+Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
+
+local Window = Fluent:CreateWindow({
+    Title = "XScript Painel Scripts 🔥 | Versão 1.0.0",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(390, 300),
+    Theme = "dark"
+})
+
+local Tabs = {
+    scripts = Window:AddTab({ Title = "XScripts", Icon = "user" }),
+}
+
+-- Função para fechar a interface
+local function closeInterface()
+    Window:Destroy() -- ou Window.Visible = false, dependendo da sua implementação
+end
+
+-- Botões
+Tabs.scripts:AddButton({
+    Title = "Easy obby", 
+    Callback = function() 
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/obbyeasy'))()
+        closeInterface() -- Fecha a interface após executar o script
+    end
+})
+
+Tabs.scripts:AddButton({
+    Title = "Really Easy Obby", 
+    Callback = function() 
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/reallyEasyObby'))()
+        closeInterface() -- Fecha a interface após executar o script
+    end 
+})
+
+-- Fim do código
