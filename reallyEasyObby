@@ -51,7 +51,7 @@ local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle",
             print("Toggle On") -- Mensagem de ativação
             while teleporting do
                 teleportToNextCheckpoint() -- Teleportar para o próximo checkpoint
-                wait(1) -- Espera 1 segundo antes de teleportar novamente
+                wait(0.5) -- Espera 0.5 segundo antes de teleportar novamente para aumentar a velocidade
             end
         else
             print("Toggle Off") -- Mensagem de desativação
