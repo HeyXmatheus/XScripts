@@ -1,6 +1,3 @@
---kick
-game.Players.LocalPlayer:Kick("o XScript universal está em manutenção. Tente novamente mais tarde.")
-
 -- Carregar biblioteca
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
