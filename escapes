@@ -12,7 +12,7 @@ local Window = Fluent:CreateWindow({
 })
 
 local Tabs = {
-    scripts = Window:AddTab({ Title = "obbys", Icon = "user" }),
+    scripts = Window:AddTab({ Title = "escapes", Icon = "user" }),
 }
 
 -- Função para fechar a interface
