@@ -1,0 +1,83 @@
+-- Carregar biblioteca
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
+-- Aviso ao executar
+Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
+
+local Window = Fluent:CreateWindow({
+    Title = "XScript escape da professora | Versão 1.0.0", -- Título atualizado
+    TabWidth = 160,
+    Size = UDim2.fromOffset(390, 300),
+    Theme = "Amethyst"
+})
+
+local Tabs = {
+    autoFarm = Window:AddTab({ Title = "Auto Farm", Icon = "map" }) -- Aba renomeada para "Auto Farm"
+}
+
+-- Variáveis de controle
+local teleporting = false -- Estado do alternador
+local currentSpawnIndex = 1 -- Índice do spawn atual
+local currentCheckpointIndex = 1 -- Índice do checkpoint atual
+
+-- Função para teleportar o jogador entre os spawns
+local function teleportToNextSpawn()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    -- Teleportar para o spawn atual
+    local spawn = workspace.StartModel.PlayerSpawns["m" .. tostring(currentSpawnIndex)]
+    if spawn then
+        character:MoveTo(spawn.Position)
+        currentSpawnIndex = currentSpawnIndex + 1 -- Avança para o próximo spawn
+        
+        -- Para a teleportação se atingir o spawn 20
+        if currentSpawnIndex > 20 then
+            teleporting = false -- Para o teleport
+            print("Teleportação concluída ao atingir o spawn m20.")
+        end
+    end
+end
+
+-- Função para teleportar o jogador entre os checkpoints
+local function teleportToNextCheckpoint()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    -- Teleportar para o checkpoint atual
+    local checkpoint = workspace.Checkpoints[tostring(currentCheckpointIndex)]
+    if checkpoint then
+        character:MoveTo(checkpoint.Position)
+        currentCheckpointIndex = currentCheckpointIndex + 1 -- Avança para o próximo checkpoint
+        
+        -- Para a teleportação se atingir o checkpoint 101
+        if currentCheckpointIndex > 101 then
+            teleporting = false -- Para o teleport
+            print("Teleportação concluída ao atingir o checkpoint 101.")
+        end
+    end
+end
+
+-- Alternador para ativar/desativar o teleport
+local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle", 
+{
+    Title = "Auto Farm Player Spawns e Checkpoints", 
+    Description = "Auto Farms player spawns e checkpoints.",
+    Default = false, -- Esse "," é necessário em qualquer situação 
+    Callback = function(state)
+        teleporting = state
+        if teleporting then
+            print("Toggle On") -- Mensagem de ativação
+            while teleporting do
+                teleportToNextSpawn() -- Teleportar para o próximo spawn
+                teleportToNextCheckpoint() -- Teleportar para o próximo checkpoint
+                wait(1) -- Espera 1 segundo antes de teleportar novamente
+            end
+        else
+            print("Toggle Off") -- Mensagem de desativação
+        end
+    end 
+})
+
+-- Mostrar a janela da interface
+Window:ShowWindow()
