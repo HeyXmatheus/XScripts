@@ -48,6 +48,14 @@ Tabs.scripts:AddButton({
 })
 
 Tabs.scripts:AddButton({
+    Title = "escape do policial Siren red", 
+    Callback = function() 
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/escapeSrPolicial'))()
+        closeInterface() -- Fecha a interface após executar o script
+    end
+})
+
+Tabs.scripts:AddButton({
     Title = "escape do Sr.pesadelo", 
     Callback = function() 
         loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/escapeSrPesadelo'))()
