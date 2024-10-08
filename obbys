@@ -7,7 +7,7 @@ Fluent:Notify({ Title = "Servidor XScripts oficial discord!", Content = "https:/
 Fluent:Notify({ Title = "Canal XScripts YouTube Oficial!", Content = "@XScriptsOficial" })
 
 local Window = Fluent:CreateWindow({
-    Title = "XScript Obbys 🔥 | Versão 1.0.0",
+    Title = "XScript Obbys 🔥 | 🇧🇷 Versão 1.0.0",
     TabWidth = 160,
     Size = UDim2.fromOffset(390, 300),
     Theme = "dark"
