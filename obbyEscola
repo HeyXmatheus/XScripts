@@ -15,6 +15,33 @@ local Tabs = {
     autoFarm = Window:AddTab({ Title = "Auto Farm", Icon = "map" }) -- Aba renomeada para "Auto Farm"
 }
 
+-- Variáveis de controle
+local teleporting = false -- Estado do alternador
+local currentCheckpointIndex = 1 -- Índice do checkpoint atual
+
+-- Função para teleportar o jogador entre os checkpoints
+local function teleportToNextCheckpoint()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    -- Obter o checkpoint atual
+    local checkpoint = workspace.Checkpoints[tostring(currentCheckpointIndex)] -- Acessar checkpoint pelo índice
+    if checkpoint then
+        character:MoveTo(checkpoint.Position) -- Move o personagem para a posição do checkpoint
+        currentCheckpointIndex = currentCheckpointIndex + 1 -- Avança para o próximo checkpoint
+        
+        -- Para a teleportação se atingir o último checkpoint (51)
+        if currentCheckpointIndex > 51 then
+            teleporting = false -- Para o teleport
+            print("Teleportação concluída ao atingir o último checkpoint.")
+            currentCheckpointIndex = 1 -- Reseta o índice para reiniciar os checkpoints
+        end
+    else
+        teleporting = false -- Para o teleport se o checkpoint não existir
+        print("Checkpoint não encontrado: " .. tostring(currentCheckpointIndex))
+    end
+end
+
 -- Alternador para ativar/desativar o teleport
 local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle", 
 {
@@ -32,22 +59,6 @@ local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle",
             end
         else
             print("Toggle Off") -- Mensagem de desativação
-        end
-    end 
-})
-
--- Alternador para ativar/desativar o renascimento automático
-local AutoRebirthToggle = Tabs.autoFarm:AddToggle("AutoRebirthToggle", 
-{
-    Title = "Auto Renascimento", 
-    Description = "Reinicia automaticamente ao chegar no final.",
-    Default = false,
-    Callback = function(state)
-        autoRebirthEnabled = state
-        if state then
-            print("Auto Renascimento ativado.")
-        else
-            print("Auto Renascimento desativado.")
         end
     end 
 })
