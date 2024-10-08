@@ -7,14 +7,14 @@ Fluent:Notify({ Title = "Servidor XScripts oficial discord!", Content = "https:/
 Fluent:Notify({ Title = "Canal XScripts YouTube Oficial!", Content = "@XScriptsOficial" })
 
 local Window = Fluent:CreateWindow({
-    Title = "XScript escape da professora 🔥 | Versão 1.0.0", -- Título atualizado
+    Title = "XScript escape da professora 🔥 | Versão 1.0.0",
     TabWidth = 160,
     Size = UDim2.fromOffset(390, 300),
     Theme = "Amethyst"
 })
 
 local Tabs = {
-    autoFarm = Window:AddTab({ Title = "Auto Farm", Icon = "map" }) -- Aba renomeada para "Auto Farm"
+    autoFarm = Window:AddTab({ Title = "Auto Farm", Icon = "map" })
 }
 
 -- Variáveis de controle
@@ -29,7 +29,7 @@ local function teleportToNextSpawn()
     -- Teleportar para o spawn atual
     local spawn = workspace.StartModel.PlayerSpawns["m" .. tostring(currentSpawnIndex)].go
     if spawn then
-        character:MoveTo(spawn.Position)
+        character:MoveTo(spawn.Position) -- Move o personagem para a posição do spawn
         currentSpawnIndex = currentSpawnIndex + 1 -- Avança para o próximo spawn
         
         -- Para a teleportação se atingir o spawn m20
@@ -37,6 +37,9 @@ local function teleportToNextSpawn()
             teleporting = false -- Para o teleport
             print("Teleportação concluída ao atingir o spawn m20.")
         end
+    else
+        teleporting = false -- Para o teleport se o spawn não existir
+        print("Spawn não encontrado: " .. tostring(currentSpawnIndex))
     end
 end
 
@@ -45,7 +48,7 @@ local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle",
 {
     Title = "Auto Zerar", 
     Description = "Auto Final.",
-    Default = false, -- Esse "," é necessário em qualquer situação 
+    Default = false,
     Callback = function(state)
         teleporting = state
         if teleporting then
@@ -58,6 +61,28 @@ local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle",
             print("Toggle Off") -- Mensagem de desativação
         end
     end 
+})
+
+-- Função para teleportar para m20
+local function teleportToM20()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local spawnM20 = workspace.StartModel.PlayerSpawns.m20.go
+    if spawnM20 then
+        character:MoveTo(spawnM20.Position)
+        print("Teleportado para m20.")
+    else
+        print("Spawn m20 não encontrado.")
+    end
+end
+
+-- Botão para zerar o bypass
+local Button = Tabs.autoFarm:AddButton({
+    Title = "Zerar Bypass",
+    Description = "Teleporta para m20.",
+    Callback = function()
+        teleportToM20()
+    end
 })
 
 -- Mostrar a janela da interface
