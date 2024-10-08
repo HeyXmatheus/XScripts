@@ -34,10 +34,30 @@ local function teleportToNextCheckpoint()
         if currentCheckpointIndex > 51 then
             teleporting = false -- Para o teleport
             print("Teleportação concluída ao atingir o último checkpoint.")
+            autoRebirth() -- Chama a função para renascer automaticamente
         end
-    else
-        teleporting = false -- Para o teleport se o checkpoint não existir
-        print("Checkpoint não encontrado: " .. tostring(currentCheckpointIndex))
+    end
+end
+
+-- Função para clicar automaticamente na GUI de renascimento
+local function autoRebirth()
+    wait(1) -- Aguarda um segundo para garantir que a GUI esteja visível
+    local player = game.Players.LocalPlayer
+    
+    -- Espera pela GUI de renascimento
+    local rebirthGui = player.PlayerGui:WaitForChild("RebirthGui") -- Altere "RebirthGui" para o nome correto da GUI, se necessário
+    
+    -- Verifica se a GUI está visível
+    if rebirthGui and rebirthGui.Visible then
+        local restartButton = rebirthGui:FindFirstChild("RestartButton") -- Altere "RestartButton" para o nome correto do botão, se necessário
+        if restartButton then
+            restartButton.MouseButton1Click:Fire() -- Simula um clique no botão de reinício
+            print("Reiniciando o jogo...")
+            currentCheckpointIndex = 1 -- Reseta o índice para reiniciar os checkpoints
+            teleporting = true -- Reativa a teleportação
+        else
+            print("Botão de reinício não encontrado.")
+        end
     end
 end
 
