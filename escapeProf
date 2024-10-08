@@ -79,7 +79,7 @@ end
 -- Botão para zerar o bypass
 local Button = Tabs.autoFarm:AddButton({
     Title = "Zerar Bypass",
-    Description = "Teleporta para m20.",
+    Description = "Teleporta para O Fim Bypass.",
     Callback = function()
         teleportToM20()
     end
