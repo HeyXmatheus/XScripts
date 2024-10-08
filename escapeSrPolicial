@@ -1,0 +1,87 @@
+-- Carregar biblioteca
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
+-- Aviso ao executar
+Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
+
+local Window = Fluent:CreateWindow({
+    Title = "XScript Escape Sr.Policial Sirin red | Versão 1.0.0",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(390, 300),
+    Theme = "Amethyst"
+})
+
+local Tabs = {
+    autoFarm = Window:AddTab({ Title = "Auto Farm", Icon = "map" })
+}
+
+-- Variáveis de controle
+local teleporting = false -- Estado do alternador
+local currentSpawnIndex = 1 -- Índice do spawn atual
+
+-- Função para teleportar o jogador entre os spawns
+local function teleportToNextSpawn()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    -- Teleportar para o spawn atual
+    local spawn = workspace.StartModel.PlayerSpawns["m" .. tostring(currentSpawnIndex)].go
+    if spawn then
+        character:MoveTo(spawn.Position) -- Move o personagem para a posição do spawn
+        currentSpawnIndex = currentSpawnIndex + 1 -- Avança para o próximo spawn
+        
+        -- Para a teleportação se atingir o último spawn (m22)
+        if currentSpawnIndex > 22 then
+            teleporting = false -- Para o teleport
+            print("Teleportação concluída ao atingir o spawn m22.")
+        end
+    else
+        teleporting = false -- Para o teleport se o spawn não existir
+        print("Spawn não encontrado: " .. tostring(currentSpawnIndex))
+    end
+end
+
+-- Alternador para ativar/desativar o teleport
+local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle", 
+{
+    Title = "Auto Zerar", 
+    Description = "Auto Final.",
+    Default = false, 
+    Callback = function(state)
+        teleporting = state
+        if teleporting then
+            print("Toggle On") -- Mensagem de ativação
+            while teleporting do
+                teleportToNextSpawn() -- Teleportar para o próximo spawn
+                wait(0.4) -- Espera 0.4 segundos entre teletransportes
+            end
+        else
+            print("Toggle Off") -- Mensagem de desativação
+        end
+    end 
+})
+
+-- Função para teleportar para m22
+local function teleportToM22()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local spawnM22 = workspace.StartModel.PlayerSpawns.m22.go
+    if spawnM22 then
+        character:MoveTo(spawnM22.Position)
+        print("Teleportado para m22.")
+    else
+        print("Spawn m22 não encontrado.")
+    end
+end
+
+-- Botão para zerar o bypass
+local Button = Tabs.autoFarm:AddButton({
+    Title = "Zerar Bypass",
+    Description = "Teleporta para m22",
+    Callback = function()
+        teleportToM22()
+    end
+})
+
+-- Mostrar a janela da interface
+Window:ShowWindow()
