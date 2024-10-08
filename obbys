@@ -40,7 +40,7 @@ Tabs.scripts:AddButton({
 })
 
 Tabs.scripts:AddButton({
-    Title = "obby escape da escola", 
+    Title = "obby da escola de fuga", 
     Callback = function() 
         loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/obbyEscola'))()
         closeInterface() -- Fecha a interface após executar o script
