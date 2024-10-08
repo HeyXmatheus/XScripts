@@ -15,52 +15,6 @@ local Tabs = {
     autoFarm = Window:AddTab({ Title = "Auto Farm", Icon = "map" }) -- Aba renomeada para "Auto Farm"
 }
 
--- Variáveis de controle
-local teleporting = false -- Estado do alternador
-local currentCheckpointIndex = 1 -- Índice do checkpoint atual
-
--- Função para teleportar o jogador entre os checkpoints
-local function teleportToNextCheckpoint()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-
-    -- Obter o checkpoint atual
-    local checkpoint = workspace.Checkpoints[tostring(currentCheckpointIndex)] -- Acessar checkpoint pelo índice
-    if checkpoint then
-        character:MoveTo(checkpoint.Position) -- Move o personagem para a posição do checkpoint
-        currentCheckpointIndex = currentCheckpointIndex + 1 -- Avança para o próximo checkpoint
-        
-        -- Para a teleportação se atingir o último checkpoint (51)
-        if currentCheckpointIndex > 51 then
-            teleporting = false -- Para o teleport
-            print("Teleportação concluída ao atingir o último checkpoint.")
-            autoRebirth() -- Chama a função para renascer automaticamente
-        end
-    end
-end
-
--- Função para clicar automaticamente na GUI de renascimento
-local function autoRebirth()
-    wait(1) -- Aguarda um segundo para garantir que a GUI esteja visível
-    local player = game.Players.LocalPlayer
-    
-    -- Espera pela GUI de renascimento
-    local rebirthGui = player.PlayerGui:WaitForChild("RebirthGui") -- Altere "RebirthGui" para o nome correto da GUI, se necessário
-    
-    -- Verifica se a GUI está visível
-    if rebirthGui and rebirthGui.Visible then
-        local restartButton = rebirthGui:FindFirstChild("RestartButton") -- Altere "RestartButton" para o nome correto do botão, se necessário
-        if restartButton then
-            restartButton.MouseButton1Click:Fire() -- Simula um clique no botão de reinício
-            print("Reiniciando o jogo...")
-            currentCheckpointIndex = 1 -- Reseta o índice para reiniciar os checkpoints
-            teleporting = true -- Reativa a teleportação
-        else
-            print("Botão de reinício não encontrado.")
-        end
-    end
-end
-
 -- Alternador para ativar/desativar o teleport
 local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle", 
 {
@@ -69,6 +23,7 @@ local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle",
     Default = false,
     Callback = function(state)
         teleporting = state
+        currentCheckpointIndex = 1 -- Reseta o índice ao ativar o alternador
         if teleporting then
             print("Toggle On") -- Mensagem de ativação
             while teleporting do
@@ -77,6 +32,22 @@ local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle",
             end
         else
             print("Toggle Off") -- Mensagem de desativação
+        end
+    end 
+})
+
+-- Alternador para ativar/desativar o renascimento automático
+local AutoRebirthToggle = Tabs.autoFarm:AddToggle("AutoRebirthToggle", 
+{
+    Title = "Auto Renascimento", 
+    Description = "Reinicia automaticamente ao chegar no final.",
+    Default = false,
+    Callback = function(state)
+        autoRebirthEnabled = state
+        if state then
+            print("Auto Renascimento ativado.")
+        else
+            print("Auto Renascimento desativado.")
         end
     end 
 })
