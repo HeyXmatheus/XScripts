@@ -53,7 +53,7 @@ local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle",
             print("Toggle On") -- Mensagem de ativação
             while teleporting do
                 teleportToNextStage() -- Teleportar para o próximo estágio
-                wait(0.3) -- Espera 0.3 segundos entre teletransportes
+                wait(0.2) -- Espera 0.2 segundos entre teletransportes
             end
         else
             print("Toggle Off") -- Mensagem de desativação
