@@ -40,6 +40,14 @@ Tabs.scripts:AddButton({
 })
 
 Tabs.scripts:AddButton({
+    Title = "obby bike", 
+    Callback = function() 
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/obbyBike'))()
+        closeInterface() -- Fecha a interface após executar o script
+    end
+})
+
+Tabs.scripts:AddButton({
     Title = "obby da escola de fuga", 
     Callback = function() 
         loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/obbyEscola'))()
