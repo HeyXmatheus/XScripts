@@ -1,0 +1,92 @@
+-- Carregar biblioteca Fluent
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
+-- Aviso ao executar
+Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
+
+-- Criar janela principal
+local Window = Fluent:CreateWindow({
+    Title = "XScript Obby bike 🚲 | 🇧🇷 Versão 1.0.0", 
+    TabWidth = 160,
+    Size = UDim2.fromOffset(390, 300),
+    Theme = "Amethyst"
+})
+
+-- Criar aba Auto Farm
+local Tabs = {
+    autoFarm = Window:AddTab({ Title = "Auto Farm", Icon = "map" })
+}
+
+-- Variáveis de controle
+local teleporting = false -- Estado do alternador
+local currentCheckpointIndex = 2 -- Iniciar do checkpoint 2
+
+-- Função para teleportar o jogador entre os checkpoints de 2 a 99
+local function teleportToNextCheckpoint()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    -- Obter o checkpoint atual
+    local checkpoint = workspace.WorldMap.Checkpoints[tostring(currentCheckpointIndex)] and workspace.WorldMap.Checkpoints[tostring(currentCheckpointIndex)].Pole
+    if checkpoint then
+        character:MoveTo(checkpoint.Position) -- Move o personagem para o checkpoint
+        currentCheckpointIndex = currentCheckpointIndex + 1 -- Avança para o próximo checkpoint
+
+        -- Para a teleportação se atingir o último checkpoint (99)
+        if currentCheckpointIndex > 99 then
+            teleporting = false -- Para o teleport
+            print("Teleportação concluída ao atingir o último checkpoint.")
+            currentCheckpointIndex = 2 -- Reseta o índice para reiniciar os checkpoints
+        end
+    else
+        teleporting = false -- Para o teleport se o checkpoint não existir
+        print("Checkpoint não encontrado: " .. tostring(currentCheckpointIndex))
+    end
+end
+
+-- Alternador para ativar/desativar o Auto Zerar
+local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle", 
+{
+    Title = "Auto Zerar", 
+    Description = "Teleporta automaticamente pelos checkpoints.",
+    Default = false,
+    Callback = function(state)
+        teleporting = state
+        currentCheckpointIndex = 2 -- Reseta o índice ao ativar o alternador
+        if teleporting then
+            print("Toggle On - Iniciando Auto Zerar") -- Mensagem de ativação
+            while teleporting do
+                teleportToNextCheckpoint() -- Teleportar para o próximo checkpoint
+                wait(0.4) -- Espera 0.4 segundos entre teletransportes
+            end
+        else
+            print("Toggle Off - Auto Zerar desativado") -- Mensagem de desativação
+        end
+    end 
+})
+
+-- Função para teleportar diretamente para o checkpoint 99
+local function teleportToCheckpoint99()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    local checkpoint = workspace.WorldMap.Checkpoints["99"] and workspace.WorldMap.Checkpoints["99"].Pole
+    if checkpoint then
+        character:MoveTo(checkpoint.Position) -- Teleportar para o checkpoint 99
+        print("Teleportado para o checkpoint 99.")
+    else
+        print("Checkpoint 99 não encontrado.")
+    end
+end
+
+-- Botão para zerar o bypass e teleportar para o checkpoint 99
+local Button = Tabs.autoFarm:AddButton({
+    Title = "Zerar Bypass",
+    Description = "Teleporta diretamente para o checkpoint 99.",
+    Callback = function()
+        teleportToCheckpoint99()
+    end
+})
+
+-- Mostrar a janela da interface
+Window:ShowWindow()
