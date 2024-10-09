@@ -63,5 +63,14 @@ local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle",
     end 
 })
 
+ -- Botão para zerar o bypass
+local Button = Tabs.autoFarm:AddButton({
+    Title = "Zerar Bypass",
+    Description = "Teleporta para O Fim Bypass.",
+    Callback = function()
+        teleportToM20()
+    end
+})
+
 -- Mostrar a janela da interface
 Window:ShowWindow()
