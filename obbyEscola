@@ -55,21 +55,12 @@ local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle",
             print("Toggle On") -- Mensagem de ativação
             while teleporting do
                 teleportToNextCheckpoint() -- Teleportar para o próximo checkpoint
-                wait(0.50) -- Espera 0.50 segundos entre teletransportes
+                wait(0.2) -- Espera 0.2 segundos entre teletransportes
             end
         else
             print("Toggle Off") -- Mensagem de desativação
         end
     end 
-})
-
- -- Botão para zerar o bypass
-local Button = Tabs.autoFarm:AddButton({
-    Title = "Zerar Bypass",
-    Description = "Teleporta para O Fim Bypass.",
-    Callback = function()
-        teleportToM20()
-    end
 })
 
 -- Mostrar a janela da interface
