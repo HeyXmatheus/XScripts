@@ -7,9 +7,9 @@ Fluent:Notify({ Title = "Servidor XScripts oficial discord!", Content = "https:/
 Fluent:Notify({ Title = "Canal XScripts YouTube Oficial!", Content = "@XScriptsOficial" })
 
 local Window = Fluent:CreateWindow({
-    Title = "XScript Toilet Verse 🔥 | 🇧🇷 Versão 1.0.0 ",
+    Title = "XScript Toilet Verse 🚽 | 🇧🇷 Versão 1.0.0 ",
     TabWidth = 160, 
-    Size = UDim2.fromOffset(580, 460), 
+    Size = UDim2.fromOffset(390, 300), 
     Theme = "Amethyst"
 })
 
@@ -35,7 +35,7 @@ end
 
 local ToggleCollectCoins = Tabs.autofarms:AddToggle("Auto Collect Coins", 
 {
-    Title = "Coletar Moedas Automaticamente", 
+    Title = "Auto Coins 🪙", 
     Default = false, 
     Callback = function(state)
         autoCollectCoins = state
@@ -60,33 +60,12 @@ end
 
 local ToggleCollectHeal = Tabs.autofarms:AddToggle("Auto Collect Heal", 
 {
-    Title = "Coletar Curativos Automaticamente", 
+    Title = "Auto Curativos 🩹", 
     Default = false, 
     Callback = function(state)
         autoCollectHeal = state
         if autoCollectHeal then
             collectHeal() -- Iniciar a coleta de curativos
-        end
-    end 
-})
-
--- Alternador para auto parasitar
-local autoParasite = false
-local function parasitar()
-    while autoParasite do
-        wait(0.1) -- Ajuste o tempo conforme necessário
-        -- Lógica para parasitar (defina conforme sua necessidade)
-    end
-end
-
-local ToggleParasite = Tabs.autofarms:AddToggle("Auto Parasitar", 
-{
-    Title = "Parasitar Automaticamente", 
-    Default = false, 
-    Callback = function(state)
-        autoParasite = state
-        if autoParasite then
-            parasitar() -- Iniciar a lógica de parasitar
         end
     end 
 })
