@@ -37,7 +37,7 @@ local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/
 Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
 
 local Window = Fluent:CreateWindow({
-    Title = "XScript Painel Scripts 🔥 | Versão 1.0.0",
+    Title = "XScript 🇧🇷 🇺🇸 | Versão 2.0.0",
     TabWidth = 160,
     Size = UDim2.fromOffset(390, 300),
     Theme = "dark"
@@ -54,17 +54,17 @@ local Tabs = {
 
 -- Botões
 Tabs.scripts:AddButton({
-    Title = "XScript universal", 
+    Title = "XScript Eua 🇺🇸", 
     Callback = function() 
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/XScriptUniversal'))()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/MenuEua'))()
         closeInterface() -- Fecha a interface após executar o script
     end
 })
 
 Tabs.scripts:AddButton({
-    Title = "[UPD] Eat Slimes to Grow HUGE", 
+    Title = "XScript Brasil 🇧🇷", 
     Callback = function() 
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/UPDEatSlimestoGrowHUGE'))()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/menuBrasil'))()
         closeInterface() -- Fecha a interface após executar o script
     end
 })
