@@ -72,7 +72,7 @@ Tabs.scripts:AddButton({
 })
 
 Tabs.scripts:AddButton({
-    Title = "XScripts Obbys", 
+    Title = "XScripts obbys", 
     Callback = function() 
         loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/obbys'))()
         closeInterface() -- Fecha a interface após executar o script
