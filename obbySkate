@@ -1,0 +1,100 @@
+-- Carregar biblioteca Fluent
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
+-- Aviso ao executar
+Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
+
+-- Criar janela principal
+local Window = Fluent:CreateWindow({
+    Title = "XScript Obby Skate 🛹 | 🇧🇷 Versão 1.0.0", 
+    TabWidth = 160,
+    Size = UDim2.fromOffset(390, 300),
+    Theme = "Amethyst"
+})
+
+-- Criar aba Auto Farm
+local Tabs = {
+    autoFarm = Window:AddTab({ Title = "Auto Farm", Icon = "map" })
+}
+
+-- Variáveis de controle
+local teleporting = true -- Estado do alternador
+local currentCheckpointIndex = 1 -- Iniciar do checkpoint 1
+
+-- Função para mover suavemente o jogador para uma posição
+local function smoothMoveTo(character, destination, steps, delay)
+    local startPosition = character.PrimaryPart.Position
+    local stepSize = (destination - startPosition) / steps
+
+    for i = 1, steps do
+        local newPosition = startPosition + stepSize * i
+        character:MoveTo(newPosition)
+        wait(delay)
+    end
+end
+
+-- Função para teleportar entre checkpoints de 1 a 100
+local function teleportToNextCheckpoint()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    -- Obter o checkpoint atual
+    local checkpoint = workspace.Map.Checkpoints[tostring(currentCheckpointIndex)] and workspace.Map.Checkpoints[tostring(currentCheckpointIndex)].Flag
+    if checkpoint then
+        character:MoveTo(checkpoint.Position) -- Move o personagem para o checkpoint
+        currentCheckpointIndex = currentCheckpointIndex + 1 -- Avança para o próximo checkpoint
+
+        -- Para a teleportação se atingir o último checkpoint (100)
+        if currentCheckpointIndex > 100 then
+            teleporting = false -- Para o teleport
+            print("Teleportação concluída ao atingir o último checkpoint.")
+            currentCheckpointIndex = 1 -- Reseta o índice para reiniciar os checkpoints
+        end
+    else
+        teleporting = false -- Para o teleport se o checkpoint não existir
+        print("Checkpoint não encontrado: " .. tostring(currentCheckpointIndex))
+    end
+end
+
+-- Inicia o processo de Auto Zerar imediatamente
+print("Iniciando Auto Zerar") -- Mensagem de ativação
+while teleporting do
+    teleportToNextCheckpoint() -- Teleportar para o próximo checkpoint
+    wait(0.7) -- Espera 0.7 segundos entre teletransportes
+end
+
+-- Função para teleportar entre checkpoints de 1 a 100 e suavemente para o RestartPortal
+local function teleportForAutoFarm()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    -- Teleportar para os checkpoints de 1 a 100
+    for i = 1, 100 do
+        local checkpoint = workspace.Map.Checkpoints[tostring(i)] and workspace.Map.Checkpoints[tostring(i)].Flag
+        if checkpoint then
+            character:MoveTo(checkpoint.Position)
+            wait(0.7) -- Espera 0.7 segundos entre checkpoints
+        end
+    end
+
+    -- Suavemente teleportar para o centro do RestartPortal após o checkpoint 100
+    local restartPortal = workspace.WorldMap.RestartPortal["Meshes/IceysAssetPack_Cube.001 (1)"]
+    if restartPortal then
+        local portalPosition = restartPortal.Position - Vector3.new(0, restartPortal.Size.Y / 2, 0) -- Ajuste para o meio da peça, embaixo
+        smoothMoveTo(character, portalPosition, 50, 0.1) -- Move o jogador em 50 etapas com 0.1 segundos entre elas
+        wait(2) -- Espera 2 segundos no RestartPortal antes de continuar
+    end
+
+    -- Voltar para o início (pode adicionar qualquer lógica para reiniciar o ciclo)
+    currentCheckpointIndex = 1
+end
+
+-- Inicia o processo de Auto Farm imediatamente
+print("Iniciando Auto Farm") -- Mensagem de ativação
+while teleporting do
+    teleportForAutoFarm() -- Teleporta através dos checkpoints e RestartPortal
+    wait(1) -- Espera 1 segundo entre ciclos
+end
+
+-- Mostrar a janela da interface
+Window:ShowWindow()
