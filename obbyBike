@@ -6,7 +6,7 @@ Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
 
 -- Criar janela principal
 local Window = Fluent:CreateWindow({
-    Title = "XScript Obby mas você é uma bike 🚲| 🇧🇷 Versão 1.0.0", 
+    Title = "XScript Obby Skate 🛹 | 🇧🇷 Versão 1.0.0", 
     TabWidth = 160,
     Size = UDim2.fromOffset(390, 300),
     Theme = "Amethyst"
@@ -19,24 +19,36 @@ local Tabs = {
 
 -- Variáveis de controle
 local teleporting = false -- Estado do alternador
-local currentCheckpointIndex = 2 -- Iniciar do checkpoint 2
+local currentCheckpointIndex = 1 -- Iniciar do checkpoint 1
 
--- Função para teleportar o jogador entre os checkpoints de 2 a 99
+-- Função para mover suavemente o jogador para uma posição
+local function smoothMoveTo(character, destination, steps, delay)
+    local startPosition = character.PrimaryPart.Position
+    local stepSize = (destination - startPosition) / steps
+
+    for i = 1, steps do
+        local newPosition = startPosition + stepSize * i
+        character:MoveTo(newPosition)
+        wait(delay)
+    end
+end
+
+-- Função para teleportar entre checkpoints de 1 a 100
 local function teleportToNextCheckpoint()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
 
     -- Obter o checkpoint atual
-    local checkpoint = workspace.WorldMap.Checkpoints[tostring(currentCheckpointIndex)] and workspace.WorldMap.Checkpoints[tostring(currentCheckpointIndex)].Pole
+    local checkpoint = workspace.Map.Checkpoints[tostring(currentCheckpointIndex)] and workspace.Map.Checkpoints[tostring(currentCheckpointIndex)].Flag
     if checkpoint then
         character:MoveTo(checkpoint.Position) -- Move o personagem para o checkpoint
         currentCheckpointIndex = currentCheckpointIndex + 1 -- Avança para o próximo checkpoint
 
-        -- Para a teleportação se atingir o último checkpoint (99)
-        if currentCheckpointIndex > 99 then
+        -- Para a teleportação se atingir o último checkpoint (100)
+        if currentCheckpointIndex > 100 then
             teleporting = false -- Para o teleport
             print("Teleportação concluída ao atingir o último checkpoint.")
-            currentCheckpointIndex = 2 -- Reseta o índice para reiniciar os checkpoints
+            currentCheckpointIndex = 1 -- Reseta o índice para reiniciar os checkpoints
         end
     else
         teleporting = false -- Para o teleport se o checkpoint não existir
@@ -44,26 +56,52 @@ local function teleportToNextCheckpoint()
     end
 end
 
--- Alternador para ativar/desativar o Auto Zerar
+-- Alternador para ativar/desativar o Auto Farm
 local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle", 
 {
     Title = "Auto Zerar", 
-    Description = "Zera o Obby (no risk!).",
+    Description = "(Sem risco!).",
     Default = false,
     Callback = function(state)
         teleporting = state
-        currentCheckpointIndex = 2 -- Reseta o índice ao ativar o alternador
+        currentCheckpointIndex = 1 -- Reseta o índice ao ativar o alternador
         if teleporting then
             print("Toggle On - Iniciando Auto Zerar") -- Mensagem de ativação
             while teleporting do
                 teleportToNextCheckpoint() -- Teleportar para o próximo checkpoint
-                wait(0.6) -- Espera 0.6 segundos entre teletransportes
+                wait(0.7) -- Espera 0.7 segundos entre teletransportes
             end
         else
             print("Toggle Off - Auto Zerar desativado") -- Mensagem de desativação
         end
     end 
 })
+
+-- Função para teleportar entre checkpoints de 1 a 100 e suavemente para o RestartPortal
+local function teleportForAutoFarm()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    -- Teleportar para os checkpoints de 1 a 100
+    for i = 1, 100 do
+        local checkpoint = workspace.Map.Checkpoints[tostring(i)] and workspace.Map.Checkpoints[tostring(i)].Flag
+        if checkpoint then
+            character:MoveTo(checkpoint.Position)
+            wait(0.7) -- Espera 0.7 segundos entre checkpoints
+        end
+    end
+
+    -- Suavemente teleportar para o centro do RestartPortal após o checkpoint 100
+    local restartPortal = workspace.WorldMap.RestartPortal["Meshes/IceysAssetPack_Cube.001 (1)"]
+    if restartPortal then
+        local portalPosition = restartPortal.Position - Vector3.new(0, restartPortal.Size.Y / 2, 0) -- Ajuste para o meio da peça, embaixo
+        smoothMoveTo(character, portalPosition, 50, 0.1) -- Move o jogador em 50 etapas com 0.1 segundos entre elas
+        wait(2) -- Espera 2 segundos no RestartPortal antes de continuar
+    end
+
+    -- Voltar para o início (pode adicionar qualquer lógica para reiniciar o ciclo)
+    currentCheckpointIndex = 1
+end
 
 -- Mostrar a janela da interface
 Window:ShowWindow()
