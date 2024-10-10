@@ -21,6 +21,18 @@ local Tabs = {
 local teleporting = false -- Estado do alternador
 local currentCheckpointIndex = 2 -- Iniciar do checkpoint 2
 
+-- Função para mover suavemente o jogador para uma posição
+local function smoothMoveTo(character, destination, steps, delay)
+    local startPosition = character.PrimaryPart.Position
+    local stepSize = (destination - startPosition) / steps
+
+    for i = 1, steps do
+        local newPosition = startPosition + stepSize * i
+        character:MoveTo(newPosition)
+        wait(delay)
+    end
+end
+
 -- Função para teleportar entre checkpoints de 2 a 99 para Auto Zerar
 local function teleportToNextCheckpoint()
     local player = game.Players.LocalPlayer
@@ -48,7 +60,7 @@ end
 local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle", 
 {
     Title = "Auto Zerar", 
-    Description = "Zera o Obby (no risk!).",
+    Description = "(Sem risco!).",
     Default = false,
     Callback = function(state)
         teleporting = state
@@ -65,7 +77,7 @@ local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle",
     end 
 })
 
--- Função para teleportar entre checkpoints de 2 a 99 e para o RestartPortal, fazendo loop
+-- Função para teleportar entre checkpoints de 2 a 99 e suavemente para o RestartPortal
 local function teleportForAutoFarm()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
@@ -79,12 +91,11 @@ local function teleportForAutoFarm()
         end
     end
 
-    -- Teleportar para o centro do RestartPortal após o checkpoint 99
-    local restartPortal = workspace.WorldMap.RestartPortal.Teleport
+    -- Suavemente teleportar para o centro do RestartPortal após o checkpoint 99
+    local restartPortal = workspace.WorldMap.RestartPortal["Meshes/IceysAssetPack_Cube.003 (1)"]
     if restartPortal then
-        -- Calcula o centro do teleport e ajusta para garantir que fique no meio
-        local middlePosition = restartPortal.Position + Vector3.new(0, 0, 0) -- Ajuste para o centro exato
-        character:MoveTo(middlePosition)
+        local portalPosition = restartPortal.Position - Vector3.new(0, restartPortal.Size.Y / 2, 0) -- Ajuste para o meio da peça, embaixo
+        smoothMoveTo(character, portalPosition, 50, 0.1) -- Move o jogador em 50 etapas com 0.1 segundos entre elas
         wait(2) -- Espera 2 segundos no RestartPortal antes de continuar
     end
 
@@ -96,7 +107,7 @@ end
 local ToggleFarm = Tabs.autoFarm:AddToggle("AutoFarmToggleFarm", 
 {
     Title = "Auto Farm", 
-    Description = "Faz o farm automaticamente e retorna ao início.",
+    Description = "Ele Vai Ficar Farmando.",
     Default = false,
     Callback = function(state)
         teleporting = state
