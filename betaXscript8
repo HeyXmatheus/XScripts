@@ -37,7 +37,7 @@ local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/
 Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
 
 local Window = Fluent:CreateWindow({
-    Title = "XScript 🇧🇷 🇺🇸 | Versão 2.0.0",
+    Title = "XScript 🇧🇷 🇺🇸 🇨🇳 🇸🇦 🇮🇹| Versão 2.0.0",
     TabWidth = 160,
     Size = UDim2.fromOffset(390, 300),
     Theme = "dark"
@@ -70,7 +70,7 @@ Tabs.scripts:AddButton({
 })
 
 Tabs.scripts:AddButton({
-    Title = "XScripts Obbys", 
+    Title = "em breve 🇨🇳", 
     Callback = function() 
         loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/obbys'))()
         closeInterface() -- Fecha a interface após executar o script
@@ -78,17 +78,17 @@ Tabs.scripts:AddButton({
 })
 
 Tabs.scripts:AddButton({
-    Title = "XScripts Escapes", 
+    Title = "em breve 🇮🇹", 
     Callback = function() 
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/escapes'))()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/'))()
         closeInterface() -- Fecha a interface após executar o script
     end
 })
 
 Tabs.scripts:AddButton({
-    Title = "Toilet Verse tower defence", 
+    Title = "em breve 🇸🇦", 
     Callback = function() 
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/toiletverse'))()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/'))()
         closeInterface() -- Fecha a interface após executar o script
     end 
 })
