@@ -90,7 +90,7 @@ Tabs.scripts:AddButton({
 Tabs.scripts:AddButton({
     Title = "Toilet Verse tower defence", 
     Callback = function() 
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/toiletverse'))()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/toiletVerseEua'))()
         closeInterface() -- Fecha a interface após executar o script
     end 
 })
