@@ -57,26 +57,12 @@ local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle",
             print("Toggle On - Iniciando Auto Zerar") -- Mensagem de ativação
             while teleporting do
                 teleportToNextCheckpoint() -- Teleportar para o próximo checkpoint
-                wait(0) -- Espera 0 segundos entre teletransportes
+                wait(0.5) -- Espera 0 segundos entre teletransportes
             end
         else
             print("Toggle Off - Auto Zerar desativado") -- Mensagem de desativação
         end
     end 
-})
-
--- Botão para zerar o bypass e teleportar automaticamente entre os checkpoints
-local Button = Tabs.autoFarm:AddButton({
-    Title = "Zerar Bypass",
-    Description = "Teleporta pelos checkpoints automaticamente.",
-    Callback = function()
-        teleporting = true
-        currentCheckpointIndex = 2 -- Reseta o índice
-        while teleporting do
-            teleportToNextCheckpoint() -- Executa a sequência de teleportes
-            wait(0.09) -- Espera 0.09 segundos entre teleportes
-        end
-    end
 })
 
 -- Mostrar a janela da interface
