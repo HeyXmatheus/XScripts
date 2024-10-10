@@ -1,0 +1,96 @@
+-- Verificar se o jogador pode executar o script
+local blockedPlayers = {4961316060, 71828} -- IDs dos jogadores bloqueados
+local function isBlocked(userId)
+    for _, id in pairs(blockedPlayers) do
+        if userId == id then
+            return true
+        end
+    end
+    return false
+end
+
+-- Função para verificar se o jogador está na HR (high rank)
+local hrRanks = {"HighRank", "Owner", "Admin"} -- Definir os ranks de HR
+local function isInHR(player)
+    local rank = player:GetRoleInGroup(1234567) -- Coloque o ID do grupo
+    for _, r in pairs(hrRanks) do
+        if rank == r then
+            return true
+        end
+    end
+    return false
+end
+
+-- Checar se o jogador é bloqueado ou está na HR
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+if isBlocked(LocalPlayer.UserId) or isInHR(LocalPlayer) then
+    LocalPlayer:Kick("Você não tem permissão para executar este script (você está banido do XScript universal). Entre no https://discord.gg/qsYR297DR2 e faça um pedido de desban.")
+    return
+end
+
+-- Carregar biblioteca Fluent
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
+-- Aviso ao executar
+Fluent:Notify({ Title = "Executed!", Content = "Running successfully" })
+
+local Window = Fluent:CreateWindow({
+    Title = "XScript Scripts Panel 🔥 | 🇺🇸 Version (BETA) 1.0.0",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(390, 300),
+    Theme = "dark"
+})
+
+-- Função para fechar a interface
+local function closeInterface()
+    Window:Destroy() -- Destrói a janela, fechando a interface
+end
+
+local Tabs = {
+    scripts = Window:AddTab({ Title = "XScripts", Icon = "user" }),
+}
+
+-- Botões
+Tabs.scripts:AddButton({
+    Title = "XScript universal", 
+    Callback = function() 
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/XScriptUniversal'))()
+        closeInterface() -- Fecha a interface após executar o script
+    end
+})
+
+Tabs.scripts:AddButton({
+    Title = "[UPD] Eat Slimes to Grow HUGE", 
+    Callback = function() 
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/UPDEatSlimestoGrowHUGE'))()
+        closeInterface() -- Fecha a interface após executar o script
+    end
+})
+
+Tabs.scripts:AddButton({
+    Title = "XScripts Obbys", 
+    Callback = function() 
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/obbys'))()
+        closeInterface() -- Fecha a interface após executar o script
+    end
+})
+
+Tabs.scripts:AddButton({
+    Title = "XScripts Escapes", 
+    Callback = function() 
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/escapes'))()
+        closeInterface() -- Fecha a interface após executar o script
+    end
+})
+
+Tabs.scripts:AddButton({
+    Title = "Toilet Verse tower defence", 
+    Callback = function() 
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/toiletverse'))()
+        closeInterface() -- Fecha a interface após executar o script
+    end 
+})
+
+-- Fim do código
