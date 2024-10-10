@@ -6,7 +6,7 @@ Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
 
 -- Criar janela principal
 local Window = Fluent:CreateWindow({
-    Title = "XScript Obby bike 🚲 | 🇧🇷 Versão 1.0.0", 
+    Title = "XScript Obby mas você é uma bike 🚲| 🇧🇷 Versão 1.0.0", 
     TabWidth = 160,
     Size = UDim2.fromOffset(390, 300),
     Theme = "Amethyst"
@@ -48,7 +48,7 @@ end
 local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle", 
 {
     Title = "Auto Zerar", 
-    Description = "Teleporta automaticamente pelos checkpoints.",
+    Description = "Zera o Obby (no risk!).",
     Default = false,
     Callback = function(state)
         teleporting = state
@@ -57,7 +57,7 @@ local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle",
             print("Toggle On - Iniciando Auto Zerar") -- Mensagem de ativação
             while teleporting do
                 teleportToNextCheckpoint() -- Teleportar para o próximo checkpoint
-                wait(0.4) -- Espera 0.4 segundos entre teletransportes
+                wait(0.5) -- Espera 0.5 segundos entre teletransportes
             end
         else
             print("Toggle Off - Auto Zerar desativado") -- Mensagem de desativação
@@ -65,26 +65,37 @@ local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle",
     end 
 })
 
--- Função para teleportar diretamente para o checkpoint 99
-local function teleportToCheckpoint99()
+-- Função para teleportar o jogador entre checkpoints específicos
+local function teleportToSpecificCheckpoints()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
 
-    local checkpoint = workspace.WorldMap.Checkpoints["99"] and workspace.WorldMap.Checkpoints["99"].Pole
-    if checkpoint then
-        character:MoveTo(checkpoint.Position) -- Teleportar para o checkpoint 99
-        print("Teleportado para o checkpoint 99.")
-    else
-        print("Checkpoint 99 não encontrado.")
+    local checkpoints = {
+        workspace.WorldMap.Checkpoints["30"].Pole,
+        workspace.WorldMap.Checkpoints["50"].Pole,
+        workspace.WorldMap.Checkpoints["90"].Pole,
+        workspace.WorldMap.Checkpoints["95"].Pole,
+        workspace.WorldMap.Checkpoints["99"].Pole
+    }
+
+    -- Teleporta para cada checkpoint da lista com intervalo de espera entre cada um
+    for _, checkpoint in ipairs(checkpoints) do
+        if checkpoint then
+            character:MoveTo(checkpoint.Position)
+            wait(1.5) -- Espera 1.5 segundos entre cada teleporte
+        else
+            print("Checkpoint não encontrado.")
+        end
     end
+    print("Teleportação para checkpoints específicos concluída.")
 end
 
--- Botão para zerar o bypass e teleportar para o checkpoint 99
+-- Botão para zerar o bypass e teleportar para checkpoints específicos
 local Button = Tabs.autoFarm:AddButton({
     Title = "Zerar Bypass",
-    Description = "Teleporta diretamente para o checkpoint 99.",
+    Description = "Teleporta para uma sequência de checkpoints.",
     Callback = function()
-        teleportToCheckpoint99()
+        teleportToSpecificCheckpoints() -- Executa a sequência de teleportes
     end
 })
 
