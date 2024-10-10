@@ -35,7 +35,7 @@ end
 
 local ToggleCollectCoins = Tabs.autofarms:AddToggle("Auto Collect Coins", 
 {
-    Title = "Auto Coins", 
+    Title = "Auto Coins 🪙", 
     Default = false, 
     Callback = function(state)
         autoCollectCoins = state
@@ -60,7 +60,7 @@ end
 
 local ToggleCollectHeal = Tabs.autofarms:AddToggle("Auto Collect Heal", 
 {
-    Title = "Auto Curativos", 
+    Title = "Auto Curativos 🩹", 
     Default = false, 
     Callback = function(state)
         autoCollectHeal = state
