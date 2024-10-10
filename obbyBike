@@ -21,19 +21,7 @@ local Tabs = {
 local teleporting = false -- Estado do alternador
 local currentCheckpointIndex = 2 -- Iniciar do checkpoint 2
 
--- Função para mover suavemente o jogador para uma posição
-local function smoothMoveTo(character, destination, steps, delay)
-    local startPosition = character.PrimaryPart.Position
-    local stepSize = (destination - startPosition) / steps
-
-    for i = 1, steps do
-        local newPosition = startPosition + stepSize * i
-        character:MoveTo(newPosition)
-        wait(delay)
-    end
-end
-
--- Função para teleportar entre checkpoints de 2 a 99 para Auto Zerar
+-- Função para teleportar o jogador entre os checkpoints de 2 a 99
 local function teleportToNextCheckpoint()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
@@ -60,7 +48,7 @@ end
 local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle", 
 {
     Title = "Auto Zerar", 
-    Description = "(Sem risco!).",
+    Description = "Zera o Obby (no risk!).",
     Default = false,
     Callback = function(state)
         teleporting = state
@@ -69,57 +57,10 @@ local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle",
             print("Toggle On - Iniciando Auto Zerar") -- Mensagem de ativação
             while teleporting do
                 teleportToNextCheckpoint() -- Teleportar para o próximo checkpoint
-                wait(0.7) -- Espera 0.7 segundos entre teletransportes
+                wait(0.5) -- Espera 0.5 segundos entre teletransportes
             end
         else
             print("Toggle Off - Auto Zerar desativado") -- Mensagem de desativação
-        end
-    end 
-})
-
--- Função para teleportar entre checkpoints de 2 a 99 e suavemente para o RestartPortal
-local function teleportForAutoFarm()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-
-    -- Teleportar para os checkpoints de 2 a 99
-    for i = 2, 99 do
-        local checkpoint = workspace.WorldMap.Checkpoints[tostring(i)] and workspace.WorldMap.Checkpoints[tostring(i)].Pole
-        if checkpoint then
-            character:MoveTo(checkpoint.Position)
-            wait(0.7) -- Espera 0.7 segundos entre checkpoints
-        end
-    end
-
-    -- Suavemente teleportar para o centro do RestartPortal após o checkpoint 99
-    local restartPortal = workspace.WorldMap.RestartPortal["Meshes/IceysAssetPack_Cube.003 (1)"]
-    if restartPortal then
-        local portalPosition = restartPortal.Position - Vector3.new(0, restartPortal.Size.Y / 2, 0) -- Ajuste para o meio da peça, embaixo
-        smoothMoveTo(character, portalPosition, 50, 0.1) -- Move o jogador em 50 etapas com 0.1 segundos entre elas
-        wait(2) -- Espera 2 segundos no RestartPortal antes de continuar
-    end
-
-    -- Voltar para o início (pode adicionar qualquer lógica para reiniciar o ciclo)
-    currentCheckpointIndex = 2
-end
-
--- Alternador para ativar/desativar o Auto Farm com loop
-local ToggleFarm = Tabs.autoFarm:AddToggle("AutoFarmToggleFarm", 
-{
-    Title = "Auto Farm", 
-    Description = "Ele Vai Ficar Farmando.",
-    Default = false,
-    Callback = function(state)
-        teleporting = state
-        currentCheckpointIndex = 2 -- Reseta o índice ao ativar o alternador
-        if teleporting then
-            print("Toggle On - Iniciando Auto Farm") -- Mensagem de ativação
-            while teleporting do
-                teleportForAutoFarm() -- Teleporta através dos checkpoints e RestartPortal
-                wait(1) -- Espera 1 segundo entre ciclos
-            end
-        else
-            print("Toggle Off - Auto Farm desativado") -- Mensagem de desativação
         end
     end 
 })
