@@ -19,6 +19,7 @@ local Tabs = {
 
 -- Variáveis de controle
 local teleporting = false -- Estado do alternador
+local farming = false -- Estado do Auto Farm
 local currentCheckpointIndex = 2 -- Iniciar do checkpoint 2
 
 -- Função para teleportar o jogador entre os checkpoints de 2 a 99
@@ -61,6 +62,47 @@ local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle",
             end
         else
             print("Toggle Off - Auto Zerar desativado") -- Mensagem de desativação
+        end
+    end 
+})
+
+-- Função para teleportar entre checkpoints de 2 a 99 e para o RestartPortal, fazendo loop
+local function teleportForAutoFarm()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    -- Teleportar para os checkpoints de 2 a 99
+    for i = 2, 99 do
+        local checkpoint = workspace.WorldMap.Checkpoints[tostring(i)] and workspace.WorldMap.Checkpoints[tostring(i)].Pole
+        if checkpoint then
+            character:MoveTo(checkpoint.Position)
+            wait(0.7) -- Espera 0.7 segundos entre checkpoints
+        end
+    end
+
+    -- Teleportar para o RestartPortal após o checkpoint 99
+    local restartPortal = workspace.WorldMap.RestartPortal.Teleport
+    if restartPortal then
+        character:MoveTo(restartPortal.Position)
+        wait(0.7) -- Espera 0.7 segundos
+    end
+end
+
+-- Alternador para ativar/desativar o Auto Farm
+local AutoFarmToggle = Tabs.autoFarm:AddToggle("AutoFarmToggle2", 
+{
+    Title = "Auto Farm", 
+    Description = "Faz loop de teleportação entre checkpoints e portal.",
+    Default = false,
+    Callback = function(state)
+        farming = state
+        if farming then
+            print("Auto Farm Iniciado") -- Mensagem de ativação
+            while farming do
+                teleportForAutoFarm() -- Executa o loop de teleportação
+            end
+        else
+            print("Auto Farm Desativado") -- Mensagem de desativação
         end
     end 
 })
