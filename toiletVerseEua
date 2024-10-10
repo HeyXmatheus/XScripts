@@ -1,1 +1,73 @@
-A
+-- Carregar biblioteca
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
+-- Aviso ao executar
+Fluent:Notify({ Title = "executado!", Content = "executando com sucesso" })
+Fluent:Notify({ Title = "Servidor XScripts oficial discord!", Content = "https://discord.gg/qsYR297DR2" })
+Fluent:Notify({ Title = "Canal XScripts YouTube Oficial!", Content = "@XScriptsOficial" })
+
+local Window = Fluent:CreateWindow({
+    Title = "XScript Toilet Verse 🔥 | 🇺🇸 Versão 1.0.0 ",
+    TabWidth = 160, 
+    Size = UDim2.fromOffset(580, 460), 
+    Theme = "Amethyst"
+})
+
+local Tabs = {
+    Tabinfo = Window:AddTab({ Title = "Tab Info" }),
+    autofarms = Window:AddTab({ Title = "Auto Farms", Icon = "leaf" }) -- Nova aba "Auto Farms"
+}
+
+-- ... (O restante do seu código permanece inalterado) ...
+
+-- Alternador para coletar moedas
+local autoCollectCoins = false
+local function collectCoins()
+    while autoCollectCoins do
+        wait(0.1) -- Ajuste o tempo conforme necessário
+        for _, coin in pairs(workspace:GetChildren()) do
+            if coin:IsA("Part") and coin.Name == "Coin" then
+                coin.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame -- Teleporta a moeda para o jogador
+            end
+        end
+    end
+end
+
+local ToggleCollectCoins = Tabs.autofarms:AddToggle("Auto Collect Coins", 
+{
+    Title = "Auto Coins", 
+    Default = false, 
+    Callback = function(state)
+        autoCollectCoins = state
+        if autoCollectCoins then
+            collectCoins() -- Iniciar a coleta de moedas
+        end
+    end 
+})
+
+-- Alternador para coletar Heal
+local autoCollectHeal = false
+local function collectHeal()
+    while autoCollectHeal do
+        wait(0.1) -- Ajuste o tempo conforme necessário
+        for _, heal in pairs(workspace:GetChildren()) do
+            if heal:IsA("Part") and heal.Name == "Heal" then
+                heal.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame -- Teleporta o curativo para o jogador
+            end
+        end
+    end
+end
+
+local ToggleCollectHeal = Tabs.autofarms:AddToggle("Auto Collect Heal", 
+{
+    Title = "Auto Curativos", 
+    Default = false, 
+    Callback = function(state)
+        autoCollectHeal = state
+        if autoCollectHeal then
+            collectHeal() -- Iniciar a coleta de curativos
+        end
+    end 
+})
+
+-- ... (O restante do seu código permanece inalterado) ...
