@@ -7,7 +7,7 @@ Fluent:Notify({ Title = "Servidor XScripts oficial discord!", Content = "https:/
 Fluent:Notify({ Title = "Canal XScripts YouTube Oficial!", Content = "@XScriptsOficial" })
 
 local Window = Fluent:CreateWindow({
-    Title = "XScript Toilet Verse 🔥 | 🇺🇸 Versão 1.0.0 ",
+    Title = "XScript Toilet Verse 🚽 | 🇺🇸 Versão 1.0.0 ",
     TabWidth = 160, 
     Size = UDim2.fromOffset(390, 300), 
     Theme = "Amethyst"
@@ -60,7 +60,7 @@ end
 
 local ToggleCollectHeal = Tabs.autofarms:AddToggle("Auto Collect Heal", 
 {
-    Title = "Auto Curativos 🩹", 
+    Title = "Auto Dressings 🩹", 
     Default = false, 
     Callback = function(state)
         autoCollectHeal = state
