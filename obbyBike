@@ -65,37 +65,17 @@ local Toggle = Tabs.autoFarm:AddToggle("AutoFarmToggle",
     end 
 })
 
--- Função para teleportar o jogador entre checkpoints específicos
-local function teleportToSpecificCheckpoints()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-
-    local checkpoints = {
-        workspace.WorldMap.Checkpoints["30"].Pole,
-        workspace.WorldMap.Checkpoints["50"].Pole,
-        workspace.WorldMap.Checkpoints["90"].Pole,
-        workspace.WorldMap.Checkpoints["95"].Pole,
-        workspace.WorldMap.Checkpoints["99"].Pole
-    }
-
-    -- Teleporta para cada checkpoint da lista com intervalo de espera entre cada um
-    for _, checkpoint in ipairs(checkpoints) do
-        if checkpoint then
-            character:MoveTo(checkpoint.Position)
-            wait(1.5) -- Espera 1.5 segundos entre cada teleporte
-        else
-            print("Checkpoint não encontrado.")
-        end
-    end
-    print("Teleportação para checkpoints específicos concluída.")
-end
-
--- Botão para zerar o bypass e teleportar para checkpoints específicos
+-- Botão para zerar o bypass e teleportar automaticamente entre os checkpoints
 local Button = Tabs.autoFarm:AddButton({
     Title = "Zerar Bypass",
-    Description = "Teleporta para uma sequência de checkpoints.",
+    Description = "Teleporta pelos checkpoints automaticamente.",
     Callback = function()
-        teleportToSpecificCheckpoints() -- Executa a sequência de teleportes
+        teleporting = true
+        currentCheckpointIndex = 2 -- Reseta o índice
+        while teleporting do
+            teleportToNextCheckpoint() -- Executa a sequência de teleportes
+            wait(0.09) -- Espera 0.09 segundos entre teleportes
+        end
     end
 })
 
