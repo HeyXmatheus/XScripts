@@ -19,10 +19,9 @@ local Tabs = {
 
 -- Variáveis de controle
 local teleporting = false -- Estado do alternador
-local farming = false -- Estado do Auto Farm
 local currentCheckpointIndex = 2 -- Iniciar do checkpoint 2
 
--- Função para teleportar o jogador entre os checkpoints de 2 a 99
+-- Função para teleportar entre checkpoints de 2 a 99 para Auto Zerar
 local function teleportToNextCheckpoint()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
@@ -80,29 +79,36 @@ local function teleportForAutoFarm()
         end
     end
 
-    -- Teleportar para o RestartPortal após o checkpoint 99
+    -- Teleportar para o centro do RestartPortal após o checkpoint 99
     local restartPortal = workspace.WorldMap.RestartPortal.Teleport
     if restartPortal then
-        character:MoveTo(restartPortal.Position)
-        wait(0.7) -- Espera 0.7 segundos
+        -- Calcula o centro do teleport e ajusta para garantir que fique no meio
+        local middlePosition = restartPortal.Position + Vector3.new(0, 0, 0) -- Ajuste para o centro exato
+        character:MoveTo(middlePosition)
+        wait(2) -- Espera 2 segundos no RestartPortal antes de continuar
     end
+
+    -- Voltar para o início (pode adicionar qualquer lógica para reiniciar o ciclo)
+    currentCheckpointIndex = 2
 end
 
--- Alternador para ativar/desativar o Auto Farm
-local AutoFarmToggle = Tabs.autoFarm:AddToggle("AutoFarmToggle2", 
+-- Alternador para ativar/desativar o Auto Farm com loop
+local ToggleFarm = Tabs.autoFarm:AddToggle("AutoFarmToggleFarm", 
 {
     Title = "Auto Farm", 
-    Description = "Faz loop de teleportação entre checkpoints e portal.",
+    Description = "Faz o farm automaticamente e retorna ao início.",
     Default = false,
     Callback = function(state)
-        farming = state
-        if farming then
-            print("Auto Farm Iniciado") -- Mensagem de ativação
-            while farming do
-                teleportForAutoFarm() -- Executa o loop de teleportação
+        teleporting = state
+        currentCheckpointIndex = 2 -- Reseta o índice ao ativar o alternador
+        if teleporting then
+            print("Toggle On - Iniciando Auto Farm") -- Mensagem de ativação
+            while teleporting do
+                teleportForAutoFarm() -- Teleporta através dos checkpoints e RestartPortal
+                wait(1) -- Espera 1 segundo entre ciclos
             end
         else
-            print("Auto Farm Desativado") -- Mensagem de desativação
+            print("Toggle Off - Auto Farm desativado") -- Mensagem de desativação
         end
     end 
 })
