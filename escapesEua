@@ -5,8 +5,6 @@ local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/
 Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
 Fluent:Notify({ Title = "Servidor XScripts oficial discord!", Content = "https://discord.gg/qsYR297DR2" })
 Fluent:Notify({ Title = "Canal XScripts YouTube Oficial!", Content = "@XScriptsOficial" })
-Fluent:Notify({ Title = "Este é Original Da XScripts!", Content = "Copyright 2024 XScripts. Todos os direitos reservados.
-" })
 
 local Window = Fluent:CreateWindow({
     Title = "XScript escapes 🔥 | 🇺🇸 Versão 1.0.0",
