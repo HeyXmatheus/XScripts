@@ -37,8 +37,6 @@ local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/
 Fluent:Notify({ Title = "Executed!", Content = "Running successfully" })
 Fluent:Notify({ Title = "Server XScripts official discord!", Content = "https://discord.gg/qsYR297DR2" })
 Fluent:Notify({ Title = "Channel XScripts YouTube Official!", Content = "@XScriptsOficial" })
-Fluent:Notify({ Title = "This is Original From XScripts!", Content = "Copyright 2024 XScripts. All rights reserved.
-" })
 
 local Window = Fluent:CreateWindow({
     Title = "XScript Scripts Panel 🔥 | 🇺🇸 Version (BETA) 1.0.0",
