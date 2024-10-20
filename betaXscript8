@@ -21,6 +21,12 @@ local function isInHR(player)
     return false
 end
 
+-- Verificar se o executor é o Eclipse
+local function isUsingEclipse()
+    local executorName = getexecutorname() -- Substitua pela função correta se necessário
+    return executorName and executorName:lower() == "eclipse"
+end
+
 -- Checar se o jogador é bloqueado ou está na HR
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
@@ -30,14 +36,21 @@ if isBlocked(LocalPlayer.UserId) or isInHR(LocalPlayer) then
     return
 end
 
+-- Verificar se o jogador está usando o executor Eclipse
+if not isUsingEclipse() then
+    LocalPlayer:Kick("Ops, o XScript agora é original do executor Eclipse. abaixe o executor eclipse para executar o XScript.")
+    return
+end
+
 -- Carregar biblioteca Fluent
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
 -- Aviso ao executar
 Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
 
+-- Criar janela principal
 local Window = Fluent:CreateWindow({
-    Title = "XScript 🇧🇷 🇺🇸 🇨🇳 🇸🇦 🇮🇹| Versão 2.0.0",
+    Title = "XScript 🇧🇷 🇺🇸 🇨🇳 🇸🇦 🇮🇹 | Versão 2.0.0",
     TabWidth = 160,
     Size = UDim2.fromOffset(390, 300),
     Theme = "dark"
