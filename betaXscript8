@@ -1,4 +1,4 @@
--- Verificar se o jogador pode executar o script
+-- Função para verificar se o jogador pode executar o script
 local blockedPlayers = {1111, 71828} -- IDs dos jogadores bloqueados
 local function isBlocked(userId)
     for _, id in pairs(blockedPlayers) do
@@ -38,47 +38,52 @@ end
 
 -- Verificar se o jogador está usando o executor Eclipse
 if not isUsingEclipse() then
-    LocalPlayer:Kick("Ops, o XScript agora é original do executor Eclipse. abaixe o executor eclipse para executar o XScript.")
+    LocalPlayer:Kick("Ops, o XScript agora é original do executor Eclipse. Baixe o executor Eclipse para executar o XScript.")
     return
 end
 
--- Carregar biblioteca Fluent
-local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+-- Função para mostrar a tela de carregamento
+local function showLoadingScreen()
+    -- Criar o frame de carregamento
+    local loadingFrame = Instance.new("ScreenGui")
+    loadingFrame.Name = "LoadingScreen"
+    loadingFrame.Parent = game.CoreGui -- Adiciona ao CoreGui
 
--- Aviso ao executar
-Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0.6, 0, 0.4, 0) -- Tamanho ajustado do fundo (não ocupa a tela toda)
+    frame.Position = UDim2.new(0.2, 0, 0.3, 0) -- Centralizado sem ocupar a tela toda
+    frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Vermelho
+    frame.BackgroundTransparency = 0.2 -- Levemente transparente
+    frame.Parent = loadingFrame
 
--- Criar janela principal
-local Window = Fluent:CreateWindow({
-    Title = "XSCRIPT | ECLIPSE • Versão 2.0.0",
-    TabWidth = 160,
-    Size = UDim2.fromOffset(390, 300),
-    Theme = "dark"
-})
-
--- Função para fechar a interface
-local function closeInterface()
-    Window:Destroy() -- Destrói a janela, fechando a interface
+    -- Criar o texto de carregamento
+    local loadingText = Instance.new("TextLabel")
+    loadingText.Size = UDim2.new(1, -20, 0.3, 0) -- Ajusta a altura e adiciona margem
+    loadingText.Position = UDim2.new(0, 10, 0.35, 0) -- Centraliza dentro do frame
+    loadingText.BackgroundTransparency = 1
+    loadingText.Text = "XSCRIPT ECLIPSE CARREGANDO..."
+    loadingText.TextColor3 = Color3.fromRGB(255, 255, 255) -- Branco
+    loadingText.TextScaled = true -- Ajusta o tamanho do texto
+    loadingText.TextWrapped = true -- Permite quebra de linha
+    loadingText.TextStrokeTransparency = 0.7 -- Suaviza a borda do texto
+    loadingText.TextStrokeColor3 = Color3.fromRGB(50, 50, 50) -- Cor da borda suave
+    loadingText.Parent = frame
 end
 
-local Tabs = {
-    scripts = Window:AddTab({ Title = "Xscripts Eclipse", Icon = "user" }),
-}
-
--- Botões
-Tabs.scripts:AddButton({
-    Title = "XScript ECLIPSE Eua 🇺🇸", 
-    Callback = function() 
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/MenuEua'))()
-        closeInterface() -- Fecha a interface após executar o script
+local function hideLoadingScreen()
+    local loadingScreen = game.CoreGui:FindFirstChild("LoadingScreen")
+    if loadingScreen then
+        loadingScreen:Destroy() -- Remove a tela de carregamento
     end
-})
+end
 
-Tabs.scripts:AddButton({
-    Title = "XScript ECLIPSE Brasil 🇧🇷", 
-    Callback = function() 
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/menuBrasil'))()
-        closeInterface() -- Fecha a interface após executar o script
-    end
-})
--- Fim do código
+-- Exemplo de uso da tela de carregamento
+showLoadingScreen() -- Mostra a tela de carregamento
+
+-- Simular um tempo de carregamento mais longo
+wait(8) -- Carregamento por 8 segundos
+
+hideLoadingScreen() -- Esconde a tela de carregamento
+
+-- Executar o script após o carregamento
+loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/betaXscript8'))()
