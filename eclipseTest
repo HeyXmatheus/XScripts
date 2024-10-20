@@ -1,0 +1,225 @@
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local ScreenGui = Instance.new("ScreenGui")
+local fundo1 = Instance.new("Frame")
+local UICorner = Instance.new("UICorner")
+local nome = Instance.new("Frame")
+local UICorner_2 = Instance.new("UICorner")
+local ouvctroutros = Instance.new("Frame")
+local UICorner_3 = Instance.new("UICorner")
+local nomeeclipse = Instance.new("TextLabel")
+local versaov1 = Instance.new("TextLabel")
+local fechamento = Instance.new("ImageButton")
+local abas = Instance.new("Frame")
+local UICorner_4 = Instance.new("UICorner")
+local buttonhome = Instance.new("ImageButton")
+local buttonexecu = Instance.new("ImageButton")
+local buttonscripts = Instance.new("ImageButton")
+local frameexecutor = Instance.new("Frame")
+local UICorner_5 = Instance.new("UICorner")
+local TextBox = Instance.new("TextBox")
+local UICorner_6 = Instance.new("UICorner")
+local rexecute = Instance.new("TextButton")
+local UICorner_7 = Instance.new("UICorner")
+local clear = Instance.new("TextButton")
+local UICorner_8 = Instance.new("UICorner")
+local logo1 = Instance.new("Frame")
+local UICorner_9 = Instance.new("UICorner")
+local logo1_2 = Instance.new("Frame")
+local UICorner_10 = Instance.new("UICorner")
+
+--Properties:
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+fundo1.Name = "fundo1"
+fundo1.Parent = ScreenGui
+fundo1.BackgroundColor3 = Color3.fromRGB(85, 0, 0)
+fundo1.BackgroundTransparency = 0.500
+fundo1.BorderColor3 = Color3.fromRGB(0, 0, 0)
+fundo1.BorderSizePixel = 0
+fundo1.Position = UDim2.new(0.288297862, 0, 0.299131006, 0)
+fundo1.Size = UDim2.new(0, 414, 0, 268)
+
+UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = fundo1
+
+nome.Name = "nome"
+nome.Parent = ScreenGui
+nome.BackgroundColor3 = Color3.fromRGB(85, 0, 0)
+nome.BorderColor3 = Color3.fromRGB(0, 0, 0)
+nome.BorderSizePixel = 0
+nome.Position = UDim2.new(0.343617022, 0, 0.3125, 0)
+nome.Size = UDim2.new(0, 113, 0, 36)
+
+UICorner_2.CornerRadius = UDim.new(0, 10)
+UICorner_2.Parent = nome
+
+ouvctroutros.Name = "ouvctroutros"
+ouvctroutros.Parent = ScreenGui
+ouvctroutros.BackgroundColor3 = Color3.fromRGB(85, 0, 0)
+ouvctroutros.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ouvctroutros.BorderSizePixel = 0
+ouvctroutros.Position = UDim2.new(0.476595759, 0, 0.3125, 0)
+ouvctroutros.Size = UDim2.new(0, 221, 0, 36)
+
+UICorner_3.CornerRadius = UDim.new(0, 10)
+UICorner_3.Parent = ouvctroutros
+
+nomeeclipse.Name = "nomeeclipse"
+nomeeclipse.Parent = ScreenGui
+nomeeclipse.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+nomeeclipse.BackgroundTransparency = 1.000
+nomeeclipse.BorderColor3 = Color3.fromRGB(0, 0, 0)
+nomeeclipse.BorderSizePixel = 0
+nomeeclipse.Position = UDim2.new(0.296808511, 0, 0.299131036, 0)
+nomeeclipse.Size = UDim2.new(0, 200, 0, 50)
+nomeeclipse.Font = Enum.Font.SourceSansBold
+nomeeclipse.Text = "eclipse"
+nomeeclipse.TextColor3 = Color3.fromRGB(255, 255, 255)
+nomeeclipse.TextSize = 26.000
+
+versaov1.Name = "versaov1"
+versaov1.Parent = ScreenGui
+versaov1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+versaov1.BackgroundTransparency = 1.000
+versaov1.BorderColor3 = Color3.fromRGB(0, 0, 0)
+versaov1.BorderSizePixel = 0
+versaov1.Position = UDim2.new(0.435106397, 0, 0.299131036, 0)
+versaov1.Size = UDim2.new(0, 200, 0, 50)
+versaov1.Font = Enum.Font.SourceSansBold
+versaov1.Text = "vers�o v1"
+versaov1.TextColor3 = Color3.fromRGB(255, 255, 255)
+versaov1.TextSize = 26.000
+
+fechamento.Name = "fechamento"
+fechamento.Parent = ScreenGui
+fechamento.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+fechamento.BackgroundTransparency = 1.000
+fechamento.BorderColor3 = Color3.fromRGB(0, 0, 0)
+fechamento.BorderSizePixel = 0
+fechamento.Position = UDim2.new(0.670212746, 0, 0.314171076, 0)
+fechamento.Size = UDim2.new(0, 29, 0, 31)
+fechamento.Image = "rbxassetid://10747384394"
+fechamento.ImageColor3 = Color3.fromRGB(255, 0, 0)
+
+abas.Name = "abas"
+abas.Parent = ScreenGui
+abas.BackgroundColor3 = Color3.fromRGB(85, 0, 0)
+abas.BorderColor3 = Color3.fromRGB(0, 0, 0)
+abas.BorderSizePixel = 0
+abas.Position = UDim2.new(0.296808511, 0, 0.382687211, 0)
+abas.Size = UDim2.new(0, 44, 0, 204)
+
+UICorner_4.CornerRadius = UDim.new(1, 0)
+UICorner_4.Parent = abas
+
+buttonhome.Name = "buttonhome"
+buttonhome.Parent = ScreenGui
+buttonhome.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+buttonhome.BackgroundTransparency = 1.000
+buttonhome.BorderColor3 = Color3.fromRGB(0, 0, 0)
+buttonhome.BorderSizePixel = 0
+buttonhome.Position = UDim2.new(0.301063836, 0, 0.40942511, 0)
+buttonhome.Size = UDim2.new(0, 35, 0, 32)
+buttonhome.Image = "rbxassetid://10723407389"
+
+buttonexecu.Name = "buttonexecu"
+buttonexecu.Parent = ScreenGui
+buttonexecu.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+buttonexecu.BackgroundTransparency = 1.000
+buttonexecu.BorderColor3 = Color3.fromRGB(0, 0, 0)
+buttonexecu.BorderSizePixel = 0
+buttonexecu.Position = UDim2.new(0.301063836, 0, 0.472927779, 0)
+buttonexecu.Size = UDim2.new(0, 35, 0, 32)
+buttonexecu.Image = "rbxassetid://10709807111"
+
+buttonscripts.Name = "buttonscripts"
+buttonscripts.Parent = ScreenGui
+buttonscripts.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+buttonscripts.BackgroundTransparency = 1.000
+buttonscripts.BorderColor3 = Color3.fromRGB(0, 0, 0)
+buttonscripts.BorderSizePixel = 0
+buttonscripts.Position = UDim2.new(0.301063836, 0, 0.538101554, 0)
+buttonscripts.Size = UDim2.new(0, 35, 0, 32)
+buttonscripts.Image = "rbxassetid://10723387563"
+
+frameexecutor.Name = "frameexecutor"
+frameexecutor.Parent = ScreenGui
+frameexecutor.BackgroundColor3 = Color3.fromRGB(85, 0, 0)
+frameexecutor.BorderColor3 = Color3.fromRGB(0, 0, 0)
+frameexecutor.BorderSizePixel = 0
+frameexecutor.Position = UDim2.new(0.368085116, 0, 0.382687181, 0)
+frameexecutor.Size = UDim2.new(0, 313, 0, 203)
+
+UICorner_5.CornerRadius = UDim.new(0, 10)
+UICorner_5.Parent = frameexecutor
+
+TextBox.Parent = frameexecutor
+TextBox.BackgroundColor3 = Color3.fromRGB(197, 0, 0)
+TextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextBox.BorderSizePixel = 0
+TextBox.Position = UDim2.new(0.0383386575, 0, 0.0344827585, 0)
+TextBox.Size = UDim2.new(0, 289, 0, 138)
+TextBox.Font = Enum.Font.SourceSans
+TextBox.Text = ""
+TextBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextBox.TextSize = 14.000
+
+UICorner_6.CornerRadius = UDim.new(0, 10)
+UICorner_6.Parent = TextBox
+
+rexecute.Name = "rexecute"
+rexecute.Parent = frameexecutor
+rexecute.BackgroundColor3 = Color3.fromRGB(188, 0, 0)
+rexecute.BorderColor3 = Color3.fromRGB(0, 0, 0)
+rexecute.BorderSizePixel = 0
+rexecute.Position = UDim2.new(0.0383386575, 0, 0.758620679, 0)
+rexecute.Size = UDim2.new(0, 139, 0, 41)
+rexecute.Font = Enum.Font.SourceSansBold
+rexecute.Text = "executar"
+rexecute.TextColor3 = Color3.fromRGB(255, 255, 255)
+rexecute.TextSize = 22.000
+
+UICorner_7.CornerRadius = UDim.new(0, 10)
+UICorner_7.Parent = rexecute
+
+clear.Name = "clear"
+clear.Parent = frameexecutor
+clear.BackgroundColor3 = Color3.fromRGB(188, 0, 0)
+clear.BorderColor3 = Color3.fromRGB(0, 0, 0)
+clear.BorderSizePixel = 0
+clear.Position = UDim2.new(0.517571867, 0, 0.758620679, 0)
+clear.Size = UDim2.new(0, 139, 0, 41)
+clear.Font = Enum.Font.SourceSansBold
+clear.Text = "clear"
+clear.TextColor3 = Color3.fromRGB(255, 255, 255)
+clear.TextSize = 22.000
+
+UICorner_8.CornerRadius = UDim.new(0, 10)
+UICorner_8.Parent = clear
+
+logo1.Name = "logo1"
+logo1.Parent = ScreenGui
+logo1.BackgroundColor3 = Color3.fromRGB(255, 85, 0)
+logo1.BorderColor3 = Color3.fromRGB(0, 0, 0)
+logo1.BorderSizePixel = 0
+logo1.Position = UDim2.new(0.295744687, 0, 0.307486564, 0)
+logo1.Size = UDim2.new(0, 40, 0, 39)
+
+UICorner_9.CornerRadius = UDim.new(1, 0)
+UICorner_9.Parent = logo1
+
+logo1_2.Name = "logo1"
+logo1_2.Parent = ScreenGui
+logo1_2.BackgroundColor3 = Color3.fromRGB(85, 0, 0)
+logo1_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+logo1_2.BorderSizePixel = 0
+logo1_2.Position = UDim2.new(0.298936158, 0, 0.3125, 0)
+logo1_2.Size = UDim2.new(0, 33, 0, 31)
+
+UICorner_10.CornerRadius = UDim.new(1, 0)
+UICorner_10.Parent = logo1_2
