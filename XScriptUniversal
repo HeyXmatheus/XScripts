@@ -1,29 +1,5 @@
--- Carregar biblioteca
-local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
-
--- Aviso ao executar
-Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
-Fluent:Notify({ Title = "Servidor XScripts oficial discord!", Content = "https://discord.gg/qsYR297DR2" })
-Fluent:Notify({ Title = "Canal XScripts YouTube Oficial!", Content = "@XScriptsOficial" })
-
-local Window = Fluent:CreateWindow({
-    Title = "XScript universal 🔥 | Versão 1.0.0 ",
-    TabWidth = 160, 
-    Size = UDim2.fromOffset(580, 460), 
-    Theme = "Amethyst"
-})
-
-local Tabs = {
-    Tabinfo = Window:AddTab({ Title = "Tab Info" }),
-    kill = Window:AddTab({ Title = "Kill All", Icon = "play" }),
-    tools = Window:AddTab({ Title = "Tools", Icon = "wrench" }),
-    guis = Window:AddTab({ Title = "Guis", Icon = "file" }),
-    localplayer = Window:AddTab({ Title = "Local Player", Icon = "user" }),
-    confi = Window:AddTab({ Title = "Configurações", Icon = "settings" })
-}
-
 -- Verificar se o jogador pode executar o script
-local blockedPlayers = {72720,71828} -- IDs dos jogadores bloqueados
+local blockedPlayers = {1111, 71828} -- IDs dos jogadores bloqueados
 local function isBlocked(userId)
     for _, id in pairs(blockedPlayers) do
         if userId == id then
@@ -45,285 +21,64 @@ local function isInHR(player)
     return false
 end
 
+-- Verificar se o executor é o Eclipse
+local function isUsingEclipse()
+    local executorName = getexecutorname() -- Substitua pela função correta se necessário
+    return executorName and executorName:lower() == "eclipse"
+end
+
 -- Checar se o jogador é bloqueado ou está na HR
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
 if isBlocked(LocalPlayer.UserId) or isInHR(LocalPlayer) then
-    LocalPlayer:Kick("Você não tem permissão para executar este script (você está banido do XScript universal) Entre no https://discord.gg/qsYR297DR2 e faça um pedido de desban.")
+    LocalPlayer:Kick("Você não tem permissão para executar este script (você está banido do XScript universal). Entre no https://discord.gg/qsYR297DR2 e faça um pedido de desban.")
     return
 end
 
+-- Verificar se o jogador está usando o executor Eclipse
+if not isUsingEclipse() then
+    LocalPlayer:Kick("Ops, o XScript agora é original do executor Eclipse. abaixe o executor eclipse para executar o XScript.")
+    return
+end
+
+-- Carregar biblioteca Fluent
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
+-- Aviso ao executar
+Fluent:Notify({ Title = "Executado!", Content = "Executando com sucesso" })
+
+-- Criar janela principal
+local Window = Fluent:CreateWindow({
+    Title = "XSCRIPT | ECLIPSE • Versão 2.0.0",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(390, 300),
+    Theme = "dark"
+})
+
+-- Função para fechar a interface
+local function closeInterface()
+    Window:Destroy() -- Destrói a janela, fechando a interface
+end
+
+local Tabs = {
+    scripts = Window:AddTab({ Title = "Xscripts Eclipse", Icon = "user" }),
+}
+
 -- Botões
-Tabs.localplayer:AddButton({ Title = "pulo infinito", Callback = function() 
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/HeyGyt/infjump/main/main"))()
-end })
-
-Tabs.guis:AddButton({ Title = "Fly gui", Callback = function() 
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fly'))()
-end })
-
-Tabs.tools:AddButton({ Title = "Tp tool", Callback = function() 
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/tptool'))()
-end })
-
-Tabs.guis:AddButton({ Title = "jogar alguém no void gui", Callback = function() 
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/fling'))()
-end })
-
-Tabs.confi:AddButton({ Title = "Remover Lag e Texturas", Callback = function() 
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-
-    -- Desativar texturas
-    for _, part in pairs(workspace:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.Material = Enum.Material.SmoothPlastic
-            if part:FindFirstChildOfClass("Decal") then
-                part:FindFirstChildOfClass("Decal"):Destroy()
-            end
-            if part:FindFirstChildOfClass("Texture") then
-                part:FindFirstChildOfClass("Texture"):Destroy()
-            end
-        end
-    end
-
-    -- Desativar efeitos de partículas
-    for _, effect in pairs(workspace:GetDescendants()) do
-        if effect:IsA("ParticleEmitter") or effect:IsA("Trail") then
-            effect.Enabled = false
-        end
-    end
-
-    -- Desativar iluminação desnecessária
-    game.Lighting.GlobalShadows = false
-    game.Lighting.FogEnd = 9e9
-    game.Lighting.Brightness = 0
-
-    print("Lag e texturas removidos")
-end })
-
--- Variável para controlar o estado do ataque automático
-local autoKill = false
-
--- Função para seguir e atacar jogadores (exceto amigos)
-local function followAndAttack()
-    while autoKill do
-        local player = game.Players.LocalPlayer
-        local character = player.Character
-        local sword = character:FindFirstChildOfClass("Tool")
-
-        -- Equipar a espada automaticamente se não estiver equipada
-        if not sword or not sword.Name:lower():find("sword") then
-            for _, tool in pairs(player.Backpack:GetChildren()) do
-                if tool:IsA("Tool") and tool.Name:lower():find("sword") then
-                    character.Humanoid:EquipTool(tool)
-                    sword = tool
-                    break
-                end
-            end
-        end
-
-        if sword and sword.Name:lower():find("sword") then
-            for _, target in pairs(game.Players:GetPlayers()) do
-                if target ~= player and not player:IsFriendsWith(target.UserId) then
-                    local targetCharacter = target.Character
-                    if targetCharacter and targetCharacter:FindFirstChild("Humanoid") and not targetCharacter:FindFirstChild("ForceField") then
-                        -- Função para seguir o alvo e atacar
-                        local function followTarget()
-                            while autoKill and targetCharacter.Humanoid.Health > 0 do
-                                -- Teleportar para trás do jogador alvo e olhar para ele
-                                local targetPosition = targetCharacter.PrimaryPart.Position
-                                local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
-                                character:SetPrimaryPartCFrame(CFrame.new(behindPosition, targetPosition))
-
-                                -- Auto click para atacar sem delay
-                                sword:Activate()
-                                wait(0.01) -- Delay mínimo
-                            end
-                        end
-
-                        -- Iniciar a função de seguir e atacar
-                        followTarget()
-
-                        -- Matar o jogador alvo
-                        targetCharacter.Humanoid.Health = 0
-                        wait(0.01) -- Esperar um pouco antes de ir para o próximo jogador
-                    end
-                end
-            end
-        else
-            print("Você precisa estar com uma espada equipada")
-        end
-        wait(0.01) -- Pequeno delay antes de repetir o ciclo
-    end
-end
-
--- Alternador para ativar/desativar o ataque automático (kill all)
-local ToggleKillAll = Tabs.kill:AddToggle("autoKill", 
-{
-    Title = "Auto Kill all (Sword)", 
-    Description = "Mate todos do Servidor (necessita de espada)",
-    Default = false, 
-    Callback = function(state)
-        autoKill = state
-        if autoKill then
-            print("Auto Kill ativado")
-            followAndAttack()
-        else
-            print("Auto Kill desativado")
-        end
-    end 
-})
-
--- Alternador para ativar/desativar o ataque automático (menos amigos)
-local ToggleKillAllFriends = Tabs.kill:AddToggle("autoKillFriends", 
-{
-    Title = "Auto Kill all (Menos Amigos)", 
-    Description = "Mate todos do Servidor exceto amigos (necessita de espada)",
-    Default = false, 
-    Callback = function(state)
-        autoKill = state
-        if autoKill then
-            print("Auto Kill (Menos Amigos) ativado")
-            followAndAttack()
-        else
-            print("Auto Kill (Menos Amigos) desativado")
-        end
-    end 
-})
-
--- Botão para executar o Kill All manualmente
-Tabs.kill:AddButton({ Title = "Kill All (Sword)", Callback = function() 
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local sword = character:FindFirstChildOfClass("Tool")
-
-    -- Equipar a espada automaticamente se não estiver equipada
-    if not sword or not sword.Name:lower():find("sword") then
-        for _, tool in pairs(player.Backpack:GetChildren()) do
-            if tool:IsA("Tool") and tool.Name:lower():find("sword") then
-                character.Humanoid:EquipTool(tool)
-                sword = tool
-                break
-            end
-        end
-    end
-
-    if sword and sword.Name:lower():find("sword") then
-        for _, target in pairs(game.Players:GetPlayers()) do
-            if target ~= player then
-                local targetCharacter = target.Character
-                if targetCharacter and targetCharacter:FindFirstChild("Humanoid") and not targetCharacter:FindFirstChild("ForceField") then
-                    -- Função para seguir o alvo e atacar
-                    local function followTarget()
-                        while targetCharacter.Humanoid.Health > 0 do
-                            -- Teleportar para trás do jogador alvo e olhar para ele
-                            local targetPosition = targetCharacter.PrimaryPart.Position
-                            local behindPosition = targetPosition - (targetCharacter.PrimaryPart.CFrame.LookVector * 3)
-                            character:SetPrimaryPartCFrame(CFrame.new(behindPosition, targetPosition))
-
-                            -- Auto click para atacar sem delay
-                            sword:Activate()
-                            wait(0.01) -- Delay mínimo
-                        end
-                    end
-
-                    -- Iniciar a função de seguir e atacar
-                    followTarget()
-
-                    -- Matar o jogador alvo
-                    targetCharacter.Humanoid.Health = 0
-                    wait(0.01) -- Esperar um pouco antes de ir para o próximo jogador
-                end
-            end
-        end
-    else
-        print("Você precisa estar com uma espada equipada")
-    end
-end })
-
--- Sliders
-local Slider = Tabs.localplayer:AddSlider("pulo", 
-{
-    Title = "ajusta pulo",
-    Description = "irá mudar pulo jogador",
-    Default = 2,
-    Min = 0,
-    Max = 5,
-    Rounding = 1,
-    Callback = function(Value)
-        local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        local humanoid = character:WaitForChild("Humanoid")
-        
-        -- Ajustar o pulo do jogador
-        humanoid.JumpPower = Value * 50  -- Multiplica o valor para aumentar o impacto
-        print("Pulo mudou para:", Value)
+Tabs.scripts:AddButton({
+    Title = "XScript ECLIPSE Eua 🇺🇸", 
+    Callback = function() 
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/MenuEua'))()
+        closeInterface() -- Fecha a interface após executar o script
     end
 })
 
-local Slider = Tabs.localplayer:AddSlider("velocidade", 
-{
-    Title = "Velocidade",
-    Description = "Ajusta a velocidade do jogador",
-    Default = 2,
-    Min = 0,
-    Max = 5,
-    Rounding = 1,
-    Callback = function(Value)
-        local player = game.Players.LocalPlayer
-        local character = player.Character or player.CharacterAdded:Wait()
-        local humanoid = character:WaitForChild("Humanoid")
-        
-        -- Define a velocidade de caminhada
-        humanoid.WalkSpeed = Value * 10  -- Multiplica o valor para aumentar o impacto
-        print("Velocidade mudou para:", Value)
+Tabs.scripts:AddButton({
+    Title = "XScript ECLIPSE Brasil 🇧🇷", 
+    Callback = function() 
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/menuBrasil'))()
+        closeInterface() -- Fecha a interface após executar o script
     end
 })
- -- Função para ativar/desativar o noclip
-local player = game.Players.LocalPlayer
-local noclip = false
-
-local function toggleNoclip(state)
-    noclip = state
-    if noclip then
-        print("Noclip ativado")
-        -- Loop contínuo para desativar colisões
-        game:GetService("RunService").Stepped:Connect(function()
-            if noclip and player.Character then
-                for _, part in pairs(player.Character:GetDescendants()) do
-                    if part:IsA("BasePart") then
-                        part.CanCollide = false
-                    end
-                end
-            end
-        end)
-        print("Noclip ativado")
-    else
-        -- Ativar colisões
-        for _, part in pairs(player.Character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = true
-            end
-        end
-        print("Noclip desativado")
-    end
-end
-
-local Toggle = Tabs.localplayer:AddToggle("noclip", 
-{
-    Title = "noclip", 
-    Description = "atravesse as paredes",
-    Default = false, 
-    Callback = function(state)
-        toggleNoclip(state)
-        if state then
-            print("Noclip ativado")
-        else
-            print("Noclip desativado")
-        end
-    end 
-})
-
 -- Fim do código
