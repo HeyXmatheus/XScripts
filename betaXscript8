@@ -62,7 +62,7 @@ local function closeInterface()
 end
 
 local Tabs = {
-    scripts = Window:AddTab({ Title = "XScripts", Icon = "user" }),
+    scripts = Window:AddTab({ Title = "XSCRIPTS ECLIPSE", Icon = "user" }),
 }
 
 -- Botões
