@@ -86,4 +86,4 @@ wait(8) -- Carregamento por 8 segundos
 hideLoadingScreen() -- Esconde a tela de carregamento
 
 -- Executar o script após o carregamento
-loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/betaXscript8'))()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/XScriptUniversal'))()
