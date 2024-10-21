@@ -69,28 +69,4 @@ Tabs.scripts:AddButton({
     end
 })
 
-Tabs.scripts:AddButton({
-    Title = "em breve 🇨🇳", 
-    Callback = function() 
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/obbys'))()
-        closeInterface() -- Fecha a interface após executar o script
-    end
-})
-
-Tabs.scripts:AddButton({
-    Title = "em breve 🇮🇹", 
-    Callback = function() 
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/'))()
-        closeInterface() -- Fecha a interface após executar o script
-    end
-})
-
-Tabs.scripts:AddButton({
-    Title = "em breve 🇸🇦", 
-    Callback = function() 
-        loadstring(game:HttpGet('https://raw.githubusercontent.com/HeyXmatheus/XScripts/refs/heads/main/'))()
-        closeInterface() -- Fecha a interface após executar o script
-    end 
-})
-
 -- Fim do código
