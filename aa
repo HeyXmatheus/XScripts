@@ -15,6 +15,7 @@ local GetHwid = game:GetService("RbxAnalyticsService"):GetClientId()
 local ConsoleJobId = 'Roblox.GameLauncher.joinGameInstance(' .. game.PlaceId .. ', "' .. game.JobId .. '")'
 local pros = "5,5,0"
 
+
 local GAMENAME = MarketplaceService:GetProductInfo(game.PlaceId).Name
 
 local function detectExecutor()
@@ -58,6 +59,8 @@ local function createWebhookData()
     return HttpService:JSONEncode(data)
 end
 
+
+
 local function sendWebhook(webhookUrl, data)
     local headers = {
         ["content-type"] = "application/json"
@@ -73,8 +76,10 @@ local webhookData = createWebhookData()
 
 sendWebhook(webhookUrl, webhookData)
 
+
 -- Carregar a biblioteca Fluent
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
 
 local clickDetector = workspace.WorkspaceCom["001_DayCare"].Tools.PowerKeyCard.ClickDetector
 local player = game.Players.LocalPlayer
@@ -87,9 +92,9 @@ local UserInputService = game:GetService("UserInputService")
 local function getcart()
     humanoidRootPart.CFrame = CFrame.new(Vector3.new(-114.53160858154297, 19.389202117919922, 31.396425247192383))
     
-    wait(1)   
+   wait(1)   
   
-    fireclickdetector(clickDetector, 1)
+  fireclickdetector(clickDetector, 1)
 
     wait(1) 
     
@@ -189,7 +194,7 @@ Tabs.casa:AddButton({
                 print("Lote " .. lotNumber .. " não encontrado.")
             end
         else
-            print("Nenhuma casa selecionada!") -- Aviso se nenhuma casa for escolhida
+            print("Nenhuma casa selecionada!") -- Aviso se nenhuma casa foi escolhida
         end
     end
 })
@@ -201,25 +206,116 @@ Tabs.tools:AddButton({
         local player = game.Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local humanoid = character:WaitForChild("Humanoid")
-        local humanoidRootPart = character:WaitForChild("HumanoidRootPart") -- Esperar até o HumanoidRootPart estar disponível
+        local humanoidRootPart = character:WaitForChild("HumanoidRootPart") -- Esperar a HumanoidRootPart
+        local originalPosition = humanoidRootPart.Position -- Salvar a posição original
 
-        -- Defina a posição onde o sofá deve aparecer
-        local sofaPosition = CFrame.new(Vector3.new(-114.53160858154297, 19.389202117919922, 31.396425247192383))
+        -- Teleportar para o sofá
+        if workspace.WorkspaceCom["003_CouchGiveTool"] and workspace.WorkspaceCom["003_CouchGiveTool"]:FindFirstChild("Seat1") then
+            humanoidRootPart.CFrame = workspace.WorkspaceCom["003_CouchGiveTool"].Seat1.CFrame
 
-        -- Teleportar o jogador para a posição do sofá
-        humanoidRootPart.CFrame = sofaPosition
-        
-        wait(1)
+            wait(0.5) -- Esperar um pouco após o teletransporte
 
-        -- Simular um clique no ClickDetector do sofá
-        fireclickdetector(clickDetector, 1)
-
-        wait(1)
-
-        -- Voltar para a posição original
-        humanoidRootPart.CFrame = CFrame.new(originalPosition)
+            -- Pular para sair da posição sentada
+            humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+            
+            wait(0.5) -- Esperar um momento para garantir que o pulo ocorra
+            
+            -- Voltar à posição original
+            humanoidRootPart.CFrame = CFrame.new(originalPosition)
+        else
+            print("Sofá não encontrado!") -- Mensagem de erro se o sofá não estiver no local esperado
+        end
     end
 })
+
+Tabs.tools:AddButton({
+    Title = "💳 pegar cartão",
+    Callback = function()
+   getcart()
+    end
+})
+
+
+-- Variável para controlar o estado do toggle
+local toggleActive = false
+
+-- Alternador na Tab "Evento"
+Tabs.evento:AddToggle("AutoEventoToggle", {
+    Title = "Auto Evento 🍬", -- Nome atualizado para "Auto Evento" com ícone de doce
+    Default = false, -- Desativado por padrão
+    Callback = function(state)
+        toggleActive = state -- Atualiza o estado do toggle
+        if toggleActive then
+            -- Código que será executado quando o toggle estiver ativo
+            spawn(function() -- Executar em uma thread separada para permitir parada
+                while toggleActive do
+                    local player = game.Players.LocalPlayer
+                    local character = player.Character or player.CharacterAdded:Wait()
+                    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+                    -- Procurar as partes chamadas "Eggy" e teleportar o jogador para elas
+                    local eggyParts = workspace:GetDescendants()
+
+                    for _, part in pairs(eggyParts) do
+                        if not toggleActive then break end -- Parar o loop se o toggle estiver desativado
+                        
+                        if part:IsA("MeshPart") and part.Name == "Eggy" then
+                            humanoidRootPart.CFrame = part.CFrame
+                            wait(1) -- Esperar 1 segundo entre cada teleporte
+                        end
+                    end
+
+                    wait(1) -- Esperar antes de repetir o loop
+                end
+            end)
+        else
+            print("Auto Evento desativado!")
+        end
+    end
+})
+
+
+-- Lista de lugares para teleporte
+local teleportLocations = {
+    ["Praça"] = workspace.Model["001_Fountain"].Fountain:GetChildren()[4],
+    ["Delegacia"] = workspace.Model:GetChildren()[1344],
+    ["Hospital"] = workspace.Model:GetChildren()[1007],
+    ["Prefeitura"] = workspace.Model["001_TownHall"]:GetChildren()[102],
+    ["Bombeiro"] = workspace.Model.FireHouse.GarbageCan["Cylinder.064"],
+    ["Praia"] = workspace.Model.NewTable.MeshPart,
+    ["Fazenda"] = workspace.Model.Barn.Barn:GetChildren()[17],
+    ["Casa Assombrada"] = workspace.Model:GetChildren()[2371],
+    ["Celeiro"] = workspace.Model.Stables.Model.Hay,
+    ["Mar"] = workspace.Model["001_SnowBeach"].BeachSand,
+    ["Drone"] = workspace.WorkspaceCom["001_Drone"]["001_DroneSpawn"],
+    ["Hotel"] = workspace.Model:GetChildren()[1788],
+    ["Restaurante"] = workspace.Model:GetChildren()[1555],
+    ["Shopping"] = workspace.Model.MeshDoorLeft.MeshPart,
+    ["Cinema"] = workspace.WorkspaceCom["001_Mall"].DoorPart["188.723, -25.432, -138.255"],
+    ["Apartamento"] = workspace.Model:GetChildren()[2845],
+    ["Mercado"] = workspace.Model:GetChildren()[2773]
+}
+
+-- Variável para armazenar o local selecionado
+local selectedLocation = nil
+
+-- Menu suspenso para escolher o local de teleporte
+local Dropdown = Tabs.teleport:AddDropdown("Dropdown", {
+    Title = "Selecione o Local 🌍",
+    Values = { 
+        "Praça", "Delegacia", "Hospital", "Prefeitura", 
+        "Bombeiro", "Praia", "Fazenda", "Casa Assombrada", 
+        "Celeiro", "Mar", "Drone", "Hotel", 
+        "Restaurante", "Shopping", "Cinema", "Apartamento", "Mercado" 
+    }, -- Opções de teleporte
+    Multi = false, -- Apenas uma escolha permitida
+    Default = "Praça", -- Local padrão
+})
+
+-- Capturar a mudança de seleção
+Dropdown:OnChanged(function(Value)
+    selectedLocation = teleportLocations[Value] -- Armazenar o local selecionado
+end)
 
 -- Adicionar um botão para teleportar para o local escolhido
 Tabs.teleport:AddButton({
@@ -239,25 +335,42 @@ Tabs.teleport:AddButton({
     end
 })
 
--- Adicionar um dropdown para escolher o local de teleportação
+-- Lista de lugares secretos 
 local teleportLocations = {
-    "Location1", "Location2", "Location3" -- Adicione mais locais conforme necessário
-}
+    ["Casa de verão"] = workspace.WorkspaceCom["001_BrookhavenSecrets"]["001_CabinAtticSeat"].Seat
 
-local teleportDropdown = Tabs.teleport:AddDropdown("DropdownTeleport", {
-    Title = "Selecione o Local para Teleportar",
-    Values = teleportLocations,
-    Multi = false,
-    Default = "Location1"
-})
-
--- Variável para armazenar a localização selecionada
+-- Variável para armazenar o local selecionado
 local selectedLocation = nil
 
--- Capturar a mudança de seleção no dropdown de teleportação
-teleportDropdown:OnChanged(function(Value)
-    selectedLocation = Value -- Armazenar a localização selecionada
+-- Menu suspenso para escolher o local de teleporte
+local Dropdown = Tabs.teleport:AddDropdown("Dropdown", {
+    Title = "lugares secretos 🌍",
+    Values = { 
+        "Casa de verão",
+    }, -- Opções de teleporte
+    Multi = false, -- Apenas uma escolha permitida
+    Default = "Casa de verão", -- Local padrão
+})
+
+-- Capturar a mudança de seleção
+Dropdown:OnChanged(function(Value)
+    selectedLocation = teleportLocations[Value] -- Armazenar o local selecionado
 end)
 
--- Finaliza a criação da janela
-Window:Show()
+-- Adicionar um botão para teleportar para o local escolhido
+Tabs.teleport:AddButton({
+    Title = "Teleportar",
+    Callback = function()
+        if selectedLocation then
+            -- Teleportar o jogador para o local selecionado
+            local player = game.Players.LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+            local humanoidRootPart = character:WaitForChild("HumanoidRootPart") -- Aguardar o HumanoidRootPart
+
+            humanoidRootPart.CFrame = selectedLocation.CFrame -- Teletransportar
+            print("Teleportado para:", selectedLocation) -- Mensagem de sucesso
+        else
+            print("Nenhum local selecionado!") -- Aviso se nenhum local for escolhido
+        end
+    end
+})
