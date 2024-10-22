@@ -1,0 +1,229 @@
+-- Carregar a biblioteca Fluent
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
+-- Criar a janela principal personalizada
+local Window = Fluent:CreateWindow({
+    Title = "XScript brookhaven hub 🏡 | 🇧🇷 Versão 1.0.0",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(500, 300),
+    Theme = "Amethyst" -- Tema Amethyst
+})
+
+-- Tabs
+local Tabs = {
+    casa = Window:AddTab({ Title = "Casas", Icon = "home" }),
+    tools = Window:AddTab({ Title = "Tools", Icon = "hammer" }),
+    evento = Window:AddTab({ Title = "Evento", Icon = "gift" }),
+    teleporte = Window:AddTab({ Title = "Teleporte", Icon = "map" }), -- Mover a aba "Teleporte" para baixo
+}
+
+-- Adicionar um menu suspenso para escolher a localização de teleporte
+local TeleportDropdown = Tabs.teleporte:AddDropdown("TeleportDropdown", {
+    Title = "Local", -- Mudado para "Local"
+    Values = {
+        "Praça",
+        "Delegacia",
+        "Hospital",
+        "Prefeitura",
+        "Bombeiro",
+        "Praia",
+        "Fazenda",
+        "Casa Assombrada",
+        "Celeiro",
+        "Mar",
+        "Drone",
+        "Hotel",
+        "Restaurante",
+        "Shopping",
+        "Cinema",
+        "Apartamento",
+        "Mercado"
+    },
+    Multi = false,
+    Default = "Praça",
+})
+
+-- Variável para armazenar a localização selecionada
+local selectedTeleportLocation = nil
+
+-- Capturar a mudança de seleção
+TeleportDropdown:OnChanged(function(Value)
+    selectedTeleportLocation = Value
+end)
+
+-- Adicionar um botão para teleportar
+Tabs.teleporte:AddButton({
+    Title = "Teleportar",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+        if selectedTeleportLocation == "Praça" then
+            humanoidRootPart.CFrame = workspace.Model["001_Fountain"].Fountain:GetChildren()[4].CFrame
+        elseif selectedTeleportLocation == "Delegacia" then
+            humanoidRootPart.CFrame = workspace.Model:GetChildren()[1344].CFrame
+        elseif selectedTeleportLocation == "Hospital" then
+            humanoidRootPart.CFrame = workspace.Model:GetChildren()[1007].CFrame
+        elseif selectedTeleportLocation == "Prefeitura" then
+            humanoidRootPart.CFrame = workspace.Model["001_TownHall"]:GetChildren()[102].CFrame
+        elseif selectedTeleportLocation == "Bombeiro" then
+            humanoidRootPart.CFrame = workspace.Model.FireHouse.GarbageCan["Cylinder.064"].CFrame
+        elseif selectedTeleportLocation == "Praia" then
+            humanoidRootPart.CFrame = workspace.Model.NewTable.MeshPart.CFrame
+        elseif selectedTeleportLocation == "Fazenda" then
+            humanoidRootPart.CFrame = workspace.Model.Barn.Barn:GetChildren()[17].CFrame
+        elseif selectedTeleportLocation == "Casa Assombrada" then
+            humanoidRootPart.CFrame = workspace.Model:GetChildren()[2371].CFrame
+        elseif selectedTeleportLocation == "Celeiro" then
+            humanoidRootPart.CFrame = workspace.Model.Stables.Model.Hay.CFrame
+        elseif selectedTeleportLocation == "Mar" then
+            humanoidRootPart.CFrame = workspace.Model["001_SnowBeach"].BeachSand.CFrame
+        elseif selectedTeleportLocation == "Drone" then
+            humanoidRootPart.CFrame = workspace.WorkspaceCom["001_Drone"]["001_DroneSpawn"].CFrame
+        elseif selectedTeleportLocation == "Hotel" then
+            humanoidRootPart.CFrame = workspace.Model:GetChildren()[1788].CFrame
+        elseif selectedTeleportLocation == "Restaurante" then
+            humanoidRootPart.CFrame = workspace.Model:GetChildren()[1555].CFrame
+        elseif selectedTeleportLocation == "Shopping" then
+            humanoidRootPart.CFrame = workspace.Model.MeshDoorLeft.MeshPart.CFrame
+        elseif selectedTeleportLocation == "Cinema" then
+            humanoidRootPart.CFrame = workspace.WorkspaceCom["001_Mall"].DoorPart["188.723, -25.432, -138.255"].CFrame
+        elseif selectedTeleportLocation == "Apartamento" then
+            humanoidRootPart.CFrame = workspace.Model:GetChildren()[2845].CFrame
+        elseif selectedTeleportLocation == "Mercado" then
+            humanoidRootPart.CFrame = workspace.Model:GetChildren()[2773].CFrame
+        else
+            print("Local de teleporte não reconhecido!")
+        end
+    end
+})
+
+-- Lista de casas
+local houseNumbers = {}
+for i = 1, 37 do
+    table.insert(houseNumbers, i)
+end
+
+-- Adicionar um menu suspenso para escolher a casa
+local Dropdown = Tabs.casa:AddDropdown("Dropdown", {
+    Title = "Selecione a Casa 🏠",
+    Values = houseNumbers,
+    Multi = false,
+    Default = 1,
+})
+
+-- Variável para armazenar o número da casa selecionada
+local selectedHouseNumber = nil
+
+-- Capturar a mudança de seleção
+Dropdown:OnChanged(function(Value)
+    selectedHouseNumber = tonumber(Value)
+end)
+
+-- Adicionar um botão para dar permissão
+Tabs.casa:AddButton({
+    Title = "Dar Permissão",
+    Callback = function()
+        if selectedHouseNumber then
+            -- Argumentos para dar permissão à casa escolhida
+            local args = {
+                [1] = "GivePermissionLoopToServer",
+                [2] = game:GetService("Players").LocalPlayer,
+                [3] = selectedHouseNumber -- Mudar o número da casa com base na escolha
+            }
+
+            -- Enviar o evento para o servidor
+            game:GetService("ReplicatedStorage").RE:FindFirstChild("1Playe1rTrigge1rEven1t"):FireServer(unpack(args))
+
+            print("Permissão dada para a casa:", selectedHouseNumber) -- Exibe o número escolhido
+        else
+            print("Nenhuma casa selecionada!") -- Aviso se nenhuma casa foi escolhida
+        end
+    end
+})
+
+-- Adicionar um botão para remover o bloco banido baseado na seleção
+Tabs.casa:AddButton({
+    Title = "Remover Ban",
+    Callback = function()
+        if selectedHouseNumber then
+            -- Defina o nome do lote
+            local lotNumber = "001_Lots"
+
+            -- Tente acessar o lote e percorrer todas as casas
+            local lot = workspace:FindFirstChild(lotNumber)
+
+            if lot then
+                -- Percorre todas as casas dentro do lote
+                for _, house in pairs(lot:GetChildren()) do
+                    if house:FindFirstChild("HousePickedByPlayer") then
+                        -- Tente encontrar e remover o BannedBlock com base na escolha
+                        local bannedBlockName = "BannedBlock" .. selectedHouseNumber -- Nome do bloco banido
+                        local bannedBlock = house.HousePickedByPlayer.HouseModel:FindFirstChild(bannedBlockName)
+
+                        if bannedBlock then
+                            bannedBlock:Destroy() -- Deletar a parte
+                            print(bannedBlockName .. " deletado com sucesso em " .. house.Name)
+                        else
+                            print(bannedBlockName .. " não encontrado em " .. house.Name)
+                        end
+                    end
+                end
+            else
+                print("Lote " .. lotNumber .. " não encontrado.")
+            end
+        else
+            print("Nenhuma casa selecionada!") -- Aviso se nenhuma casa foi escolhida
+        end
+    end
+})
+
+-- Adicionar um botão para pegar o sofá
+Tabs.tools:AddButton({
+    Title = "Pegar o Sofá 🛋️",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        local humanoidRootPart = character:WaitForChild("HumanoidRootPart") -- Esperar a HumanoidRootPart
+        local originalPosition = humanoidRootPart.Position -- Salvar a posição original
+
+        -- Teleportar para o sofá
+        if workspace.WorkspaceCom["003_CouchGiveTool"] and workspace.WorkspaceCom["003_CouchGiveTool"]:FindFirstChild("Seat1") then
+            humanoidRootPart.CFrame = workspace.WorkspaceCom["003_CouchGiveTool"].Seat1.CFrame
+
+            wait(0.5) -- Esperar um pouco após o teletransporte
+
+            -- Pular para sair da posição sentada
+            humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+
+            wait(0.5) -- Esperar um momento para garantir que o pulo ocorra
+
+            -- Voltar à posição original
+            humanoidRootPart.CFrame = CFrame.new(originalPosition)
+        else
+            print("Sofá não encontrado!") -- Mensagem de erro se o sofá não estiver no local esperado
+        end
+    end
+})
+
+-- Variável para controlar o estado do toggle
+local toggleActive = false
+
+-- Alternador na Tab "Evento"
+Tabs.evento:AddToggle("AutoEventoToggle", {
+    Title = "Ativar Auto Evento",
+    Callback = function(state)
+        toggleActive = state
+        while toggleActive do
+            wait(1) -- Ajuste o intervalo conforme necessário
+
+            -- Chame a função para iniciar o evento aqui
+            game:GetService("ReplicatedStorage").RE:FindFirstChild("EventName"):Fire() -- Substitua "EventName" pelo nome do evento real
+        end
+    end
+})
+
+-- Mostrar a janela
+Window:Show()
