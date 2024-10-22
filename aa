@@ -332,24 +332,43 @@ Tabs.teleport:AddButton({
         else
             print("Nenhum local selecionado!") -- Aviso se nenhum local for escolhido
         end
-    end
-})
+     })
 
--- Lista de lugares secretos 
+-- Lista de lugares para teleporte
 local teleportLocations = {
-    ["Casa de verão"] = workspace.WorkspaceCom["001_BrookhavenSecrets"]["001_CabinAtticSeat"].Seat
+    ["Praça"] = workspace.Model["001_Fountain"].Fountain:GetChildren()[4],
+    ["Delegacia"] = workspace.Model:GetChildren()[1344],
+    ["Hospital"] = workspace.Model:GetChildren()[1007],
+    ["Prefeitura"] = workspace.Model["001_TownHall"]:GetChildren()[102],
+    ["Bombeiro"] = workspace.Model.FireHouse.GarbageCan["Cylinder.064"],
+    ["Praia"] = workspace.Model.NewTable.MeshPart,
+    ["Fazenda"] = workspace.Model.Barn.Barn:GetChildren()[17],
+    ["Casa Assombrada"] = workspace.Model:GetChildren()[2371],
+    ["Celeiro"] = workspace.Model.Stables.Model.Hay,
+    ["Mar"] = workspace.Model["001_SnowBeach"].BeachSand,
+    ["Drone"] = workspace.WorkspaceCom["001_Drone"]["001_DroneSpawn"],
+    ["Hotel"] = workspace.Model:GetChildren()[1788],
+    ["Restaurante"] = workspace.Model:GetChildren()[1555],
+    ["Shopping"] = workspace.Model.MeshDoorLeft.MeshPart,
+    ["Cinema"] = workspace.WorkspaceCom["001_Mall"].DoorPart["188.723, -25.432, -138.255"],
+    ["Apartamento"] = workspace.Model:GetChildren()[2845],
+    ["Mercado"] = workspace.Model:GetChildren()[2773]
+}
 
 -- Variável para armazenar o local selecionado
 local selectedLocation = nil
 
 -- Menu suspenso para escolher o local de teleporte
 local Dropdown = Tabs.teleport:AddDropdown("Dropdown", {
-    Title = "lugares secretos 🌍",
+    Title = "Selecione o Local 🌍",
     Values = { 
-        "Casa de verão",
+        "Praça", "Delegacia", "Hospital", "Prefeitura", 
+        "Bombeiro", "Praia", "Fazenda", "Casa Assombrada", 
+        "Celeiro", "Mar", "Drone", "Hotel", 
+        "Restaurante", "Shopping", "Cinema", "Apartamento", "Mercado" 
     }, -- Opções de teleporte
     Multi = false, -- Apenas uma escolha permitida
-    Default = "Casa de verão", -- Local padrão
+    Default = "Praça", -- Local padrão
 })
 
 -- Capturar a mudança de seleção
@@ -371,6 +390,47 @@ Tabs.teleport:AddButton({
             print("Teleportado para:", selectedLocation) -- Mensagem de sucesso
         else
             print("Nenhum local selecionado!") -- Aviso se nenhum local for escolhido
+        end
+    end
+})
+
+-- Lista de lugares secretos 
+local secretTeleportLocations = {
+    ["Casa de verão"] = workspace.WorkspaceCom["001_BrookhavenSecrets"]["001_CabinAtticSeat"].Seat
+}
+
+-- Variável para armazenar o local selecionado para lugares secretos
+local selectedSecretLocation = nil
+
+-- Menu suspenso para escolher o local secreto de teleporte
+local SecretDropdown = Tabs.teleport:AddDropdown("SecretDropdown", {
+    Title = "Lugares Secretos 🌍",
+    Values = { 
+        "Casa de verão",
+    }, -- Opções de teleporte
+    Multi = false, -- Apenas uma escolha permitida
+    Default = "Casa de verão", -- Local padrão
+})
+
+-- Capturar a mudança de seleção
+SecretDropdown:OnChanged(function(Value)
+    selectedSecretLocation = secretTeleportLocations[Value] -- Armazenar o local selecionado
+end)
+
+-- Adicionar um botão para teleportar para o local secreto escolhido
+Tabs.teleport:AddButton({
+    Title = "Teleportar para Lugar Secreto",
+    Callback = function()
+        if selectedSecretLocation then
+            -- Teleportar o jogador para o local selecionado
+            local player = game.Players.LocalPlayer
+            local character = player.Character or player.CharacterAdded:Wait()
+            local humanoidRootPart = character:WaitForChild("HumanoidRootPart") -- Aguardar o HumanoidRootPart
+
+            humanoidRootPart.CFrame = selectedSecretLocation.CFrame -- Teletransportar
+            print("Teleportado para:", selectedSecretLocation) -- Mensagem de sucesso
+        else
+            print("Nenhum local secreto selecionado!") -- Aviso se nenhum local for escolhido
         end
     end
 })
